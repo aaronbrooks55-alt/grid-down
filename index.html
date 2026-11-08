@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grid Down</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Grid Down">
+<meta name="theme-color" content="#1d1f1c">
+<style>
+:root{--bg:#f4f1ea;--panel:#fffdf8;--ink:#1d1f1c;--muted:#5d6158;--line:#d9d3c4;--a1:#a3401c;--a2:#1f5f7a;--ok:#2f6b3a;--warn:#8a5a00}
+@media (prefers-color-scheme: dark){:root{--bg:#131512;--panel:#1c1f1b;--ink:#e8e6de;--muted:#a2a69a;--line:#33372f;--a1:#e07a4f;--a2:#6fb3d0;--ok:#7cc287;--warn:#e3b350}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top) 16px 40px}
+.wrap{max-width:640px;margin:0 auto}
+header{padding:28px 0 18px;border-bottom:2px solid var(--ink);margin-bottom:20px}
+h1{font:800 26px/1.1 system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;margin:0}
+.sub{font:500 12px ui-monospace,Menlo,Consolas,monospace;color:var(--muted);margin-top:6px}
+a.tile{display:block;background:var(--panel);border:1px solid var(--line);border-left:6px solid var(--a1);border-radius:12px;padding:18px 18px;margin:0 0 14px;color:inherit;text-decoration:none}
+a.tile.med{border-left-color:var(--a2)}
+a.tile:active{transform:scale(.99)}
+a.tile b{display:block;font-size:20px;margin-bottom:4px}
+a.tile span{color:var(--muted);font-size:15px}
+.status{font:600 13px ui-monospace,Menlo,Consolas,monospace;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);margin:18px 0}
+.status.ok{border-color:var(--ok);color:var(--ok)} .status.warn{border-color:var(--warn);color:var(--warn)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-top:14px;font-size:15px}
+.box h2{font-size:15px;margin:0 0 6px}
+ol{padding-left:20px;margin:6px 0} li{margin:3px 0}
+.foot{font-size:13px;color:var(--muted);margin-top:22px}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>Grid Down</h1><div class="sub">Offline survival and medical reference</div></header>
+<a class="tile" href="manual.html"><b>Field Manual</b><span>Water, heat, cold injuries, food, hunting and processing, foraging, sanitation, power, comms, checklists.</span></a>
+<a class="tile med" href="medical.html"><b>Medical</b><span>Symptom checker, children's dosing and dose log, conditions and treatment, drug lookup, interactions, pharmacy aisle decoder.</span></a>
+<div class="status" id="st">Checking offline status…</div>
+<div class="box" id="install"><h2>Install on iPhone or iPad</h2>
+<ol><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button, then <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open Grid Down from the home screen once while online, and open both tools, so everything is saved to the phone.</li><li>In Medical, go to <b>Drug lookup</b> and tap <b>Download all FDA labels</b> on Wi-Fi.</li></ol></div>
+<div class="box"><h2>Keep it current</h2>Open the app on Wi-Fi now and then; updates install automatically. Everything you enter (weights, dose logs, checklists) stays on this device only.</div>
+<p class="foot">Reference only. When any doctor, pharmacist, or emergency service is reachable, use them first.</p>
+</div>
+<script>
+const st=document.getElementById('st');
+const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+if(standalone) document.getElementById('install').style.display='none';
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{
+    const ok=await caches.has('gridown-v1');
+    st.className='status ok'; st.textContent='✓ Saved for offline use'+(navigator.onLine?'':' (you are offline)');
+  }).catch(()=>{st.className='status warn';st.textContent='Offline cache unavailable in this browser. Install from Safari.'});
+}else{st.className='status warn';st.textContent='This browser cannot save the app offline.'}
+</script>
+</body>
+</html>

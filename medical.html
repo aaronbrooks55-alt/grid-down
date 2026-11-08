@@ -1,0 +1,1271 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grid Down Medical</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Grid Down">
+<meta name="theme-color" content="#1d1f1c">
+
+<style>
+:root{
+  --bg:#f4f1ea; --panel:#fffdf8; --ink:#1d1f1c; --muted:#5d6158; --line:#d9d3c4;
+  --accent:#1f5f7a; --accent-soft:#dcebf1; --ok:#2f6b3a; --ok-soft:#e0efe1;
+  --warn:#8a5a00; --warn-soft:#fbf0d4; --danger:#9b1c1c; --danger-soft:#fbe1e1;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+  --sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121514; --panel:#1b1f1d; --ink:#e7e8e2; --muted:#a0a69c; --line:#323832;
+    --accent:#6fb3d0; --accent-soft:#18303a; --ok:#7cc287; --ok-soft:#1d3121;
+    --warn:#e3b350; --warn-soft:#352a12; --danger:#f08080; --danger-soft:#3a1a1a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121514; --panel:#1b1f1d; --ink:#e7e8e2; --muted:#a0a69c; --line:#323832;
+  --accent:#6fb3d0; --accent-soft:#18303a; --ok:#7cc287; --ok-soft:#1d3121;
+  --warn:#e3b350; --warn-soft:#352a12; --danger:#f08080; --danger-soft:#3a1a1a;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
+header.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:2px solid var(--ink);padding:10px 16px 0}
+.hrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font:800 18px/1.1 var(--sans);letter-spacing:.06em;text-transform:uppercase;margin:0 auto 0 0}
+header h1 small{display:block;font:500 11px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:none}
+nav.tabs{display:flex;gap:2px;overflow-x:auto;margin-top:10px}
+nav.tabs button{border:1px solid var(--line);border-bottom:0;border-radius:8px 8px 0 0;background:var(--bg);color:var(--ink);font:600 14px var(--sans);padding:8px 14px;cursor:pointer;white-space:nowrap}
+nav.tabs button[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+button.b{font:600 13px var(--sans);padding:7px 12px;border:1px solid var(--ink);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+button.b:hover{background:var(--accent-soft)}
+main{max-width:1100px;margin:0 auto;padding:16px 16px 80px}
+.pane{display:none}.pane.on{display:block}
+.disc{background:var(--warn-soft);border:1px solid var(--warn);border-radius:8px;padding:10px 14px;font-size:14px;margin-bottom:14px}
+section,.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px;margin:0 0 16px}
+h2{font:800 20px/1.2 var(--sans);margin:0 0 6px}
+h3{font:700 16px var(--sans);margin:18px 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+.lede{color:var(--muted);margin:0 0 12px}
+p,li{max-width:80ch}
+ul,ol{padding-left:22px} li{margin:3px 0}
+table{border-collapse:collapse;width:100%;margin:8px 0 12px;font-size:14px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--bg)}
+.tbl{overflow-x:auto}
+.box{border-left:4px solid var(--ink);padding:10px 14px;margin:10px 0;border-radius:0 6px 6px 0;background:var(--bg)}
+.box.danger{border-color:var(--danger);background:var(--danger-soft)}
+.box.warn{border-color:var(--warn);background:var(--warn-soft)}
+.box.ok{border-color:var(--ok);background:var(--ok-soft)}
+.box b.tag{font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}
+input[type=search],input[type=number],select{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:15px var(--sans)}
+input[type=search]{width:100%}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:end;margin-bottom:12px}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--muted);gap:3px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.chip{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:20px;padding:5px 11px;font:14px var(--sans);cursor:pointer}
+.chip.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.card{border:1px solid var(--line);border-radius:9px;background:var(--panel);margin:0 0 10px}
+.card > summary{list-style:none;cursor:pointer;padding:10px 14px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.card > summary::-webkit-details-marker{display:none}
+.card > summary b{font-size:16px}
+.card[open] > summary{border-bottom:1px solid var(--line)}
+.card .body{padding:6px 16px 14px}
+.card .body h4{margin:12px 0 2px;font:700 12px var(--mono);text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.card .body p{margin:2px 0 6px}
+.pill{display:inline-block;font:700 11px var(--mono);padding:1px 7px;border-radius:20px;border:1px solid currentColor;white-space:nowrap}
+.pill.r{color:var(--danger)} .pill.y{color:var(--warn)} .pill.g{color:var(--ok)} .pill.b{color:var(--accent)} .pill.m{color:var(--muted)}
+.score{font:700 12px var(--mono);color:var(--accent)}
+.dl{display:grid;grid-template-columns:130px 1fr;gap:4px 12px;font-size:15px}
+.dl dt{font:700 12px var(--mono);text-transform:uppercase;color:var(--muted);padding-top:3px}
+.dl dd{margin:0}
+a.dr{color:var(--accent);cursor:pointer;text-decoration:underline}
+.ix{border-radius:8px;padding:10px 14px;margin:8px 0;border:1px solid}
+.ix.sev3{border-color:var(--danger);background:var(--danger-soft)}
+.ix.sev2{border-color:var(--warn);background:var(--warn-soft)}
+.ix.sev1{border-color:var(--line);background:var(--bg)}
+.sel{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.sel span{background:var(--accent-soft);border:1px solid var(--accent);border-radius:20px;padding:4px 10px;font-size:14px}
+.sel span button{border:0;background:none;color:var(--ink);cursor:pointer;font-weight:700;margin-left:4px}
+.out{font:600 15px var(--mono);border-radius:6px;padding:10px 12px;margin-top:8px;white-space:pre-line;border:1px solid var(--line);background:var(--bg)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.foot{font-size:13px;color:var(--muted)}
+.muted{color:var(--muted)}
+@media (max-width:700px){ .dl{grid-template-columns:1fr} .dl dt{padding-top:8px} section,.panel{padding:14px} }
+@media print{
+  header.top .tabs,.noprint{display:none!important}
+  header.top{position:static}
+  .pane{display:block!important;page-break-before:always}
+  body{background:#fff;color:#000;font-size:10.5pt}
+  details{display:block} details > .body{display:block!important}
+  .card{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="hrow">
+    <h1>Grid Down Medical<small>Offline field reference · assess · children · treat · drug lookup · interactions · v3 Nov 2026</small></h1>
+    <a href="index.html" class="noprint" style="font:700 13px system-ui,sans-serif;padding:8px 12px;border:1px solid currentColor;border-radius:6px;color:inherit;text-decoration:none">⌂ Home</a>
+    <button class="b noprint" id="printAll">Print all</button>
+    <button class="b noprint" id="theme" aria-label="Toggle dark mode">◐</button>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-p="assess" aria-selected="true">1 · Assess</button>
+    <button role="tab" data-p="kids">2 · Children</button>
+    <button role="tab" data-p="cond">3 · Conditions &amp; treatment</button>
+    <button role="tab" data-p="drugs">4 · Drug lookup</button>
+    <button role="tab" data-p="ix">5 · Interaction check</button>
+    <button role="tab" data-p="otc">6 · Pharmacy aisle decoder</button>
+    <button role="tab" data-p="stock">7 · Stock &amp; prep</button>
+  </nav>
+</header>
+<main>
+<div class="disc"><b>Use this only when no doctor, pharmacist, urgent care, or telehealth can be reached.</b> Any of those beats this page. Doses are standard <b>adult</b> doses for non-pregnant adults with normal kidney and liver function. Children are dosed by weight: use the product label or package insert for the child's weight. Verify every dose against the package insert in the box. Red flags mean get the person to definitive care by any means available, even at real cost or risk.</div>
+
+<!-- ============ ASSESS ============ -->
+<div class="pane on" id="assess">
+<section>
+<h2>Symptom checker</h2>
+<p class="lede">Tap every symptom present. Conditions are ranked by match. This gives you a starting list, not a diagnosis. Read each condition's "How to check" section and its red flags.</p>
+<div class="row noprint"><label>Age group<select id="scAge"><option value="a">Adult / teen</option><option value="c">Child 1 to 12</option><option value="i">Infant under 1</option></select></label><button class="b" id="scClear">Clear symptoms</button></div>
+<div class="chips" id="scChips"></div>
+<div id="scOut"></div>
+</section>
+
+<section>
+<h2>Vital signs without electronics</h2>
+<div class="row noprint">
+  <label>Age<select id="vAge">
+    <option value="0">Newborn to 3 months</option><option value="1">3 to 12 months</option><option value="2">1 to 3 years</option><option value="3">3 to 6 years</option><option value="4">6 to 12 years</option><option value="5" selected>Teen / adult</option></select></label>
+  <label>Heart rate /min<input id="vHR" type="number" min="0"></label>
+  <label>Breaths /min<input id="vRR" type="number" min="0"></label>
+  <label>Temp °F<input id="vT" type="number" step="0.1"></label>
+</div>
+<div class="out" id="vOut"></div>
+<h3>How to measure</h3>
+<ul>
+<li><b>Pulse:</b> two fingers (not thumb) on the thumb side of the wrist, or the side of the neck beside the windpipe. In infants use the inside of the upper arm. Count 30 seconds × 2. Note whether it is regular or irregular.</li>
+<li><b>Breathing:</b> count chest rises for a full 60 seconds without the person knowing (they change it if they notice). In children, watch the belly. Look for ribs sucking in, nostril flaring, grunting, or head bobbing. Those signs mean the person is working hard to breathe.</li>
+<li><b>Temperature:</b> a non-electric galinstan glass thermometer works without batteries. Hand on the forehead only tells you "hot" or "not hot." Fever is 100.4°F (38°C) or higher. <b>Any fever in a baby under 3 months is an emergency.</b></li>
+<li><b>Capillary refill:</b> press a fingernail (or the sternum in infants) for 5 seconds, release, count. Pink color should return in under 2 seconds. Slower means dehydration, shock, or cold.</li>
+<li><b>Blood pressure (manual cuff + stethoscope):</b> inflate to 180, release 2 to 3 mmHg per second. The first tapping sound is systolic and the point it disappears is diastolic. Without a cuff: a palpable wrist pulse <i>roughly</i> suggests systolic is not dangerously low. This is only a rough guide.</li>
+<li><b>Level of consciousness (AVPU):</b> <b>A</b>lert, responds to <b>V</b>oice, responds only to <b>P</b>ain, <b>U</b>nresponsive. Anything below A is serious; track it over time.</li>
+<li><b>Pupils:</b> equal, round, and both shrink to a light. Unequal pupils after head injury = emergency.</li>
+<li><b>Skin:</b> pale, cool, clammy, sweaty = shock. Blue lips = low oxygen. Yellow eyes = liver. Mottled knees in a sick child = poor circulation.</li>
+<li><b>Hydration:</b> urine pale yellow is good; dark or none in 8 hours (adults) or fewer than 3 wet diapers in 24 hours (infants) is dehydration. Also dry mouth, no tears, sunken eyes, sunken soft spot in infants.</li>
+<li><b>Urine dipstick</b> (non-electric strips): leukocytes + nitrites point to a urinary tract infection (UTI). Glucose + ketones point to uncontrolled diabetes. Blood points to a stone or infection.</li>
+</ul>
+</section>
+
+<section>
+<h2>Systematic exam</h2>
+<h3>History (SAMPLE + OPQRST)</h3>
+<div class="grid2">
+<div><b>SAMPLE</b><ul><li><b>S</b>ymptoms</li><li><b>A</b>llergies</li><li><b>M</b>edications (incl. supplements)</li><li><b>P</b>ast history, pregnancy possible?</li><li><b>L</b>ast intake (food, drink, urine, stool)</li><li><b>E</b>vents leading up</li></ul></div>
+<div><b>OPQRST</b> (for pain)<ul><li><b>O</b>nset: sudden or gradual</li><li><b>P</b>rovokes / palliates</li><li><b>Q</b>uality: sharp, dull, crushing, cramping</li><li><b>R</b>egion / radiation</li><li><b>S</b>everity 0 to 10</li><li><b>T</b>ime course</li></ul></div>
+</div>
+<h3>Head to toe</h3>
+<ol>
+<li><b>Head:</b> bumps, cuts, fluid from ears/nose, raccoon eyes (skull fracture).</li>
+<li><b>Eyes:</b> pupils, redness, discharge, yellow whites.</li>
+<li><b>Mouth/throat:</b> use a flashlight and a spoon handle. Look for tonsil pus, white patches, a swollen floor of the mouth, or tooth abscess. <b>Do not</b> look in the throat of a drooling child who is sitting forward (epiglottitis).</li>
+<li><b>Neck:</b> chin to chest. Stiffness with fever = meningitis until proven otherwise. Swollen nodes.</li>
+<li><b>Chest:</b> ear (or stethoscope) on back, both sides, top to bottom. Crackles or one side quieter = pneumonia or collapsed lung. Wheeze = asthma/bronchospasm.</li>
+<li><b>Abdomen:</b> person lying flat, knees bent. Press gently in all 4 quadrants, painful area last. Check for rigid "board-like" belly, rebound pain (pain on <i>release</i>), and the <b>heel drop test</b> (pain in the belly when they drop onto their heels). Any of these suggests peritonitis = surgical.</li>
+<li><b>Back:</b> fist tap over each kidney (flank). Pain = kidney infection or stone.</li>
+<li><b>Limbs:</b> deformity, swelling, pulses past the injury, sensation, movement. Calf swelling on one side = clot.</li>
+<li><b>Skin:</b> rashes (press a clear glass on a rash: if it does <b>not</b> fade under pressure, and the person has a fever, treat it as an emergency), wounds, tick bites, red streaks.</li>
+</ol>
+</section>
+
+<section>
+<h2>Universal red flags: evacuate now</h2>
+<div class="box danger"><ul>
+<li>Trouble breathing, blue lips, can't speak full sentences, ribs pulling in (child)</li>
+<li>Chest pain with sweating, nausea, or pain to arm/jaw</li>
+<li>Stroke signs (BE-FAST): <b>B</b>alance, <b>E</b>yes, <b>F</b>ace droop, <b>A</b>rm weakness, <b>S</b>peech, <b>T</b>ime</li>
+<li>Confusion, very hard to wake, seizure over 5 minutes</li>
+<li>Fever + stiff neck, or fever + non-fading rash</li>
+<li>Any fever in an infant under 3 months; a limp, unresponsive, or inconsolable baby</li>
+<li>Severe belly pain with a rigid belly, or pain moving to the lower right</li>
+<li>Vomiting blood, black tarry stool (not from Pepto), heavy rectal bleeding</li>
+<li>Bleeding not controlled by pressure; deep wounds to chest, belly, neck</li>
+<li>Signs of shock: pale, cold, clammy, fast weak pulse, confused</li>
+<li>Dehydration in a small child that is not improving with oral rehydration</li>
+<li>Severe allergic reaction (even if epinephrine helped: reactions can return)</li>
+<li>Possible pregnancy + belly pain or bleeding</li>
+<li>Sudden severe testicle pain</li>
+</ul></div>
+</section>
+</div>
+
+<div class="pane" id="kids">
+<section>
+<h2>My kids: doses from the product labels</h2>
+<p class="lede">Enter each child's current weight (weigh them monthly; weight is how the labels dose). Doses below are copied from the official Drug Facts labels and only apply to products with the exact concentration shown. Store brands (CVS, Equate, Up&amp;Up) use the same concentrations, but check the box.</p>
+<div class="box danger"><b class="tag">Before you give anything</b>
+<ul>
+<li><b>Check the concentration on the box</b> and use <b>only the syringe/cup from that box</b>. Infants' Motrin (50 mg per 1.25 mL) is 2.5× stronger than Children's Motrin (100 mg per 5 mL).</li>
+<li>Count acetaminophen in <b>every</b> product given (cold/flu combos). No aspirin or Pepto-Bismol under 18 with fever or flu. No cough/cold medicine under 4. No honey under 1.</li>
+<li>Where the label says <b>"ask a doctor"</b> (any acetaminophen under 2 years, ibuprofen under 6 months), this tool will not give a number. <b>Ask your pediatrician now</b>, while you can, for written doses for each child and each product you stock, and enter them in that child's "Doctor's doses" box.</li>
+</ul></div>
+<div id="kidCards"></div>
+<p class="noprint"><button class="b" id="kidAdd" type="button">+ Add child</button></p>
+</section>
+
+<section>
+<h2>Fever: when it matters</h2>
+<p class="lede">Fever helps fight infection. Treat the child's comfort, not the number. How the child acts matters more than how high the fever is.</p>
+<div class="tbl"><table>
+<tr><th>Age</th><th>Emergency / evacuate</th><th>Needs care soon</th></tr>
+<tr><td>Under 3 months</td><td><b>Any fever 100.4°F (38°C) or higher</b>, rectal. Also: temperature under 97°F with poor feeding.</td><td></td></tr>
+<tr><td>3 to 6 months</td><td>Fever with lethargy, poor feeding, fast breathing, rash</td><td>102°F or higher; any fever over 24 h</td></tr>
+<tr><td>6 months to 2 years</td><td>Limp, hard to wake, non-fading rash, stiff neck, breathing hard, signs of dehydration, seizure over 5 min</td><td>Fever over 24 h with no cold symptoms (possible UTI); fever over 3 days; 104°F+ repeatedly</td></tr>
+<tr><td>2 years and up</td><td>Same red flags</td><td>Fever over 3 days; returns after 24 h fever-free; ear/throat/urinary pain</td></tr>
+</table></div>
+<ul>
+<li><b>Measuring:</b> rectal is accurate under 3 years (petroleum jelly, ½ inch in). Armpit reads about 1°F low.</li>
+<li><b>Comfort:</b> light clothing, fluids, lukewarm sponge only if they like it. No cold baths, no alcohol rubs.</li>
+<li><b>Febrile seizure</b> (6 months to 5 years): shaking with fever, usually under 5 minutes, then sleepy. Child on side, nothing in the mouth, time it. Over 5 minutes, breathing trouble, or not waking normally = emergency. Fever medicine does not prevent them.</li>
+</ul>
+</section>
+
+<section>
+<h2>Dehydration and oral rehydration</h2>
+<div class="grid2">
+<div class="card" style="padding:12px 14px"><b>Mild</b><p>Slightly dry mouth, normal tears, a bit fewer wet diapers.</p></div>
+<div class="card" style="padding:12px 14px"><b>Moderate</b><p>Dry mouth, few tears, sunken eyes, fewer than 3 wet diapers / 8 h without urine, fussy, sunken soft spot.</p></div>
+<div class="card" style="padding:12px 14px;border-color:var(--danger)"><b>Severe: emergency</b><p>Very sleepy or limp, no urine 8+ hours, cold mottled hands/feet, very sunken eyes, fast breathing, skin pinch on belly stays tented.</p></div>
+</div>
+<h3>WHO oral rehydration plan</h3>
+<ul>
+<li><b>Prevent (Plan A):</b> after each loose stool give ORS: under 2 years 50 to 100 mL (¼ to ½ cup); 2 to 10 years 100 to 200 mL (½ to 1 cup); older: as much as they want. Keep breastfeeding and feeding normally.</li>
+<li><b>Treat moderate dehydration (Plan B):</b> 75 mL per kg of body weight over 4 hours (your child's amount is calculated on their card above). Then back to Plan A.</li>
+<li><b>Vomiting:</b> 5 mL (1 teaspoon) every 1 to 2 minutes by spoon or syringe. That adds up to about 150 to 300 mL per hour, and most vomiting children keep this down. If they vomit, wait 10 minutes and restart slowly.</li>
+<li>Home ORS: 1 liter clean water + 6 level teaspoons sugar + ½ level teaspoon salt. Measure exactly. Too much salt is dangerous. Plain water, juice, soda, and sports drinks are poor substitutes for small children.</li>
+</ul>
+</section>
+
+<section>
+<h2>Choking and CPR (AHA/AAP 2025)</h2>
+<div class="grid2">
+<div class="card" style="padding:12px 14px"><b>Infant (under 1) choking</b>
+<p>Can't cry, cough, or breathe:</p><ol><li>Face down along your forearm, head lower than chest, supporting the jaw.</li><li><b>5 back blows</b> between the shoulder blades with the heel of your hand.</li><li>Turn face up, <b>5 chest thrusts</b> on the breastbone just below the nipple line.</li><li>Repeat until the object comes out or the baby goes limp (start CPR).</li></ol><p>No abdominal thrusts in infants. No blind finger sweeps.</p></div>
+<div class="card" style="padding:12px 14px"><b>Child (1 year to puberty) choking</b>
+<p>Can't speak, cough, or breathe:</p><ol><li><b>5 back blows</b>, leaning the child forward.</li><li><b>5 abdominal thrusts</b>: fist just above the belly button, quick inward-upward.</li><li>Alternate until it clears or they go limp (start CPR).</li></ol><p>If coughing forcefully, let them cough.</p></div>
+<div class="card" style="padding:12px 14px"><b>CPR: unresponsive, not breathing normally</b>
+<ul><li>Shout for help. If alone with a child or infant, do 2 minutes of CPR before leaving to call.</li><li><b>30 compressions : 2 breaths</b>, rate 100 to 120 per minute, full recoil.</li><li><b>Infant:</b> 2 thumbs encircling the chest (or heel of one hand), about 1½ inches (one third of chest depth). The old two-finger method is no longer recommended.</li><li><b>Child:</b> heel of one or two hands, about 2 inches (one third of chest depth).</li><li>Breaths: head tilt chin lift; infant cover mouth and nose. Each breath just enough to make the chest rise.</li><li>Look in the mouth before breaths if choking caused it; remove only what you can see.</li></ul></div>
+</div>
+<p class="foot">Take a hands-on infant/child CPR class. Reading is not enough.</p>
+</section>
+
+<section>
+<h2>Swallowed objects and poisons</h2>
+<div class="box danger"><b class="tag">Emergencies even if the child seems fine</b>
+<ul>
+<li><b>Button / coin batteries</b> burn through the esophagus within 2 hours. Go now. For a child 1 year or older swallowed within 12 hours, the National Capital Poison Center advises <b>10 mL (2 tsp) of honey every 10 minutes, up to 6 doses</b> on the way to care. Not under 1 year.</li>
+<li><b>Two or more magnets</b> (or a magnet plus metal): they pinch through bowel walls.</li>
+<li><b>Iron pills</b> (prenatal vitamins), adult medications (one pill of some heart, diabetes, or pain medicines can kill a toddler), benzonatate, nicotine, lamp oil, gasoline/kerosene (don't induce vomiting), dishwasher pods, caustics (drain cleaner, lye), antifreeze, rodenticide.</li>
+</ul></div>
+<ul>
+<li><b>Poison Control: 1-800-222-1222</b> (free, 24/7, nationwide; works whenever any phone line or cell signal works). Write it on the wall near the medicine cabinet.</li>
+<li>Do <b>not</b> induce vomiting. Do not give charcoal unless poison control says to.</li>
+<li>Note what, how much, and when; keep the container.</li>
+<li>Grid-down risk rises: fuel cans, lamp oil, candles, bleach for water treatment, pool shock, rodent bait, firearm/ammo all around the house at child height. Lock them up.</li>
+</ul>
+</section>
+
+<section>
+<h2>Childhood illnesses</h2>
+<p class="lede">These are also in the Conditions tab under the category "Children".</p>
+<div id="kidConds"></div>
+</section>
+
+<section>
+<h2>Prescription medicines for children</h2>
+<ul>
+<li>Children's prescription doses are per kilogram of body weight and differ by condition. The <b>full FDA package insert</b> (Drug lookup tab, then Download all FDA labels) contains the official pediatric dosing section for each drug: use that, with your child's weight in kg (lb ÷ 2.2).</li>
+<li>Ask your pediatrician to write a standby plan now: amoxicillin dose for each child at current weight (the most common childhood antibiotic), ondansetron for vomiting, and an epinephrine auto-injector size if needed. Refresh it each year as they grow.</li>
+<li>Liquid antibiotics expire 10 to 14 days after mixing. Store the powder dry and mix with treated water only when needed. Chewables and capsules (opened and mixed into food) store longer.</li>
+<li>Avoid in children unless a clinician directs: ciprofloxacin/levofloxacin, tetracyclines other than doxycycline for tick fevers, promethazine under 2, benzonatate under 10, viscous lidocaine, loperamide under 2, aspirin, bismuth subsalicylate.</li>
+</ul>
+</section>
+</div>
+
+<!-- ============ CONDITIONS ============ -->
+<div class="pane" id="cond">
+<section>
+<h2>Conditions &amp; treatment</h2>
+<p class="lede">Recognize, confirm, act. Drug names link to the drug lookup. The "Rx" lines show the standard adult regimen used for that condition when no clinician is available.</p>
+<div class="row noprint">
+  <label style="flex:1;min-width:220px">Search<input type="search" id="cQ" placeholder="ear, tooth, bite, UTI, tick, diarrhea…"></label>
+  <label>Category<select id="cCat"><option value="">All</option></select></label>
+  <label>Show<select id="cFreq"><option value="">Common + uncommon</option><option value="c">Common</option><option value="u">Uncommon / dangerous</option></select></label>
+</div>
+<div id="cList"></div>
+</section>
+</div>
+
+<!-- ============ DRUGS ============ -->
+<div class="pane" id="drugs">
+<section>
+<h2>Drug lookup</h2>
+<p class="lede">Search by generic, brand, store-brand label wording, or by what it treats. <span class="pill g">OTC</span> on the shelf · <span class="pill y">BTC</span> behind the counter, no prescription needed · <span class="pill r">Rx</span> prescription · <span class="pill m">Rx · LONG-TERM</span> common daily prescriptions, with sick-day and run-out guidance. Controlled substances (opioids, benzodiazepines, stimulants) are not included.</p>
+<div class="row noprint">
+  <label style="flex:1;min-width:220px">Search<input type="search" id="dQ" placeholder="Tylenol, amoxicillin, Zantac 360, yeast, UTI…"></label>
+  <label>Type<select id="dType"><option value="">All</option><option value="OTC">OTC</option><option value="BTC">Behind counter</option><option value="Rx">Rx</option><option value="HOME">Long-term Rx</option></select></label>
+</div>
+<div class="box ok noprint" id="fdaBox"><b class="tag">Full FDA package inserts</b>
+<p id="fdaStatus" style="margin:4px 0 8px"></p>
+<div class="row" style="margin:0">
+<button class="b" id="fdaAll" type="button">Download all FDA labels (needs internet once)</button>
+<label style="flex:1;min-width:200px">Or fetch any drug by generic name<input type="search" id="fdaOneQ" placeholder="e.g. gabapentin, lisinopril, amoxicillin"></label>
+<button class="b" id="fdaOne" type="button">Fetch label</button>
+<button class="b" id="fdaSave" type="button">Save offline copy</button>
+</div>
+<div id="fdaProg" class="foot"></div>
+<div id="fdaOneOut"></div>
+</div>
+<div id="dList"></div>
+</section>
+</div>
+
+<!-- ============ INTERACTIONS ============ -->
+<div class="pane" id="ix">
+<section>
+<h2>Interaction check</h2>
+<p class="lede">Add everything the person takes, including daily medications, supplements, and alcohol. This catches the common, high-risk combinations. It is <b>not</b> a complete interaction database.</p>
+<div class="row noprint">
+  <label style="flex:1;min-width:220px">Add a drug<input type="search" id="iQ" list="iList" placeholder="type a name, then pick"></label>
+  <datalist id="iList"></datalist>
+  <button class="b" id="iAdd">Add</button><button class="b" id="iClr">Clear</button>
+</div>
+<div class="sel" id="iSel"></div>
+<div id="iOut"><p class="muted">Add two or more drugs.</p></div>
+</section>
+</div>
+
+<!-- ============ OTC DECODER ============ -->
+<div class="pane" id="otc">
+<section>
+<h2>Pharmacy aisle decoder</h2>
+<p class="lede">Store brands (CVS Health, Walgreens, Equate, Up&amp;Up) use the same active ingredients as name brands, usually at a fraction of the price. The <b>Drug Facts</b> box on every OTC package is your pharmacist.</p>
+<div class="box ok"><b class="tag">How to read Drug Facts</b>
+<ol>
+<li><b>Active ingredient(s)</b>: this line is the only thing that matters for identity and dose. Ignore the brand name and the "PM / Severe / Max" marketing.</li>
+<li><b>Purpose</b>: what each ingredient does (pain reliever, antihistamine, cough suppressant).</li>
+<li><b>Warnings</b>: "Do not use if…" and "Ask a doctor before use if you have…" Read every one.</li>
+<li><b>Directions</b>: dose by age, and the 24 hour max.</li>
+<li>Cross-check every product you are giving. <b>Acetaminophen hides in dozens of combination products.</b> Adding them together is the most common accidental overdose.</li>
+</ol></div>
+<h3>Combination products: what's actually in them</h3>
+<p class="foot">Formulas change and vary by version. Always confirm against the box.</p>
+<div class="row noprint"><label style="flex:1">Filter<input type="search" id="oQ" placeholder="NyQuil, PM, sleep, cold…"></label></div>
+<div class="tbl"><table id="oTbl"><thead><tr><th>Product</th><th>Typical active ingredients</th><th>Watch for</th></tr></thead><tbody></tbody></table></div>
+
+<h3>Symptom → what to look for on the label</h3>
+<div class="tbl"><table>
+<tr><th>Need</th><th>Active ingredient to find</th><th>Notes</th></tr>
+<tr><td>Pain, fever</td><td>acetaminophen; ibuprofen; naproxen sodium</td><td>Alternating acetaminophen and ibuprofen is common. Never two NSAIDs at once.</td></tr>
+<tr><td>Allergy, hives, itchy eyes</td><td>cetirizine, loratadine, fexofenadine (non-drowsy); diphenhydramine (drowsy)</td><td>Severe swelling or wheeze → epinephrine, not pills.</td></tr>
+<tr><td>Stuffy nose</td><td>pseudoephedrine (behind counter); fluticasone nasal; oxymetazoline spray (3 days max)</td><td>Oral phenylephrine ("PE") was found ineffective by an FDA advisory panel in 2023.</td></tr>
+<tr><td>Cough</td><td>dextromethorphan (dry cough); guaifenesin (thick mucus); honey (over 1 yr old)</td><td>No cough/cold products under age 4.</td></tr>
+<tr><td>Diarrhea</td><td>oral rehydration salts first; loperamide; bismuth subsalicylate</td><td>No loperamide with fever or bloody stool.</td></tr>
+<tr><td>Heartburn</td><td>famotidine; omeprazole / esomeprazole; calcium carbonate</td><td>"Zantac 360" is now famotidine, not ranitidine.</td></tr>
+<tr><td>Constipation</td><td>polyethylene glycol 3350; senna; docusate</td><td></td></tr>
+<tr><td>Nausea / motion</td><td>meclizine; dimenhydrinate</td><td>Ondansetron is Rx.</td></tr>
+<tr><td>Fungal skin</td><td>terbinafine; clotrimazole; miconazole</td><td></td></tr>
+<tr><td>Vaginal yeast</td><td>miconazole or clotrimazole vaginal (1, 3, or 7 day)</td><td>Fluconazole pill is Rx.</td></tr>
+<tr><td>Wound</td><td>bacitracin or triple antibiotic ointment; saline; gauze</td><td></td></tr>
+<tr><td>Itchy rash, poison ivy</td><td>hydrocortisone 1%; calamine; oral antihistamine</td><td></td></tr>
+<tr><td>Lice</td><td>permethrin 1% (Nix)</td><td>Scabies needs Rx 5% permethrin.</td></tr>
+<tr><td>Opioid overdose</td><td>naloxone 4 mg nasal spray (OTC since 2023)</td><td>Worth stocking regardless.</td></tr>
+<tr><td>Dehydration</td><td>oral rehydration solution (Pedialyte type)</td><td>Sports drinks are a poor substitute for kids.</td></tr>
+</table></div>
+
+<h3>Identifying an unknown pill</h3>
+<ul>
+<li>Every US prescription and OTC tablet has an <b>imprint code</b> (letters/numbers) plus color and shape. With internet: search the imprint on an online pill identifier. Without internet: there is no reliable way. Do not guess.</li>
+<li>Pharmacy stock bottles show the generic name, strength, NDC number, and lot. Use the generic name in the Drug lookup tab.</li>
+<li>Expiration: most solid tablets keep much of their potency past the printed date if stored cool and dry. <b>Never</b> use expired liquid antibiotics, insulin, epinephrine that is discolored, nitroglycerin, or anything that has changed color, smell, or texture. <b>Tetracycline-class drugs (including doxycycline) should not be used past their date.</b></li>
+</ul>
+</section>
+</div>
+
+<!-- ============ STOCK ============ -->
+<div class="pane" id="stock">
+<section>
+<h2>Stock &amp; prep</h2>
+<h3>Legal ways to build a prescription reserve</h3>
+<ul>
+<li>Ask your primary care doctor for <b>90 day supplies</b> of every chronic medication and refill at day 60 so you build a buffer.</li>
+<li>Ask about a <b>travel/expedition kit</b>. Many doctors and some telehealth services prescribe a small standby kit for remote travel, typically an antibiotic for diarrhea, a broad antibiotic, and an anti-nausea drug.</li>
+<li>Get an <b>epinephrine auto-injector</b> prescription if anyone has any allergy history. Check expiration dates yearly.</li>
+<li>Animal ("fish") antibiotics are not FDA regulated for human use, and their purity and dose are not assured. Do not rely on them.</li>
+<li><b>Print the package insert</b> (from DailyMed, dailymed.nlm.nih.gov) for every drug you stock and keep it with the drug. It has the pediatric dosing, the full interaction list, and kidney dose changes this tool can't hold.</li>
+<li>Get everyone current on <b>tetanus (Tdap)</b> now: every 10 years, or 5 years for a dirty wound.</li>
+</ul>
+<h3>Non-electric diagnostic kit</h3>
+<div class="grid2">
+<div><ul>
+<li>Galinstan (glass, mercury-free) thermometers x2</li>
+<li>Manual blood pressure cuff (adult + child size)</li>
+<li>Stethoscope</li>
+<li>Penlight + spare batteries; otoscope</li>
+<li>Pulse oximeter (battery, but tiny draw)</li>
+<li>Urine dipsticks (10 parameter)</li>
+</ul></div>
+<div><ul>
+<li>Pregnancy tests</li>
+<li>Rapid strep tests (CLIA waived; sold online)</li>
+<li>Glucose meter + strips (if anyone is diabetic)</li>
+<li>Tongue depressors, magnifier, tweezers, tick removal tool</li>
+<li>Peak flow meter (if anyone has asthma)</li>
+<li>Printed references: <i>Where There Is No Doctor</i>; <i>Where There Is No Dentist</i></li>
+</ul></div>
+</div>
+<h3>OTC stock for a family of 5</h3>
+<p>Acetaminophen and ibuprofen in adult <b>and</b> children's/infant liquid forms (keep the boxes for the weight charts), naproxen, cetirizine, diphenhydramine, famotidine, omeprazole, loperamide, bismuth subsalicylate, oral rehydration salts (lots), polyethylene glycol, senna, meclizine, guaifenesin, dextromethorphan, saline spray, fluticasone nasal, hydrocortisone 1%, triple antibiotic ointment, clotrimazole, terbinafine, miconazole vaginal, permethrin 1%, naloxone, glucose tablets, zinc oxide (diaper rash), artificial tears, aspirin 81 mg (adults only, for heart attack).</p>
+<h3>Wound and trauma</h3>
+<p>Tourniquets (CAT), pressure bandages, hemostatic gauze, rolled gauze, wound closure strips, irrigation syringes, nitrile gloves, SAM splints, elastic wraps, moleskin, burn gel, non-stick dressings, medical tape, trauma shears.</p>
+<h3>Training that matters more than gear</h3>
+<p>Adult and pediatric CPR/AED, Stop the Bleed, and a Wilderness First Aid or Wilderness First Responder course (WFR is the gold standard for austere settings). Have a dentist show you how to place temporary filling material.</p>
+</section>
+<section>
+<h2>Sources</h2>
+<ul class="foot">
+<li>IDSA/ATS 2019 adult community acquired pneumonia guideline (amoxicillin or doxycycline outpatient)</li>
+<li>IDSA/AAN/ACR 2020 Lyme disease guideline (doxycycline 10 days for erythema migrans)</li>
+<li>CDC tularemia clinical care (doxycycline 14 to 21 days; ciprofloxacin 750 mg q12h 10 days)</li>
+<li>CDC giardiasis treatment (tinidazole 2 g single dose; metronidazole)</li>
+<li>CDC Rocky Mountain spotted fever: doxycycline for all ages</li>
+<li>IDSA skin and soft tissue infection guideline; IDSA uncomplicated cystitis guideline</li>
+<li>FDA OTC Drug Facts labels; FDA Nonprescription Drugs Advisory Committee on oral phenylephrine (2023); FDA naloxone OTC approval (2023)</li>
+<li>WHO pediatric respiratory rate thresholds; AHA/ARC first aid guidelines</li>
+<li>DailyMed (NLM) package inserts. Verify all doses there.</li>
+</ul>
+</section>
+</div>
+</main>
+
+<script>
+const SNAP='<!doctype html>\n'+document.documentElement.outerHTML;
+/* ======================= DATA ======================= */
+const SX = {
+fever:"Fever / chills", cough:"Cough", sob:"Short of breath", wheeze:"Wheezing", stridor:"Noisy breathing in / barky cough", sorethroat:"Sore throat", earpain:"Ear pain", runny:"Runny / stuffy nose", sinus:"Face / sinus pain", headache:"Headache", stiffneck:"Stiff neck", confusion:"Confused / hard to wake", seizure:"Seizure", weakone:"Weakness or numbness one side", speech:"Slurred speech / face droop", vision:"Double or blurry vision", chestpain:"Chest pain", palp:"Racing / irregular heart", faint:"Fainting / dizzy", rash:"Rash", nonblanch:"Rash that doesn't fade under glass", hives:"Hives / itchy welts", swellface:"Lip, tongue or face swelling", redskin:"Red, hot, spreading skin", pus:"Pus / swollen pocket", itch:"Itching", wound:"Cut / puncture", bite:"Animal or human bite", tick:"Tick bite / bullseye", burn:"Burn", deform:"Deformity / can't bear weight", eyered:"Red eye / discharge", tooth:"Tooth or jaw pain", abdrlq:"Belly pain lower right", abdupper:"Belly pain upper", abdgen:"Belly pain general / cramps", flank:"Back / side (flank) pain", nausea:"Nausea / vomiting", diarrhea:"Diarrhea", blood_stool:"Bloody or black stool", constip:"Constipation", dysuria:"Burning urination / frequency", vagd:"Vaginal itch / discharge", vagbleed:"Pregnancy possible + bleeding / pain", testis:"Testicle pain", thirst:"Extreme thirst / urination", shaky:"Shaky, sweaty, sudden confusion", achy:"Body aches / muscle pain", fatigue:"Exhaustion", joint:"Joint pain / swelling", lethargy:"Infant: floppy, poor feeding, few wet diapers", drool:"Drooling, can't swallow", jaw:"Jaw stiffness / muscle spasms", dehyd:"Dry mouth, little urine, no tears", cold:"Cold exposure", headinj:"Head injury", calf:"One calf swollen / painful", eyelid:"Droopy eyelids / trouble swallowing", lice:"Visible lice / nits", sneeze:"Sneezing / itchy eyes", heartburn:"Heartburn", jelly:"Toddler: screaming episodes + legs drawn up", exposure:"Mouse droppings / dust exposure", rawmeat:"Ate undercooked game", gen_co:"Several people sick indoors with heater / generator"
+};
+
+const D = [
+/* id, name, brands, type, cls, uses, dose, kids, warn, tags */
+{id:"apap",n:"Acetaminophen",b:"Tylenol, Panadol, 'non-aspirin pain reliever'; in NyQuil, DayQuil, Excedrin, Tylenol PM, many cold/flu",t:"OTC",c:"Pain reliever / fever reducer",u:"Pain, fever, headache. Safe with most drugs; ok in pregnancy at normal doses.",d:"650 to 1,000 mg every 6 h. Label max 3,000 mg/24 h (some labels 4,000). Max 2,000 mg if heavy drinker or liver disease.",k:"Weight-based: use infant/children's product chart. Never use adult tablets for small children.",w:"Overdose destroys the liver and early symptoms are mild. Check every combination product for acetaminophen.",g:["apap"]},
+{id:"ibu",n:"Ibuprofen",b:"Advil, Motrin; in Advil PM, Advil Dual Action",t:"OTC",c:"NSAID",u:"Pain, fever, inflammation, sprains, dental pain, menstrual cramps, kidney stone pain.",d:"OTC: 200 to 400 mg every 4 to 6 h, max 1,200 mg/24 h. Prescription strength: 400 to 800 mg every 6 to 8 h, max 3,200 mg/24 h. Take with food.",k:"Weight-based per children's/infant label. Not under 6 months without a doctor.",w:"Stomach ulcers/bleeding, kidney injury (worse when dehydrated). Avoid with blood thinners, kidney disease, ulcers, and pregnancy from 20 weeks.",g:["nsaid"]},
+{id:"nap",n:"Naproxen sodium",b:"Aleve; in Aleve PM",t:"OTC",c:"NSAID (long acting)",u:"Pain, inflammation, menstrual cramps, gout, sprains.",d:"220 mg every 8 to 12 h; may take 440 mg for the first dose. Max 660 mg/24 h OTC.",k:"Label: not under 12 unless directed.",w:"Same as ibuprofen. Don't combine with other NSAIDs.",g:["nsaid"]},
+{id:"asa",n:"Aspirin",b:"Bayer, Ecotrin, 'low dose 81 mg'; in Excedrin, Goody's, BC, Alka-Seltzer Original",t:"OTC",c:"NSAID / antiplatelet",u:"Suspected heart attack (chew), pain, fever.",d:"Heart attack: chew 162 to 325 mg non-enteric coated (2 to 4 × 81 mg or 1 × 325) once. Pain: 325 to 650 mg every 4 h, max about 4,000 mg/24 h.",k:"<b>Do not give to children or teens</b> (Reye syndrome), especially with flu or chickenpox.",w:"Bleeding. Do not give for stroke symptoms (could be a bleed). Avoid in late pregnancy.",g:["nsaid","antiplatelet","salicylate"]},
+{id:"dph",n:"Diphenhydramine",b:"Benadryl; in ZzzQuil, Tylenol PM, Advil PM, Aleve PM, many 'PM' and sleep aids",t:"OTC",c:"Sedating antihistamine",u:"Allergic reactions, hives, itching, sleep. Add-on after epinephrine in anaphylaxis.",d:"25 to 50 mg every 4 to 6 h. Max 300 mg/24 h.",k:"Not under 2. Under 6: doctor only. Can cause agitation in kids.",w:"Drowsiness, confusion and falls in elderly, urinary retention, dry mouth. No driving.",g:["sedative","anticholinergic"]},
+{id:"cet",n:"Cetirizine",b:"Zyrtec; in Zyrtec-D",t:"OTC",c:"Non-drowsy antihistamine",u:"Allergies, hives, itchy eyes.",d:"10 mg once daily (5 mg if over 65).",k:"Children's syrup by age per label.",w:"Mild drowsiness in some.",g:["sedative_mild"]},
+{id:"lor",n:"Loratadine",b:"Claritin, Alavert; in Claritin-D",t:"OTC",c:"Non-drowsy antihistamine",u:"Allergies, hives.",d:"10 mg once daily.",k:"Per label by age.",w:"Minimal.",g:[]},
+{id:"fex",n:"Fexofenadine",b:"Allegra",t:"OTC",c:"Non-drowsy antihistamine",u:"Allergies, hives.",d:"180 mg once daily or 60 mg twice daily. Take with water, not fruit juice.",k:"Per label by age.",w:"Fruit juice reduces absorption.",g:[]},
+{id:"fam",n:"Famotidine",b:"Pepcid AC, <b>Zantac 360</b>",t:"OTC",c:"H2 acid blocker",u:"Heartburn, ulcer symptoms. Also helps hives alongside an antihistamine.",d:"10 to 20 mg up to twice daily OTC.",k:"Label: not under 12 unless directed.",w:"Reduce dose in kidney disease.",g:[]},
+{id:"ome",n:"Omeprazole / esomeprazole",b:"Prilosec OTC, Nexium 24HR",t:"OTC",c:"Proton pump inhibitor",u:"Frequent heartburn, ulcer protection with NSAIDs or steroids.",d:"Omeprazole 20 mg (or esomeprazole 20 mg) once daily before breakfast, 14 day course.",k:"Not OTC for kids.",w:"Takes 1 to 4 days to work fully. Not for instant relief.",g:[]},
+{id:"tums",n:"Calcium carbonate",b:"Tums, Rolaids (some), store antacid",t:"OTC",c:"Antacid",u:"Immediate heartburn relief.",d:"Chew 2 to 4 tablets as needed; follow label max.",k:"Per label.",w:"Binds some antibiotics: separate from doxycycline, ciprofloxacin, levothyroxine by 2 to 4 h.",g:["chelator"]},
+{id:"lop",n:"Loperamide",b:"Imodium A-D",t:"OTC",c:"Antidiarrheal",u:"Watery diarrhea without fever or blood.",d:"4 mg after first loose stool, then 2 mg after each loose stool. Max 8 mg/24 h OTC. Stop after 2 days.",k:"Never under 2. Ages 2 to 5: doctor only. Older: per label.",w:"<b>Do not use with fever or bloody stool</b> (can trap infection). High doses cause dangerous heart rhythms.",g:["qt_minor"]},
+{id:"bss",n:"Bismuth subsalicylate",b:"Pepto-Bismol, Kaopectate (US)",t:"OTC",c:"Antidiarrheal / stomach",u:"Diarrhea, upset stomach, traveler's diarrhea prevention.",d:"524 mg (2 tbsp or 2 caplets) every 30 to 60 min as needed, max 8 doses/24 h.",k:"Contains salicylate (aspirin family): <b>not under 12</b>, never with flu/chickenpox.",w:"Turns tongue and stool black (harmless, but masks bleeding). Avoid with aspirin, blood thinners, aspirin allergy. Binds doxycycline.",g:["salicylate","chelator"]},
+{id:"peg",n:"Polyethylene glycol 3350",b:"MiraLAX, store 'ClearLax'",t:"OTC",c:"Osmotic laxative",u:"Constipation.",d:"17 g (1 capful) in 8 oz liquid once daily. Works in 1 to 3 days.",k:"Common for kids under pediatric guidance; label says under 17 ask doctor.",w:"Bloating. Not for belly pain with vomiting (possible obstruction).",g:[]},
+{id:"sen",n:"Senna (sennosides)",b:"Senokot, Ex-Lax",t:"OTC",c:"Stimulant laxative",u:"Constipation, especially opioid related.",d:"17.2 mg (2 tablets) at bedtime. Max per label.",k:"Per label.",w:"Cramping.",g:[]},
+{id:"doc",n:"Docusate",b:"Colace, 'stool softener'",t:"OTC",c:"Stool softener",u:"Hard stools, after childbirth or surgery.",d:"100 mg once or twice daily.",k:"Per label.",w:"Weak on its own.",g:[]},
+{id:"mec",n:"Meclizine",b:"Bonine, Dramamine Less Drowsy, Antivert (Rx)",t:"OTC",c:"Antihistamine antiemetic",u:"Motion sickness, vertigo.",d:"25 to 50 mg 1 h before travel; repeat every 24 h.",k:"Not under 12 per label.",w:"Drowsy.",g:["sedative","anticholinergic"]},
+{id:"dmh",n:"Dimenhydrinate",b:"Dramamine Original",t:"OTC",c:"Antihistamine antiemetic",u:"Motion sickness, nausea.",d:"50 to 100 mg every 4 to 6 h, max 400 mg/24 h.",k:"Per label by age (2+).",w:"Very drowsy.",g:["sedative","anticholinergic"]},
+{id:"pse",n:"Pseudoephedrine",b:"Sudafed (the real one, behind counter); in Claritin-D, Zyrtec-D, Allegra-D, Aleve-D",t:"BTC",c:"Oral decongestant",u:"Stuffy nose, sinus and ear pressure.",d:"60 mg every 4 to 6 h, max 240 mg/24 h. Extended release 120 mg q12h or 240 mg q24h.",k:"Not under 4; per label.",w:"Raises blood pressure and heart rate, insomnia. Avoid with uncontrolled hypertension, heart disease, MAOIs. ID and purchase log required.",g:["decongestant"]},
+{id:"phe",n:"Phenylephrine (oral)",b:"Sudafed PE, most 'D' and 'PE' cold products, DayQuil",t:"OTC",c:"Oral decongestant",u:"Marketed for congestion.",d:"10 mg every 4 h.",k:"Per label.",w:"FDA advisory panel (2023) found <b>oral</b> phenylephrine ineffective. Nasal spray form does work.",g:["decongestant"]},
+{id:"oxy",n:"Oxymetazoline nasal",b:"Afrin, store 'nasal decongestant spray 12 hour'",t:"OTC",c:"Nasal decongestant",u:"Severe congestion, nosebleed (spray onto packing).",d:"2 to 3 sprays each nostril every 10 to 12 h, max 2 doses/24 h, <b>3 days max</b>.",k:"Not under 6.",w:"Rebound congestion after 3 days.",g:[]},
+{id:"flu_n",n:"Fluticasone nasal",b:"Flonase",t:"OTC",c:"Nasal steroid",u:"Allergy congestion, chronic sinus symptoms.",d:"2 sprays each nostril once daily; takes days to work.",k:"Children's version per label (4+).",w:"Nosebleeds.",g:[]},
+{id:"gua",n:"Guaifenesin",b:"Mucinex, Robitussin (some), 'chest congestion relief'",t:"OTC",c:"Expectorant",u:"Thick chest mucus.",d:"Extended release 600 to 1,200 mg every 12 h, max 2,400 mg/24 h. Drink lots of water.",k:"No cough/cold products under 4.",w:"Mild.",g:[]},
+{id:"dxm",n:"Dextromethorphan",b:"Delsym, Robitussin DM, 'DM' products, NyQuil, DayQuil",t:"OTC",c:"Cough suppressant",u:"Dry cough that prevents sleep.",d:"30 mg every 6 to 8 h (or Delsym 60 mg every 12 h). Max 120 mg/24 h.",k:"No cough/cold products under 4.",w:"Serotonin syndrome with SSRIs/MAOIs. Don't suppress a productive cough in pneumonia.",g:["serotonergic"]},
+{id:"hc",n:"Hydrocortisone 1%",b:"Cortizone-10, store 'anti-itch cream'",t:"OTC",c:"Topical steroid (mild)",u:"Poison ivy, eczema, bug bites, itchy rash.",d:"Thin layer up to 3 to 4 times daily, up to 7 days.",k:"Over 2 per label.",w:"Not on infected skin, not long term on face.",g:[]},
+{id:"tab",n:"Bacitracin / triple antibiotic ointment",b:"Neosporin, Polysporin",t:"OTC",c:"Topical antibiotic",u:"Minor cuts and scrapes, keeps wounds moist.",d:"Thin layer 1 to 3 times daily under a dressing.",k:"OK.",w:"Neomycin (in triple) causes allergic rash in some; bacitracin alone avoids that.",g:[]},
+{id:"clo",n:"Clotrimazole 1% / terbinafine 1%",b:"Lotrimin AF (clotrimazole), Lamisil AT (terbinafine)",t:"OTC",c:"Topical antifungal",u:"Athlete's foot, jock itch, ringworm, skin yeast.",d:"Clotrimazole twice daily 2 to 4 weeks; terbinafine once or twice daily 1 to 2 weeks. Continue 1 week past clearing.",k:"Per label.",w:"Keep skin dry.",g:[]},
+{id:"mic",n:"Miconazole vaginal",b:"Monistat 1, 3, or 7",t:"OTC",c:"Vaginal antifungal",u:"Vaginal yeast infection (itch, thick white discharge).",d:"Per product: 1, 3, or 7 day course at bedtime.",k:"Not under 12.",w:"First episode, fever, foul odor, or pelvic pain needs a real diagnosis.",g:[]},
+{id:"perm1",n:"Permethrin 1%",b:"Nix",t:"OTC",c:"Lice treatment",u:"Head lice.",d:"Apply to washed, towel-dried hair, 10 min, rinse. Comb nits. Repeat day 7 to 10.",k:"2 months and older.",w:"Wash bedding hot or bag for 2 weeks.",g:[]},
+{id:"nal",n:"Naloxone",b:"Narcan, RiVive (nasal)",t:"OTC",c:"Opioid reversal",u:"Opioid overdose: not breathing or barely breathing, pinpoint pupils, unresponsive.",d:"4 mg nasal spray in one nostril. Repeat every 2 to 3 min in alternate nostril if no response.",k:"Same dose any age.",w:"Wears off before many opioids: watch for 2+ hours.",g:[]},
+{id:"ors",n:"Oral rehydration solution",b:"Pedialyte, store 'electrolyte solution', WHO ORS packets",t:"OTC",c:"Rehydration",u:"Dehydration from diarrhea or vomiting.",d:"Sip continuously: adults roughly 2 to 4 L/day during illness. Home recipe: 1 L clean water + 6 level tsp sugar + ½ level tsp salt.",k:"Small frequent sips (a teaspoon every 1 to 2 min if vomiting). Keep breastfeeding.",w:"Too much salt is dangerous: measure exactly.",g:[]},
+{id:"glu",n:"Glucose tablets / gel",b:"Dex4, store glucose tabs",t:"OTC",c:"Fast sugar",u:"Low blood sugar.",d:"15 to 20 g (4 tablets), recheck in 15 min, repeat. Then a snack.",k:"Smaller amounts for small kids.",w:"Not into the mouth of an unconscious person: rub gel inside cheek.",g:[]},
+/* --- Rx --- */
+{id:"amox",n:"Amoxicillin",b:"Amoxil",t:"Rx",c:"Penicillin antibiotic",u:"Strep throat, ear infection, sinusitis, dental infection, pneumonia, early Lyme.",d:"500 mg every 8 h or 875 mg every 12 h. Pneumonia: 1,000 mg every 8 h. Typical 5 to 10 days by condition.",k:"Weight-based (mg/kg): use the package insert.",w:"Penicillin allergy. Causes a rash in mononucleosis (not true allergy). Diarrhea.",g:["warf_mild","mtx"]},
+{id:"amc",n:"Amoxicillin-clavulanate",b:"Augmentin",t:"Rx",c:"Penicillin antibiotic, broader",u:"Animal and human bites, bacterial sinusitis, dental infection, ear infection after amoxicillin failure.",d:"875/125 mg every 12 h with food. Bite prophylaxis 3 to 5 days; infection 5 to 10 days.",k:"Weight-based per insert.",w:"Penicillin allergy. Diarrhea more common than amoxicillin.",g:["warf_mild","mtx"]},
+{id:"cex",n:"Cephalexin",b:"Keflex",t:"Rx",c:"Cephalosporin antibiotic",u:"Cellulitis (non-pus skin infection), strep throat if penicillin allergic (mild rash allergy only), UTI.",d:"500 mg every 6 h (cellulitis) for 5 to 10 days; 500 mg every 12 h for strep.",k:"Weight-based per insert.",w:"Avoid if penicillin allergy was anaphylaxis. Doesn't cover MRSA.",g:[]},
+{id:"doxy",n:"Doxycycline",b:"Vibramycin, Doryx",t:"Rx",c:"Tetracycline antibiotic",u:"Tick-borne disease (Lyme, Rocky Mountain spotted fever, ehrlichiosis), MRSA skin abscess, pneumonia, tularemia, leptospirosis, bites (penicillin allergy).",d:"100 mg every 12 h with a full glass of water, upright for 30 min. Tularemia: 200 mg first dose, then 100 mg q12h 14 to 21 days.",k:"CDC recommends it at <b>any age</b> for suspected tick-borne rickettsial disease (short courses). Weight-based per insert.",w:"Esophagus burns if taken lying down. Sun sensitivity. Avoid in pregnancy. Separate 2 to 3 h from calcium, dairy, antacids, iron, Pepto. Never use expired.",g:["chelate_target","warf_mild"]},
+{id:"smx",n:"Trimethoprim-sulfamethoxazole",b:"Bactrim DS, Septra DS",t:"Rx",c:"Sulfa antibiotic",u:"UTI, MRSA skin abscess.",d:"1 DS tablet (800/160 mg) every 12 h. UTI: 3 days. Skin: 5 to 10 days. Drink lots of water.",k:"Not under 2 months; weight-based per insert.",w:"Sulfa allergy (can cause severe skin reactions). Raises potassium. Avoid in 1st trimester and near term. Big warfarin interaction.",g:["warf_major","hyperk","mtx_major"]},
+{id:"nit",n:"Nitrofurantoin",b:"Macrobid",t:"Rx",c:"Urinary antibiotic",u:"Bladder infection (cystitis) only: no fever, no flank pain.",d:"100 mg (Macrobid) every 12 h with food for 5 days.",k:"Per insert.",w:"Doesn't treat kidney infection. Avoid with poor kidney function and at 38+ weeks pregnancy. Turns urine brown.",g:[]},
+{id:"cip",n:"Ciprofloxacin",b:"Cipro",t:"Rx",c:"Fluoroquinolone antibiotic",u:"Kidney infection, complicated UTI, severe bacterial diarrhea, tularemia.",d:"500 mg every 12 h. Kidney infection 7 days. Diarrhea 1 to 3 days (or 750 mg once). Tularemia 750 mg q12h 10 days.",k:"Generally avoided in children.",w:"Tendon rupture (worse over 60 and with steroids), nerve damage, aortic risk, QT prolongation, C. diff. Separate from calcium, dairy, antacids, iron. Avoid in pregnancy.",g:["chelate_target","qt","fq","warf_major"]},
+{id:"azi",n:"Azithromycin",b:"Zithromax, Z-Pak",t:"Rx",c:"Macrolide antibiotic",u:"Severe bacterial or bloody diarrhea, pneumonia (add-on), whooping cough, strep with penicillin anaphylaxis.",d:"Z-Pak: 500 mg day 1, then 250 mg days 2 to 5. Diarrhea: 1,000 mg once (or 500 mg daily 3 days).",k:"Weight-based per insert. Preferred over cipro for kids' severe diarrhea.",w:"QT prolongation / arrhythmia, especially with other QT drugs.",g:["qt","warf_mild"]},
+{id:"cli",n:"Clindamycin",b:"Cleocin",t:"Rx",c:"Lincosamide antibiotic",u:"Dental abscess, skin infection, strep, for penicillin allergic patients.",d:"300 to 450 mg every 6 to 8 h for 5 to 10 days.",k:"Weight-based per insert.",w:"Highest risk of C. difficile colitis (severe watery diarrhea). Stop and rehydrate if it happens.",g:[]},
+{id:"met",n:"Metronidazole",b:"Flagyl",t:"Rx",c:"Antiprotozoal / anaerobic antibiotic",u:"Giardia, C. difficile, bacterial vaginosis, trichomonas, dental/abdominal anaerobes (with other antibiotics).",d:"Giardia: 250 mg every 8 h 5 to 7 days. C. diff: 500 mg every 8 h 10 days. BV: 500 mg every 12 h 7 days.",k:"Weight-based per insert.",w:"<b>No alcohol</b> during and 3 days after (violent vomiting). Metallic taste. Big warfarin interaction.",g:["disulfiram","warf_major"]},
+{id:"tin",n:"Tinidazole",b:"Tindamax",t:"Rx",c:"Antiprotozoal",u:"Giardia (single dose), trichomonas, BV.",d:"Giardia: 2 g once with food.",k:"Over 3: weight-based per insert.",w:"No alcohol 3 days. Avoid in 1st trimester.",g:["disulfiram"]},
+{id:"flc",n:"Fluconazole",b:"Diflucan",t:"Rx",c:"Oral antifungal",u:"Vaginal yeast infection, oral thrush.",d:"Yeast: 150 mg once.",k:"Per insert.",w:"QT prolongation, warfarin and statin interactions. Avoid in pregnancy (use vaginal cream).",g:["qt","warf_major","statin_x"]},
+{id:"osel",n:"Oseltamivir",b:"Tamiflu",t:"Rx",c:"Antiviral (influenza)",u:"Influenza, best started within 48 h; any time for high-risk/severe.",d:"75 mg every 12 h for 5 days.",k:"Weight-based per insert, approved from infancy.",w:"Nausea (take with food). Reduce in kidney disease.",g:[]},
+{id:"pred",n:"Prednisone",b:"Deltasone",t:"Rx",c:"Oral corticosteroid",u:"Asthma/COPD flare, severe poison ivy, severe allergic reaction (after epinephrine), gout flare.",d:"Asthma flare: 40 to 50 mg once daily for 5 days. Severe poison ivy: 40 to 60 mg tapered over 2 to 3 weeks (short courses cause rebound).",k:"Weight-based per insert.",w:"Raises blood sugar, mood/insomnia, stomach irritation (worse with NSAIDs). Don't stop suddenly after more than 2 to 3 weeks.",g:["steroid"]},
+{id:"alb",n:"Albuterol inhaler",b:"ProAir, Ventolin, Proventil",t:"Rx",c:"Bronchodilator",u:"Asthma attack, wheezing, bronchospasm.",d:"2 puffs every 4 to 6 h as needed. Attack: 4 to 8 puffs via spacer every 20 min, up to 3 times, then reassess.",k:"Same puff approach with spacer and mask; use child's action plan.",w:"Shaky, fast heart. Needing it more than every 4 h = serious flare. Blocked by non-selective beta blockers.",g:["beta_agonist"]},
+{id:"epi",n:"Epinephrine auto-injector",b:"EpiPen, Auvi-Q, generic; neffy (nasal)",t:"Rx",c:"Anaphylaxis rescue",u:"Anaphylaxis: hives/swelling plus breathing trouble, throat tightness, vomiting, or collapse after an exposure.",d:"0.3 mg into outer thigh (through clothing) for over about 30 kg (66 lb). Repeat in 5 to 15 min if not improving.",k:"0.15 mg for about 15 to 30 kg; 0.1 mg device for 7.5 to 15 kg.",w:"Never delay it for antihistamines. Lie the person down, legs up (sit up if breathing is hard). Effect fades in 15 to 20 min.",g:["epi"]},
+{id:"ond",n:"Ondansetron",b:"Zofran, Zofran ODT",t:"Rx",c:"Antiemetic",u:"Vomiting from stomach flu, so oral rehydration can work.",d:"4 to 8 mg every 8 h (dissolving tablet on tongue).",k:"Weight-based per insert; single dose often enough for kids with gastroenteritis.",w:"QT prolongation with other QT drugs. Constipation.",g:["qt","serotonergic_minor"]},
+{id:"ssd",n:"Silver sulfadiazine 1%",b:"Silvadene",t:"Rx",c:"Burn cream",u:"Partial thickness (blistering) burns.",d:"1/16 inch layer once or twice daily under a dressing.",k:"Not under 2 months.",w:"Sulfa allergy. Not on the face. Not in late pregnancy.",g:[]},
+{id:"mup",n:"Mupirocin 2%",b:"Bactroban",t:"Rx",c:"Topical antibiotic",u:"Impetigo (honey crusted sores), infected minor wounds, MRSA nose.",d:"Apply 3 times daily for 5 to 10 days.",k:"OK from infancy per insert.",w:"",g:[]},
+{id:"erye",n:"Erythromycin eye ointment",b:"Ilotycin",t:"Rx",c:"Ophthalmic antibiotic",u:"Bacterial pink eye (thick yellow/green discharge, lids stuck).",d:"½ inch ribbon inside lower lid up to 4 to 6 times daily for 5 to 7 days.",k:"Used in newborns.",w:"Contacts out. Eye pain, light sensitivity, or vision change = not simple pink eye.",g:[]},
+{id:"perm5",n:"Permethrin 5% cream",b:"Elimite",t:"Rx",c:"Scabicide",u:"Scabies (intensely itchy at night, burrows between fingers, wrists, waist).",d:"Massage neck to toes, wash off after 8 to 14 h, repeat in 7 days. Treat whole household same day.",k:"From 2 months; include head/scalp in infants.",w:"Itch can persist 2 to 4 weeks after cure.",g:[]},
+{id:"alben",n:"Albendazole",b:"Albenza",t:"Rx",c:"Antiparasitic",u:"Trichinosis (undercooked bear, boar, raccoon, etc.), some worms.",d:"Trichinosis: 400 mg twice daily for 8 to 14 days with fatty food.",k:"Per insert.",w:"Avoid in pregnancy. Most useful early.",g:[]},
+/* --- home meds for interaction checking --- */
+{id:"warf",n:"Warfarin",b:"Coumadin, Jantoven",t:"HOME",c:"Blood thinner",u:"Clot prevention.",d:"Individual; requires INR monitoring.",k:"",w:"Many antibiotics, NSAIDs, aspirin and fluconazole raise bleeding risk sharply.",g:["anticoag","warfarin"]},
+{id:"doac",n:"Apixaban / rivaroxaban / dabigatran",b:"Eliquis, Xarelto, Pradaxa",t:"HOME",c:"Blood thinner",u:"Clot prevention.",d:"Individual.",k:"",w:"NSAIDs and aspirin raise bleeding risk.",g:["anticoag"]},
+{id:"clop",n:"Clopidogrel",b:"Plavix",t:"HOME",c:"Antiplatelet",u:"After stents/heart attack.",d:"Individual.",k:"",w:"Bleeding with NSAIDs/aspirin; omeprazole may reduce effect.",g:["antiplatelet"]},
+{id:"ssri",n:"SSRI / SNRI antidepressants",b:"sertraline (Zoloft), fluoxetine (Prozac), citalopram (Celexa), escitalopram (Lexapro), paroxetine, venlafaxine, duloxetine",t:"HOME",c:"Antidepressant",u:"Depression, anxiety.",d:"Individual. Don't stop abruptly.",k:"",w:"Serotonin syndrome with dextromethorphan; bleeding with NSAIDs; citalopram/escitalopram prolong QT.",g:["serotonergic","ssri","qt_minor"]},
+{id:"maoi",n:"MAO inhibitors",b:"phenelzine (Nardil), tranylcypromine, selegiline (Emsam), isocarboxazid",t:"HOME",c:"Antidepressant",u:"Depression, Parkinson's.",d:"Individual.",k:"",w:"Dangerous with decongestants and dextromethorphan.",g:["maoi"]},
+{id:"lith",n:"Lithium",b:"Lithobid",t:"HOME",c:"Mood stabilizer",u:"Bipolar disorder.",d:"Individual.",k:"",w:"NSAIDs and dehydration push it to toxic levels (tremor, confusion, vomiting).",g:["lithium"]},
+{id:"ace",n:"ACE inhibitor / ARB",b:"lisinopril, enalapril, ramipril, losartan, valsartan, olmesartan",t:"HOME",c:"Blood pressure",u:"Hypertension, heart failure, kidney protection.",d:"Individual.",k:"",w:"With NSAIDs (and diuretics): kidney injury. With Bactrim: high potassium.",g:["acearb"]},
+{id:"diur",n:"Diuretics",b:"hydrochlorothiazide, chlorthalidone, furosemide (Lasix)",t:"HOME",c:"Blood pressure / fluid",u:"Hypertension, swelling.",d:"Individual. Consider holding during severe vomiting/diarrhea only on medical advice.",k:"",w:"Dehydration risk; kidney injury with NSAIDs + ACE/ARB.",g:["diuretic"]},
+{id:"spir",n:"Spironolactone",b:"Aldactone",t:"HOME",c:"Potassium-sparing diuretic",u:"Heart failure, BP, acne.",d:"Individual.",k:"",w:"High potassium with Bactrim and ACE/ARB.",g:["hyperk","diuretic"]},
+{id:"bb",n:"Beta blockers",b:"metoprolol, atenolol, carvedilol, propranolol, nadolol",t:"HOME",c:"Heart / blood pressure",u:"BP, heart rhythm, migraine.",d:"Individual. Don't stop abruptly.",k:"",w:"Blunt epinephrine and albuterol (especially propranolol, nadolol, carvedilol).",g:["bb"]},
+{id:"stat",n:"Statins (simvastatin, atorvastatin, lovastatin)",b:"Zocor, Lipitor, Mevacor",t:"HOME",c:"Cholesterol",u:"Cholesterol.",d:"Individual.",k:"",w:"Muscle breakdown risk with fluconazole.",g:["statin"]},
+{id:"mtxd",n:"Methotrexate",b:"Trexall, Otrexup",t:"HOME",c:"Immune / arthritis",u:"Rheumatoid arthritis, psoriasis.",d:"Individual (usually weekly).",k:"",w:"Toxic with Bactrim; levels raised by NSAIDs and penicillins.",g:["methotrexate"]},
+{id:"levo",n:"Levothyroxine",b:"Synthroid",t:"HOME",c:"Thyroid",u:"Hypothyroid.",d:"Individual, empty stomach.",k:"",w:"Calcium, iron, antacids block absorption: separate 4 h.",g:["chelate_target"]},
+{id:"iron",n:"Iron / calcium / magnesium / zinc supplements, multivitamins",b:"ferrous sulfate, Caltrate, multivitamins",t:"HOME",c:"Supplement",u:"",d:"",k:"",w:"Bind doxycycline, ciprofloxacin, levothyroxine: separate doses.",g:["chelator"]},
+{id:"insu",n:"Insulin / sulfonylureas",b:"insulin (any), glipizide, glyburide, glimepiride",t:"HOME",c:"Diabetes",u:"Diabetes.",d:"Individual.",k:"",w:"Illness and not eating cause lows; illness and steroids cause highs. Check sugar more often. Fluoroquinolones and Bactrim can cause severe lows.",g:["hypoglyc"]},
+{id:"alc",n:"Alcohol",b:"beer, wine, liquor",t:"HOME",c:"",u:"",d:"",k:"",w:"Sedation with antihistamines; liver risk with acetaminophen; violent reaction with metronidazole/tinidazole; stomach bleeding with NSAIDs.",g:["alcohol","sedative"]}
+];
+const DM = Object.fromEntries(D.map(x=>[x.id,x]));
+
+/* interaction rules: [tagA, tagB, severity 1-3, message] */
+const RULES = [
+["nsaid","nsaid",3,"Two NSAIDs (counting aspirin) together: stomach bleeding and kidney injury without added benefit. Use one NSAID, and pair it with acetaminophen instead if needed. Ibuprofen also blocks aspirin's heart protection."],
+["nsaid","anticoag",3,"NSAID/aspirin + blood thinner: major bleeding risk. Use acetaminophen for pain."],
+["antiplatelet","anticoag",3,"Aspirin/antiplatelet + blood thinner: major bleeding risk unless a doctor prescribed the combination."],
+["nsaid","antiplatelet",2,"NSAID + antiplatelet: bleeding risk. Use acetaminophen if possible."],
+["nsaid","ssri",2,"NSAID + SSRI/SNRI: increased stomach bleeding. Short courses with food are usually tolerated; consider adding omeprazole."],
+["nsaid","acearb",2,"NSAID + ACE inhibitor/ARB: kidney injury risk, especially when dehydrated. Add a diuretic and it becomes the 'triple whammy'."],
+["nsaid","diuretic",2,"NSAID + diuretic: kidney injury risk when dehydrated; reduces BP control."],
+["nsaid","lithium",3,"NSAID + lithium: lithium levels climb to toxic. Use acetaminophen."],
+["nsaid","steroid",2,"NSAID + steroid: stomach ulcer risk. Add omeprazole or famotidine if both are necessary."],
+["nsaid","methotrexate",3,"NSAID + methotrexate: methotrexate toxicity."],
+["nsaid","alcohol",2,"NSAID + alcohol: stomach bleeding."],
+["apap","apap",3,"Duplicate acetaminophen (check combination products). Add up total daily mg; stay under the label max."],
+["apap","alcohol",2,"Acetaminophen + regular heavy drinking: liver damage. Limit to 2,000 mg/day."],
+["apap","warfarin",1,"Regular acetaminophen above 2 g/day can raise INR. Occasional use is the preferred painkiller on warfarin."],
+["salicylate","salicylate",3,"Duplicate salicylates (aspirin + Pepto-Bismol): salicylate toxicity (ringing ears, vomiting, fast breathing)."],
+["salicylate","anticoag",3,"Salicylate (aspirin or Pepto-Bismol) + blood thinner: bleeding."],
+["qt","qt",3,"Two QT-prolonging drugs: risk of fatal heart rhythm (torsades). Avoid combining, especially with low potassium (vomiting/diarrhea), heart disease, or elderly."],
+["qt","qt_minor",2,"QT-prolonging combination: rhythm risk increases, more so with vomiting/diarrhea losing potassium."],
+["serotonergic","serotonergic",3,"Serotonin syndrome risk: agitation, fever, sweating, muscle twitching, diarrhea. Avoid dextromethorphan with SSRIs/SNRIs."],
+["serotonergic","maoi",3,"Contraindicated: dextromethorphan or SSRI with an MAOI can be fatal."],
+["serotonergic_minor","serotonergic",1,"Minor serotonin overlap (ondansetron + SSRI). Usually fine; watch for agitation or twitching."],
+["decongestant","maoi",3,"Contraindicated: decongestant + MAOI can cause a hypertensive crisis."],
+["decongestant","bb",1,"Decongestant can raise blood pressure in someone treated for hypertension or heart disease. Prefer saline or fluticasone spray."],
+["sedative","sedative",2,"Two sedating drugs: excess drowsiness, falls, slowed breathing (dangerous with alcohol or in the elderly)."],
+["sedative","sedative_mild",1,"Additive drowsiness."],
+["sedative_mild","alcohol",1,"Additive drowsiness."],
+["anticholinergic","anticholinergic",2,"Stacked anticholinergics: confusion, urinary retention, constipation, overheating, worst in the elderly."],
+["chelator","chelate_target",2,"Calcium, antacids, iron, magnesium, zinc or Pepto-Bismol block absorption. Give doxycycline/ciprofloxacin 2 h before or 6 h after; levothyroxine 4 h apart."],
+["warf_major","warfarin",3,"Antibiotic/antifungal strongly raises warfarin effect: serious bleeding. If unavoidable, watch for bruising, bleeding gums, dark urine/stool."],
+["warf_mild","warfarin",2,"Antibiotic may raise warfarin effect (illness itself also does). Watch for bleeding."],
+["hyperk","acearb",3,"Bactrim or spironolactone + ACE/ARB: dangerously high potassium (weakness, slow or irregular heartbeat)."],
+["hyperk","hyperk",2,"Two potassium-raising drugs: high potassium."],
+["mtx_major","methotrexate",3,"Bactrim + methotrexate: severe bone marrow toxicity. Avoid."],
+["mtx","methotrexate",2,"Penicillins can raise methotrexate levels."],
+["disulfiram","alcohol",3,"Metronidazole/tinidazole + alcohol: severe vomiting, flushing, racing heart. No alcohol until 3 days after the last dose."],
+["fq","steroid",3,"Fluoroquinolone + steroid: tendon rupture risk (Achilles). Avoid; stop and rest at first tendon pain."],
+["fq","hypoglyc",2,"Fluoroquinolone + diabetes medicine: severe low or high blood sugar."],
+["hyperk","hypoglyc",1,"Bactrim can cause low blood sugar with sulfonylureas."],
+["statin_x","statin",2,"Fluconazole + statin: muscle breakdown risk. Hold the statin during a short fluconazole course is common practice."],
+["bb","epi",2,"Beta blocker may blunt epinephrine; anaphylaxis may need repeated doses. Still give epinephrine."],
+["bb","beta_agonist",2,"Non-selective beta blockers (propranolol, nadolol) block albuterol and can trigger bronchospasm."],
+["steroid","hypoglyc",2,"Steroids raise blood sugar in diabetics: check more often."]
+];
+
+/* conditions */
+const C = [
+// --- Respiratory / ENT
+{n:"Common cold / viral upper respiratory infection",cat:"Respiratory & ENT",f:"c",s:["runny","sorethroat","cough","sneeze","fever","headache"],
+r:"Runny/stuffy nose, sore or scratchy throat, cough, low fever. Peaks day 2 to 3, lasts 7 to 10 days. Cough can linger 3 weeks.",
+k:"Clear or colored mucus is normal and does not mean bacteria. Check breathing rate and listen to both lungs.",
+f2:"Breathing fast or labored; fever over 3 days or returning after improvement; ear or sinus pain worsening after day 7; infant poor feeding.",
+h:"Fluids, rest, saline rinses, honey for cough (over 1 yr), humidified air.",o:["apap","ibu","dxm","gua","pse","cet"],x:"No antibiotics: they do nothing for viruses."},
+{n:"Influenza",cat:"Respiratory & ENT",f:"c",s:["fever","achy","cough","headache","fatigue","sorethroat"],
+r:"Sudden high fever, body aches, exhaustion, dry cough. Much worse than a cold.",k:"Sudden onset is the key. Others in the household get it within 1 to 4 days.",
+f2:"Shortness of breath, chest pain, confusion, improvement then relapse with high fever (secondary pneumonia), infant or elderly with poor intake.",
+h:"Rest, fluids, isolate the sick person, masks.",o:["apap","ibu"],x:"Oseltamivir 75 mg twice daily for 5 days, ideally within 48 h of onset; for high-risk (under 5, over 65, pregnant, chronic disease) at any point.",rx:["osel"]},
+{n:"Strep throat",cat:"Respiratory & ENT",f:"c",s:["sorethroat","fever","headache"],
+r:"Sudden sore throat, fever, swollen tender front neck nodes, white pus on tonsils, <b>no cough</b>. Common ages 5 to 15.",
+k:"Centor score: +1 each for fever, tonsil pus, tender front neck nodes, no cough, (age 3 to 14 +1, over 45 -1). Score 4+ likely strep. Rapid strep test if stocked. Cough, runny nose and hoarseness point to a virus.",
+f2:"Can't swallow saliva, drooling, muffled 'hot potato' voice, one side of the throat bulging (abscess), trouble breathing.",
+h:"Warm salt water gargles, fluids.",o:["apap","ibu"],x:"Amoxicillin 500 mg twice daily (or 1,000 mg once daily) for 10 days. Mild penicillin allergy: cephalexin 500 mg twice daily 10 days. Serious allergy: azithromycin Z-Pak or clindamycin 300 mg three times daily 10 days. Treat to prevent rheumatic fever.",rx:["amox","cex","azi","cli"]},
+{n:"Ear infection (otitis media)",cat:"Respiratory & ENT",f:"c",s:["earpain","fever","runny"],
+r:"Ear pain often after a cold, fever, toddler pulling ear and poor sleep. Pus draining from ear if eardrum ruptured.",k:"Otoscope: red, bulging eardrum. Pulling the ear lobe doesn't hurt (that points to swimmer's ear instead).",
+f2:"Swelling/redness behind the ear pushing it forward (mastoiditis), stiff neck, facial weakness, under 6 months with fever.",
+h:"Pain control is the main treatment; many clear in 2 to 3 days without antibiotics in kids over 2.",o:["apap","ibu"],x:"If severe, under 2, or not improving after 48 to 72 h: amoxicillin (adult 875 mg twice daily 5 to 7 days; kids high-dose weight-based per insert). Failure after 3 days: amoxicillin-clavulanate.",rx:["amox","amc"]},
+{n:"Sinusitis",cat:"Respiratory & ENT",f:"c",s:["sinus","runny","headache","fever"],
+r:"Facial pressure, thick nasal discharge, congestion. Most are viral.",k:"Bacterial is more likely if: over 10 days without improvement, OR severe (fever 102°F+ with facial pain 3+ days), OR got better then worse ('double sickening').",
+f2:"Swelling or redness around the eye, double vision, severe headache with stiff neck, confusion.",
+h:"Saline irrigation (boiled/treated water only), steam, fluticasone spray.",o:["pse","flu_n","apap","ibu"],x:"Bacterial criteria met: amoxicillin-clavulanate 875/125 mg twice daily 5 to 7 days. Penicillin allergy: doxycycline 100 mg twice daily 5 to 7 days.",rx:["amc","doxy"]},
+{n:"Pneumonia",cat:"Respiratory & ENT",f:"c",s:["fever","cough","sob","chestpain","fatigue"],
+r:"Fever, productive cough, short of breath, sharp chest pain worse on breathing in. Elderly may only be confused.",
+k:"Breathing rate high (adult over 20; child: under 2 months 60+, 2 to 12 months 50+, 1 to 5 years 40+). Crackles or quiet area on one side with ear to back. Pulse oximeter under 94%.",
+f2:"Breathing rate adult 30+, blue lips, oxygen under 92%, confusion, low blood pressure, can't keep fluids down, infant grunting or ribs pulling in.",
+h:"Fluids, sit upright, deep breaths and cough every hour, rest.",o:["apap","ibu"],x:"Healthy adult: amoxicillin 1,000 mg three times daily for 5 days, OR doxycycline 100 mg twice daily for 5 days. Children: amoxicillin high-dose weight-based per insert.",rx:["amox","doxy","azi"]},
+{n:"Asthma attack / wheezing",cat:"Respiratory & ENT",f:"c",s:["wheeze","sob","cough","chestpain"],
+r:"Wheeze, tight chest, cough (often at night), short of breath.",k:"Can they speak full sentences? Peak flow vs personal best. Using neck muscles? Ribs pulling in?",
+f2:"Can't speak more than a few words, silent chest (no air moving), blue lips, exhausted, drowsy, no response to albuterol.",
+h:"Sit upright, calm, remove trigger (smoke, cold air: breathe through a scarf).",o:[],x:"Albuterol 4 to 8 puffs via spacer every 20 min up to 3 times. Then prednisone 40 to 50 mg daily for 5 days for a significant flare.",rx:["alb","pred"]},
+{n:"Croup",cat:"Respiratory & ENT",f:"c",s:["stridor","fever","runny","cough"],
+r:"Age 6 months to 5 years. Seal-like barking cough, hoarse voice, high-pitched noise on breathing in (stridor), worse at night.",k:"Stridor only when crying = mild. Stridor at rest = moderate to severe.",
+f2:"Stridor at rest, ribs pulling in, blue lips, drooling, can't swallow, very anxious or drowsy.",
+h:"Keep the child calm (crying worsens it). Cool night air for 10 minutes or a steamy bathroom often helps. Upright on a parent's lap.",o:["apap","ibu"],x:"A single dose of oral dexamethasone (Rx) is the standard treatment. Pediatric dosing from a clinician or the insert only."},
+{n:"Bronchiolitis (RSV) in infants",cat:"Respiratory & ENT",f:"c",s:["cough","runny","wheeze","sob","lethargy"],
+r:"Under 2, especially under 6 months. Cold symptoms then fast breathing, wheeze, feeding trouble, days 3 to 5 worst.",k:"Count breathing for a full minute. Look for ribs pulling in, nostril flare, grunting, pauses in breathing.",
+f2:"Pauses in breathing, blue color, breathing 60+ per minute, ribs pulling in hard, fewer than half normal feeds, few wet diapers, under 3 months.",
+h:"Saline drops and bulb suction before feeds, small frequent feeds, upright, humidified air.",o:["apap"],x:"No antibiotics or cough medicine. Supportive care only."},
+{n:"Epiglottitis",cat:"Respiratory & ENT",f:"u",s:["drool","sorethroat","fever","stridor"],
+r:"Rapid high fever, severe sore throat, drooling, can't swallow, muffled voice, sitting forward 'tripod' to breathe. Rare since the Hib vaccine but still occurs.",
+k:"<b>Do not</b> look in the throat or lay the person down. Agitation can close the airway.",f2:"This entire condition is a red flag.",h:"Keep calm and upright. Evacuate immediately.",o:[],x:"Requires airway management and IV antibiotics."},
+// --- Infectious / skin
+{n:"Cellulitis",cat:"Skin & wounds",f:"c",s:["redskin","fever","wound","swellface"],
+r:"Spreading red, warm, swollen, tender skin, often from a crack or wound; fever possible.",k:"Draw a pen line around the edge and date/time it. Track spread every 12 h. Press for a soft fluid pocket (abscess).",
+f2:"Red streaks up the limb, fever with chills, rapid spread past the line, face/eye involvement, blistering, crackling under skin, pain far worse than appearance (necrotizing infection).",
+h:"Elevate, rest, warm compresses.",o:["ibu","apap"],x:"Cephalexin 500 mg four times daily for 5 days (extend to 10 if not improving). If MRSA likely (abscess, prior MRSA): add or use Bactrim DS 1 to 2 tablets twice daily, or doxycycline 100 mg twice daily.",rx:["cex","smx","doxy"]},
+{n:"Skin abscess / boil",cat:"Skin & wounds",f:"c",s:["pus","redskin","fever"],
+r:"Tender red lump that becomes soft and fluctuant (fluid-filled). Often MRSA.",k:"Soft center that gives under pressure = ready to drain. Hard = warm compresses 4×/day until it softens.",
+f2:"Face (especially nose/lip triangle), hand, groin, near rectum, fever, spreading redness, diabetes.",
+h:"Small boils: warm compresses often drain them. Drainage: clean with soap, cut a single 1 cm stab along skin lines with a sterile blade over the softest point, express pus, irrigate with treated water, pack loosely with gauze, change daily.",o:["ibu","tab"],x:"After drainage, antibiotics only if surrounding cellulitis, fever, or large: Bactrim DS 1 tablet twice daily or doxycycline 100 mg twice daily, 5 to 10 days.",rx:["smx","doxy"]},
+{n:"Wound care / lacerations",cat:"Skin & wounds",f:"c",s:["wound"],
+r:"Cut, puncture, scrape.",k:"Check feeling, movement and blood flow past the wound. Look for tendon, bone, or foreign material.",
+f2:"Spurting or uncontrolled bleeding, numbness/can't move fingers, gaping over a joint, deep hand/face wound, puncture into a joint, heavily contaminated (soil, manure), no tetanus in 5+ years for dirty wounds.",
+h:"1) Direct pressure. 2) Irrigate hard with at least 1 L clean water using a syringe or a bag with a pinhole. Volume matters most. 3) Close only clean, under 6 to 12 hours old, non-bite wounds with strips/tape; leave dirty wounds, punctures and bites open. 4) Ointment + dressing, change daily.",o:["tab","ibu","apap"],x:"Antibiotics are not needed for clean wounds. Infected: see cellulitis."},
+{n:"Animal or human bite",cat:"Skin & wounds",f:"c",s:["bite","wound","redskin"],
+r:"Puncture or tear from dog, cat, wild animal, or human (including a punch to the teeth).",k:"Cat bites and hand bites infect most often. Note the animal's behavior.",
+f2:"Any bite from a bat, raccoon, skunk, fox, groundhog, or coyote; a dog/cat acting strangely or unobservable = rabies exposure. Hand/joint bites, spreading redness.",
+h:"Scrub with soap and running water for 15 min (this is the most important rabies step). Irrigate. Leave open. Elevate.",o:["ibu","apap","tab"],x:"Prophylaxis for cat, human, hand, deep puncture, or immune-compromised: amoxicillin-clavulanate 875/125 mg twice daily for 3 to 5 days. Penicillin allergy: doxycycline 100 mg twice daily plus metronidazole 500 mg twice daily.",rx:["amc","doxy","met"]},
+{n:"Rabies exposure",cat:"Skin & wounds",f:"u",s:["bite","wound"],
+r:"Bite or scratch from a wild mammal (bat, raccoon, skunk, fox, groundhog, coyote), or a bat found in a room with a sleeping person or child.",
+k:"Rabies is nearly 100% fatal once symptoms start, and there is no home treatment.",f2:"Every exposure needs post-exposure vaccine and immune globulin: travel any distance to get it.",
+h:"Wash 15 min with soap and water, then iodine if available. If possible and safe, keep the animal's body intact (head) for testing.",o:[],x:"Rabies immune globulin + vaccine series only."},
+{n:"Burns",cat:"Skin & wounds",f:"c",s:["burn"],
+r:"Superficial (red, painful), partial thickness (blisters, very painful), full thickness (white, leathery, painless).",k:"Size: the person's palm with fingers is about 1% of body surface.",
+f2:"Over 10% of body (5% child), face, hands, feet, genitals, joints, circumferential, full thickness, inhalation (singed nose hair, soot, hoarse voice), electrical, chemical.",
+h:"Cool running water 20 min (not ice). Remove rings. Leave blisters intact. Cover with plastic wrap or a non-stick dressing. Hydrate aggressively for large burns.",o:["ibu","apap","tab"],x:"Partial thickness: silver sulfadiazine (or bacitracin on the face) daily dressing changes.",rx:["ssd"]},
+{n:"Poison ivy / contact dermatitis",cat:"Skin & wounds",f:"c",s:["rash","itch"],
+r:"Itchy rash with blisters in lines or streaks 1 to 3 days after exposure.",k:"Fluid from blisters does not spread it; oil left on skin, clothing, tools and pets does.",
+f2:"Face/eye swelling, breathing trouble from burning plants (never burn poison ivy), over a large area.",
+h:"Wash skin with soap within 30 min; wash clothes and tools. Cool compresses, oatmeal baths, calamine.",o:["hc","dph","cet"],x:"Severe: prednisone 40 to 60 mg daily, tapered over 2 to 3 weeks.",rx:["pred"]},
+{n:"Fungal skin (athlete's foot, ringworm, jock itch)",cat:"Skin & wounds",f:"c",s:["rash","itch"],
+r:"Scaly itchy rash, ring-shaped with clearer center; between toes; groin.",k:"Moist folds and feet in wet boots for days.",f2:"Spreading redness and swelling (secondary bacterial infection), diabetic foot.",
+h:"Keep dry, change socks, powder.",o:["clo"],x:""},
+{n:"Impetigo",cat:"Skin & wounds",f:"c",s:["rash","itch","pus"],r:"Honey-colored crusted sores, often around nose/mouth in kids. Contagious.",k:"",f2:"Fever, spreading redness, many sores.",
+h:"Soak crusts off with soap and water, keep fingernails short, separate towels.",o:["tab"],x:"Mupirocin three times daily 5 days. Widespread: cephalexin.",rx:["mup","cex"]},
+{n:"Scabies / lice",cat:"Skin & wounds",f:"c",s:["itch","rash","lice"],r:"Scabies: intense itch at night, tiny burrows between fingers, wrists, waist, genitals. Lice: nits glued to hair near scalp.",k:"Crowded conditions spread both.",f2:"Crusted thick scales (crusted scabies), secondary infection.",
+h:"Wash bedding/clothes hot or seal in bags 3 days (scabies) or 2 weeks (lice).",o:["perm1"],x:"Scabies: permethrin 5% neck to toes, repeat in 7 days; whole household.",rx:["perm5"]},
+{n:"Tick-borne illness (Lyme, Rocky Mountain spotted fever, ehrlichiosis)",cat:"Infections",f:"c",s:["tick","rash","fever","headache","achy","joint"],
+r:"Lyme: expanding red rash at bite (often bullseye) 3 to 30 days later, flu-like illness. RMSF/ehrlichiosis: fever, headache, aches 2 to 14 days after bite; RMSF rash starts at wrists/ankles, can spread to palms and soles.",
+k:"Remove ticks with tweezers close to the skin, steady pull. Save the date. Check daily from April to October.",
+f2:"Fever + rash after tick bite (RMSF kills quickly: treat immediately), confusion, facial drooping, chest pain or palpitations.",
+h:"",o:["apap"],x:"Doxycycline 100 mg twice daily. Lyme rash: 10 days (alternative amoxicillin 500 mg three times daily 14 days). RMSF/ehrlichiosis: until 3 days after fever ends, minimum 5 to 7 days. CDC: doxycycline for any age with suspected RMSF.",rx:["doxy","amox"]},
+{n:"Tularemia",cat:"Infections",f:"u",s:["fever","wound","pus","headache","achy","bite"],
+r:"After skinning rabbits/rodents or a tick/deer fly bite: sudden fever, an ulcer where bacteria entered, painful swollen nodes (armpit, groin).",k:"History of handling wild rabbits, muskrats, squirrels bare-handed.",
+f2:"Cough/chest pain (pneumonic form), confusion, very high fever.",h:"",o:["apap"],x:"Doxycycline 200 mg first dose, then 100 mg twice daily for 14 to 21 days, OR ciprofloxacin 750 mg twice daily for 10 days (CDC). Severe disease needs IV gentamicin.",rx:["doxy","cip"]},
+{n:"Leptospirosis",cat:"Infections",f:"u",s:["fever","headache","achy","eyered","nausea"],
+r:"After wading/swimming in floodwater or contact with animal urine: sudden fever, severe headache, calf muscle pain, red eyes without discharge.",k:"Calf pain and red eyes are classic.",f2:"Yellow skin, little urine, coughing blood, bleeding.",
+h:"",o:["apap"],x:"Doxycycline 100 mg twice daily for 7 days.",rx:["doxy"]},
+{n:"Hantavirus",cat:"Infections",f:"u",s:["exposure","fever","achy","sob","cough"],
+r:"1 to 8 weeks after cleaning mouse droppings in sheds/cabins: fever, severe thigh/back aches, then sudden severe shortness of breath.",
+k:"Prevention: never sweep or vacuum droppings dry. Soak with 1:10 bleach for 5 min, wipe up wearing gloves and a mask.",f2:"Any breathing difficulty after the flu-like phase: rapid lung failure.",h:"",o:[],x:"No specific drug; ICU support."},
+{n:"Trichinosis",cat:"Infections",f:"u",s:["rawmeat","diarrhea","achy","fever","swellface"],
+r:"Days after eating undercooked bear, wild boar, raccoon or other wild carnivore/omnivore: diarrhea, then muscle pain, swollen eyelids, fever.",
+k:"Ask what game was eaten and how it was cooked.",f2:"Chest pain, palpitations, shortness of breath (heart involvement), confusion.",h:"Prevention: cook game to 160°F; freezing doesn't reliably kill wild strains.",o:["apap","ibu"],x:"Albendazole 400 mg twice daily for 8 to 14 days (Rx).",rx:["alben"]},
+{n:"Tetanus",cat:"Infections",f:"u",s:["jaw","wound","seizure"],r:"Days to weeks after a dirty wound: jaw stiffness (lockjaw), neck stiffness, painful muscle spasms triggered by noise or touch.",
+k:"Vaccination status is everything. Prevention: Tdap within 10 years (5 for dirty wounds).",f2:"This entire condition is a red flag.",h:"Dark quiet room, evacuate.",o:[],x:"Tetanus immune globulin, wound debridement, metronidazole, ICU."},
+{n:"Meningitis",cat:"Infections",f:"u",s:["fever","headache","stiffneck","confusion","nonblanch","nausea","lethargy"],
+r:"Fever, severe headache, stiff neck, light sensitivity, vomiting, confusion. Infants: bulging soft spot, irritable, floppy, poor feeding. Purple non-fading rash = meningococcal.",
+k:"Chin to chest. Glass test on rash: if the spots do not fade under pressure, it is an emergency.",f2:"This entire condition is a red flag. Hours matter.",h:"Evacuate immediately.",o:[],x:"Needs IV antibiotics. If evacuation is impossible and a clinician can be reached by radio, ask them about giving the strongest available antibiotic right away."},
+{n:"Sepsis",cat:"Infections",f:"u",s:["fever","confusion","faint","sob","palp"],
+r:"An infection anywhere (UTI, wound, pneumonia) with: confusion, fast breathing (22+), low blood pressure, fast heart, cold mottled skin, little urine.",k:"Two of: confusion, breathing 22+/min, systolic BP 100 or below (qSOFA).",f2:"This entire condition is a red flag.",h:"Evacuate. Fluids by mouth if awake.",o:[],x:"IV antibiotics and fluids."},
+// --- GI
+{n:"Gastroenteritis (stomach flu)",cat:"Gut & abdomen",f:"c",s:["nausea","diarrhea","abdgen","fever","dehyd"],
+r:"Vomiting then diarrhea, crampy pain, low fever. Usually viral (norovirus) and spreads fast through a house.",k:"Track urine output and wet diapers. Weigh small kids if you have a scale.",
+f2:"Blood in stool or vomit, can't keep down any fluids 8+ hours, signs of dehydration in a child, severe constant pain, pain moving to lower right, high fever, illness over 3 days.",
+h:"Oral rehydration is the treatment. Small sips constantly. Resume normal food as soon as tolerated. Strict handwashing; bleach 1:10 on surfaces (sanitizer doesn't kill norovirus).",o:["ors","lop","bss"],x:"Ondansetron 4 to 8 mg to stop vomiting so rehydration works.",rx:["ond"]},
+{n:"Bacterial / bloody diarrhea (dysentery)",cat:"Gut & abdomen",f:"c",s:["diarrhea","blood_stool","fever","abdgen"],
+r:"Bloody or mucous stool, fever, cramping, often from contaminated water or food.",k:"",
+f2:"Children with bloody diarrhea and <b>no fever</b>: possible E. coli O157 (antibiotics raise the risk of kidney failure, HUS). Decreased urine, pale, puffy = HUS. Severe dehydration.",
+h:"Rehydration. No loperamide.",o:["ors"],x:"Adults: azithromycin 1,000 mg once (or 500 mg daily for 3 days), OR ciprofloxacin 500 mg twice daily for 3 days. Children: azithromycin weight-based per insert. Avoid antibiotics if E. coli O157 suspected.",rx:["azi","cip"]},
+{n:"Giardia (untreated water)",cat:"Gut & abdomen",f:"c",s:["diarrhea","abdgen","nausea","fatigue"],
+r:"1 to 3 weeks after drinking untreated water: greasy, foul, floating stools, gas, sulfur burps, bloating, weight loss. No blood.",k:"",f2:"Severe dehydration.",
+h:"Treat all drinking water properly.",o:["ors"],x:"Tinidazole 2 g once with food, OR metronidazole 250 mg three times daily for 5 to 7 days. No alcohol.",rx:["tin","met"]},
+{n:"C. difficile colitis",cat:"Gut & abdomen",f:"u",s:["diarrhea","abdgen","fever"],r:"Frequent watery foul diarrhea during or weeks after antibiotics (especially clindamycin, cephalosporins, fluoroquinolones).",k:"",f2:"Swollen tight belly, high fever, rising heart rate.",
+h:"Stop the causing antibiotic if possible. Rehydrate. No loperamide.",o:["ors"],x:"Metronidazole 500 mg three times daily 10 days (vancomycin by mouth is first choice where available).",rx:["met"]},
+{n:"Appendicitis",cat:"Gut & abdomen",f:"u",s:["abdrlq","abdgen","nausea","fever"],
+r:"Pain starts around the belly button, moves to the lower right over 12 to 24 h, loss of appetite, nausea, low fever.",
+k:"Point tenderness lower right (McBurney's point: one third of the way from the hip bone to the belly button). Heel-drop and cough increase pain. Pain in lower right when pressing lower left.",
+f2:"This condition requires surgery. Sudden relief then worsening, rigid belly = rupture.",h:"Nothing by mouth except sips. No laxatives. Evacuate.",o:[],x:"No reliable home treatment. Hospitals sometimes use IV antibiotics instead of surgery; oral substitutes are not proven. Get to surgery."},
+{n:"Intussusception (toddlers)",cat:"Gut & abdomen",f:"u",s:["jelly","nausea","blood_stool","lethargy"],
+r:"6 months to 3 years: sudden episodes of inconsolable crying with legs pulled up, calm between episodes, vomiting, later 'red currant jelly' stool, sleepy.",k:"Pattern of episodes every 15 to 20 minutes.",f2:"This entire condition is a red flag.",h:"Evacuate.",o:[],x:"Hospital air/contrast enema or surgery."},
+{n:"Heartburn / ulcer",cat:"Gut & abdomen",f:"c",s:["heartburn","abdupper","nausea"],r:"Burning upper belly or chest after meals or lying down.",k:"Rule out heart pain: exertional, pressure, sweating, arm/jaw.",
+f2:"Black tarry stool, vomiting blood or coffee-ground material, weight loss, trouble swallowing, pain like a heart attack.",
+h:"Smaller meals, no food 3 h before lying down, raise the head of the bed, stop NSAIDs.",o:["tums","fam","ome"],x:""},
+{n:"Constipation",cat:"Gut & abdomen",f:"c",s:["constip","abdgen"],r:"Hard infrequent stools, straining.",k:"Common with low water intake and diet changes.",f2:"Vomiting with a distended belly and no gas passing (obstruction).",
+h:"Water, fiber, movement, prunes.",o:["peg","sen","doc"],x:""},
+{n:"Gallbladder attack",cat:"Gut & abdomen",f:"u",s:["abdupper","nausea","fever"],r:"Upper right pain after fatty meal, to right shoulder blade, lasting hours.",k:"Tender under right ribs on deep breath in.",f2:"Fever, yellow eyes/skin, pain over 6 h.",h:"Low-fat diet, fluids.",o:["ibu","apap"],x:""},
+// --- GU
+{n:"Bladder infection (UTI)",cat:"Urinary & reproductive",f:"c",s:["dysuria","abdgen"],
+r:"Burning urination, urgency, frequency, lower belly pressure, cloudy urine. No fever.",k:"Dipstick: positive leukocytes and nitrites. Men, pregnancy and kids count as complicated UTI.",
+f2:"Fever, flank pain, vomiting (kidney infection); pregnancy; man with fever; infant/child.",
+h:"Lots of water.",o:["ibu"],x:"Women, uncomplicated: nitrofurantoin 100 mg twice daily 5 days, OR Bactrim DS 1 tablet twice daily 3 days. Men: Bactrim DS twice daily 7 days.",rx:["nit","smx","cex"]},
+{n:"Kidney infection (pyelonephritis)",cat:"Urinary & reproductive",f:"c",s:["dysuria","fever","flank","nausea"],r:"UTI symptoms plus fever, flank pain, vomiting.",k:"Fist tap on the back over the kidney is painful.",
+f2:"Can't keep down fluids or pills, confusion, low blood pressure, pregnancy.",h:"Fluids.",o:["apap"],x:"Ciprofloxacin 500 mg twice daily for 7 days. Alternative: Bactrim DS twice daily 14 days. Nitrofurantoin does not work here.",rx:["cip","smx"]},
+{n:"Kidney stone",cat:"Urinary & reproductive",f:"c",s:["flank","nausea","abdgen"],r:"Sudden severe waves of flank pain moving to the groin, can't sit still, blood in urine.",k:"Dipstick blood. Pain comes in waves.",
+f2:"Fever (an infected blocked kidney is an emergency), only one kidney, can't keep fluids down.",h:"Drink lots of water, strain urine.",o:["ibu","nap","apap"],x:"NSAIDs are the best pain relief. Ondansetron for vomiting.",rx:["ond"]},
+{n:"Vaginal yeast infection",cat:"Urinary & reproductive",f:"c",s:["vagd","itch"],r:"Itching, thick white curd-like discharge, no strong odor.",k:"Fishy odor = BV; frothy green = trichomonas.",f2:"Fever, pelvic pain, pregnancy with first episode.",h:"",o:["mic"],x:"Fluconazole 150 mg once (not in pregnancy).",rx:["flc"]},
+{n:"Ectopic pregnancy",cat:"Urinary & reproductive",f:"u",s:["vagbleed","abdgen","faint"],r:"Pregnancy possible (missed period or positive test) with one-sided lower belly pain, spotting, shoulder tip pain, fainting.",k:"Pregnancy test.",f2:"This entire condition is a red flag: internal bleeding.",h:"Lie flat, legs up, evacuate.",o:[],x:"Surgery or methotrexate in hospital."},
+{n:"Testicular torsion",cat:"Urinary & reproductive",f:"u",s:["testis","nausea","abdgen"],r:"Sudden severe testicle pain, often teens, vomiting, testicle high or sideways.",k:"",f2:"This entire condition is a red flag: about 6 hours to save the testicle.",h:"Evacuate.",o:[],x:"Surgery."},
+// --- Cardiac / neuro
+{n:"Heart attack",cat:"Heart, brain & emergencies",f:"u",s:["chestpain","sob","nausea","faint","palp"],
+r:"Pressure, squeezing or heaviness in the chest, to arm/jaw/back; sweating, nausea, short of breath. Women, elderly and diabetics may have only fatigue, nausea, or breathlessness.",
+k:"Pain with exertion, not changed by pressing on the chest or position.",f2:"This entire condition is a red flag.",
+h:"Rest, sit up, keep warm, evacuate.",o:["asa"],x:"Chew aspirin 162 to 325 mg (unless allergic or actively bleeding). Use the person's own nitroglycerin if prescribed.",rx:["asa"]},
+{n:"Stroke",cat:"Heart, brain & emergencies",f:"u",s:["weakone","speech","vision","confusion","headache","faint"],r:"Sudden face droop, arm weakness, speech trouble, vision loss, loss of balance, worst headache of life.",k:"BE-FAST. Note the time last seen normal.",
+f2:"This entire condition is a red flag.",h:"Nothing by mouth (choking). Lie with head slightly up. Evacuate.",o:[],x:"<b>Do not give aspirin</b>: it may be a bleed."},
+{n:"Concussion / head injury",cat:"Heart, brain & emergencies",f:"c",s:["headinj","headache","nausea","confusion","faint"],r:"Headache, dizziness, nausea, confusion, memory gap after a blow to the head.",
+k:"Check pupils, alertness (AVPU), and limb strength. Wake every 3 to 4 hours the first night and check that they recognize you.",
+f2:"Worsening headache, repeated vomiting, one pupil larger, weakness, seizure, increasing drowsiness, clear fluid from nose/ears, on blood thinners, infant with swelling of the scalp.",
+h:"Rest from physical and screen activity 24 to 48 h, then gradual return.",o:["apap"],x:"Use acetaminophen; avoid NSAIDs for the first 24 h."},
+{n:"Seizure",cat:"Heart, brain & emergencies",f:"c",s:["seizure","fever","confusion"],r:"Shaking, stiffening, unresponsive, then sleepy and confused.",k:"Time it. Fever seizures are common at 6 months to 5 years and are usually harmless if under 5 min.",
+f2:"Over 5 minutes, repeated without waking, first-ever seizure in an adult, after head injury, pregnant, not breathing normally afterward.",
+h:"Clear the area, on their side, nothing in the mouth, don't restrain.",o:["apap","ibu"],x:""},
+{n:"Low blood sugar (hypoglycemia)",cat:"Heart, brain & emergencies",f:"c",s:["shaky","confusion","faint","seizure"],r:"Shaky, sweaty, hungry, irritable, then confusion and passing out. Diabetics on insulin or sulfonylureas, or anyone not eating.",
+k:"Glucose meter under 70 mg/dL. If unsure, give sugar anyway.",f2:"Unconscious or not improving after two rounds of sugar.",h:"Rule of 15: 15 g fast sugar, recheck in 15 min, repeat, then a meal.",o:["glu"],x:""},
+{n:"Diabetic ketoacidosis (DKA)",cat:"Heart, brain & emergencies",f:"u",s:["thirst","nausea","abdgen","confusion","sob"],r:"Extreme thirst and urination, vomiting, belly pain, deep fast breathing, fruity breath. Type 1 diabetics who run out of insulin.",
+k:"Urine dipstick: high glucose and ketones.",f2:"This entire condition is a red flag.",h:"Fluids if awake, evacuate.",o:[],x:"Only insulin and IV fluids treat it. Insulin supply is the single most important prep for a type 1 diabetic."},
+{n:"Anaphylaxis",cat:"Heart, brain & emergencies",f:"u",s:["hives","swellface","sob","wheeze","nausea","faint"],
+r:"Minutes after a sting, food, or drug: hives or swelling plus breathing trouble, throat tightness, vomiting, or collapse.",k:"Two body systems involved after an exposure = anaphylaxis.",
+f2:"This entire condition is a red flag.",h:"Lie down with legs raised (sit up if breathing is hard). Never stand them up.",o:["dph","cet"],x:"Epinephrine IM into the outer thigh immediately; repeat in 5 to 15 min if needed. Then diphenhydramine and prednisone. Watch 4+ hours for rebound.",rx:["epi","pred"]},
+{n:"Allergies / hives (mild)",cat:"Heart, brain & emergencies",f:"c",s:["hives","itch","sneeze","runny"],r:"Itchy welts, sneezing, itchy watery eyes without breathing trouble.",k:"Watch 30 min for progression.",f2:"Any breathing or throat symptoms, lip/tongue swelling.",h:"Remove trigger.",o:["cet","dph","fam","lor","fex"],x:""},
+{n:"Carbon monoxide poisoning",cat:"Heart, brain & emergencies",f:"u",s:["gen_co","headache","nausea","confusion","faint"],r:"Headache, dizziness, nausea, confusion in several people indoors, better outside. Heaters, generators, grills.",
+k:"Pets often sick first.",f2:"This entire condition is a red flag.",h:"Everyone outside into fresh air immediately. Turn off the source only if safe.",o:[],x:"High-flow oxygen."},
+{n:"Blood clot in leg (DVT) / lung (PE)",cat:"Heart, brain & emergencies",f:"u",s:["calf","sob","chestpain","palp"],r:"One calf swollen, warm, tender. If it travels to the lung: sudden short of breath, sharp chest pain, fast heart.",
+k:"Risk: long immobility, recent surgery, pregnancy, birth control pills, cancer.",f2:"Any chest or breathing symptoms.",h:"Evacuate.",o:[],x:"Blood thinners."},
+{n:"Collapsed lung (pneumothorax)",cat:"Heart, brain & emergencies",f:"u",s:["chestpain","sob"],r:"Sudden one-sided sharp chest pain and breathlessness, after rib trauma or spontaneously in tall thin young men.",k:"One side quieter with ear on chest.",
+f2:"Worsening breathing, neck veins bulging, low blood pressure (tension pneumothorax).",h:"Sit upright. Penetrating chest wound: cover with a vented chest seal or tape plastic on 3 sides.",o:[],x:""},
+{n:"Botulism",cat:"Heart, brain & emergencies",f:"u",s:["eyelid","vision","drool","sob"],r:"12 to 72 h after improperly home-canned low-acid food: double/blurred vision, drooping eyelids, slurred speech, trouble swallowing, then weakness descending down the body. No fever.",
+k:"Ask about home-canned vegetables, meat, fish, garlic in oil. Others who ate it.",f2:"This entire condition is a red flag: breathing muscles fail.",h:"Evacuate everyone who ate the food.",o:[],x:"Antitoxin (CDC), ventilator support. Prevention: pressure can low-acid foods; boil home-canned food 10 min before eating if in doubt."},
+// --- MSK / eyes / dental / environment
+{n:"Sprain vs fracture",cat:"Bones, eyes, teeth & cold",f:"c",s:["deform","joint"],r:"Pain, swelling, bruising after injury.",
+k:"Ottawa ankle rules: fracture likely if tender on the back edge or tip of either ankle bone, at the base of the 5th metatarsal (outer midfoot), or the navicular (inner midfoot), OR can't take 4 steps right after injury and at exam. Check pulse, feeling and color past the injury.",
+f2:"Deformity, bone through skin, numb or cold/pale limb, severe pain unrelieved by splinting, tight swollen calf/forearm with pain on stretching (compartment syndrome).",
+h:"Splint in position found (pad well, include joint above and below), RICE: rest, ice 20 min, compression, elevate.",o:["ibu","nap","apap"],x:""},
+{n:"Pink eye (conjunctivitis)",cat:"Bones, eyes, teeth & cold",f:"c",s:["eyered"],r:"Red eye with discharge. Viral: watery, with a cold. Bacterial: thick yellow/green, lids stuck. Allergic: itchy, both eyes.",k:"Vision normal? Pupil normal? Light painful?",
+f2:"Vision loss, severe pain, light sensitivity, contact lens wearer, trauma, chemical splash (flush 15 min).",h:"Warm compresses, wash hands, separate towels.",o:["cet"],x:"Bacterial: erythromycin ointment 4 times daily 5 to 7 days.",rx:["erye"]},
+{n:"Dental abscess / toothache",cat:"Bones, eyes, teeth & cold",f:"c",s:["tooth","fever","jaw"],r:"Throbbing tooth pain, sensitivity to hot, swollen gum bump, facial swelling.",k:"Tap the teeth with a spoon handle: the infected one hurts.",
+f2:"Swelling spreading to the floor of mouth, under jaw, or near the eye; trouble swallowing or breathing; can't open mouth; high fever.",
+h:"Warm salt water rinses. Temporary filling material for lost fillings. Definitive fix is drainage/extraction.",o:["ibu","apap"],x:"Ibuprofen 400 mg + acetaminophen 500 to 1,000 mg together every 6 h beats most prescription painkillers for dental pain. Infection: amoxicillin 500 mg three times daily 5 to 7 days (penicillin allergy: clindamycin 300 mg four times daily).",rx:["amox","cli","amc"]},
+{n:"Hypothermia",cat:"Bones, eyes, teeth & cold",f:"c",s:["cold","confusion","shaky","fatigue","lethargy"],r:"Shivering, fumbling, slurred speech, drowsy. Babies: bright red cold skin, low energy.",k:"Core warmth: feel chest, belly, back of neck.",
+f2:"Stopped shivering while still cold, confused, unresponsive, temp under 95°F.",h:"Get dry and warm, insulate from ground, core first, skin to skin, warm sweet drinks if alert. Handle gently.",o:[],x:"See the Grid Down Manual §5."},
+{n:"Frostbite",cat:"Bones, eyes, teeth & cold",f:"c",s:["cold"],r:"White/gray waxy numb skin on fingers, toes, ears, nose.",k:"",
+f2:"Hard frozen tissue, blisters with blood, black tissue.",h:"Rewarm in warm water (comfortable to an unaffected hand) only if it won't refreeze. No rubbing. Pad between digits.",o:["ibu"],x:"Ibuprofen 400 mg every 12 h helps tissue survival in frostbite. Tetanus update."},
+{n:"Dehydration",cat:"Bones, eyes, teeth & cold",f:"c",s:["dehyd","faint","lethargy","diarrhea","nausea"],r:"Thirst, dark/little urine, dizziness on standing, dry mouth. Kids: no tears, sunken eyes, fewer wet diapers, sleepy.",
+k:"Capillary refill over 2 s, skin pinch on belly returns slowly.",f2:"Child: very sleepy, no urine 8+ h, sunken eyes and soft spot, cold hands/feet.",h:"ORS small frequent sips.",o:["ors"],x:""}
+];
+
+/* combination products */
+const COMBO = [
+["NyQuil Cold & Flu","acetaminophen + dextromethorphan + doxylamine","Acetaminophen duplicate; sedation"],
+["DayQuil Cold & Flu","acetaminophen + dextromethorphan + phenylephrine","Acetaminophen duplicate; DXM + SSRI"],
+["Tylenol PM","acetaminophen + diphenhydramine","Acetaminophen duplicate; sedation"],
+["Advil PM","ibuprofen + diphenhydramine","NSAID duplicate; sedation"],
+["Aleve PM","naproxen + diphenhydramine","NSAID duplicate; sedation"],
+["ZzzQuil, Unisom SleepGels, 'sleep aid'","diphenhydramine (Unisom SleepTabs = doxylamine)","Sedation; elderly confusion"],
+["Excedrin (Extra Strength / Migraine)","acetaminophen + aspirin + caffeine","Acetaminophen and NSAID duplicates; no kids"],
+["Goody's / BC powder","aspirin + caffeine (+ acetaminophen in some)","Aspirin; no kids"],
+["Alka-Seltzer Original","aspirin + sodium bicarbonate + citric acid","Aspirin; high sodium"],
+["Alka-Seltzer Plus","varies: acetaminophen ± phenylephrine ± dextromethorphan ± antihistamine","Read box; acetaminophen duplicate"],
+["Theraflu (varies)","acetaminophen + phenylephrine ± diphenhydramine or DXM","Acetaminophen duplicate"],
+["Mucinex DM","guaifenesin + dextromethorphan","DXM + SSRI"],
+["Mucinex D","guaifenesin + pseudoephedrine (behind counter)","Blood pressure"],
+["Mucinex Fast-Max (varies)","acetaminophen + guaifenesin + phenylephrine ± DXM","Acetaminophen duplicate"],
+["Robitussin DM","guaifenesin + dextromethorphan","DXM + SSRI"],
+["Claritin-D / Zyrtec-D / Allegra-D","antihistamine + pseudoephedrine (behind counter)","Blood pressure, insomnia"],
+["Sudafed PE (vs Sudafed)","phenylephrine (vs pseudoephedrine)","PE oral likely ineffective"],
+["Midol Complete","acetaminophen + caffeine + pyrilamine","Acetaminophen duplicate"],
+["Pamprin / Midol (some)","acetaminophen or naproxen + diuretic/antihistamine","Read box"],
+["Pepto-Bismol / Kaopectate","bismuth subsalicylate","Salicylate: no kids, no aspirin/blood thinners"],
+["Zantac 360","famotidine (not ranitidine)",""],
+["Dramamine Original / Less Drowsy","dimenhydrinate / meclizine","Sedation"],
+["Benadryl Allergy Plus Congestion","diphenhydramine + phenylephrine","Sedation"],
+["Coricidin HBP","dextromethorphan + chlorpheniramine (± acetaminophen)","Made for high BP (no decongestant); DXM + SSRI"],
+["Neosporin / Polysporin","neomycin + bacitracin + polymyxin / bacitracin + polymyxin","Neomycin allergy"],
+["Lotrimin AF / Lotrimin Ultra","clotrimazole (AF) or miconazole / butenafine (Ultra)",""],
+["Dulcolax tablets vs Dulcolax stool softener","bisacodyl (stimulant) vs docusate","Different drugs, same brand"],
+["Children's Tylenol / Infants' Tylenol","acetaminophen 160 mg per 5 mL (both now same strength)","Use the syringe in that box; dose by weight chart"],
+["Children's Motrin vs Infants' Motrin","ibuprofen 100 mg/5 mL vs 50 mg/1.25 mL (concentrated)","<b>Different concentrations</b>: never swap syringes"]
+];
+
+/* ======================= EXPANDED PRESCRIPTION DATA ======================= */
+/* Additional Rx and long-term drugs */
+D.push(
+{id:"penvk",n:"Penicillin V potassium",b:"Pen VK, Veetids",t:"Rx",c:"Penicillin antibiotic",u:"Strep throat, dental infection, rheumatic fever prevention.",d:"Strep: 500 mg twice daily or 250 mg four times daily for 10 days.",k:"Weight-based: see FDA label.",w:"Penicillin allergy. Take on empty stomach.",g:["mtx"],fda:"penicillin v potassium"},
+{id:"cfd",n:"Cefdinir",b:"Omnicef",t:"Rx",c:"Cephalosporin (3rd gen) antibiotic",u:"Sinusitis, ear infection, pneumonia, strep, skin infection.",d:"300 mg every 12 h or 600 mg once daily, 5 to 10 days.",k:"Weight-based: see FDA label.",w:"Diarrhea; red stools when combined with iron. Separate from iron and antacids by 2 h.",g:["chelate_target"],fda:"cefdinir"},
+{id:"cfx",n:"Cefuroxime axetil",b:"Ceftin",t:"Rx",c:"Cephalosporin (2nd gen) antibiotic",u:"Sinusitis, early Lyme (alternative), UTI, bronchitis, skin.",d:"250 to 500 mg every 12 h with food. Lyme: 500 mg twice daily 14 days.",k:"Weight-based: see FDA label.",w:"Bitter taste; take with food.",g:[],fda:"cefuroxime axetil"},
+{id:"lvx",n:"Levofloxacin",b:"Levaquin",t:"Rx",c:"Fluoroquinolone antibiotic",u:"Pneumonia, kidney infection, complicated UTI, sinusitis when others fail, plague, anthrax.",d:"Pneumonia: 750 mg once daily 5 days. Kidney infection: 750 mg daily 5 days. Cystitis: 250 mg daily 3 days.",k:"Generally avoided in children.",w:"Same boxed warnings as ciprofloxacin: tendons, nerves, CNS, aorta, QT, blood sugar.",g:["chelate_target","qt","fq","warf_major"],fda:"levofloxacin"},
+{id:"vala",n:"Valacyclovir",b:"Valtrex",t:"Rx",c:"Antiviral (herpes)",u:"Cold sores, genital herpes, shingles, chickenpox (adolescents).",d:"Cold sores: 2 g twice in one day (12 h apart). Shingles: 1 g three times daily 7 days (start within 72 h). Genital first episode: 1 g twice daily 10 days; recurrence 500 mg twice daily 3 days.",k:"See FDA label.",w:"Reduce in kidney disease; confusion in elderly. Drink fluids.",g:[],fda:"valacyclovir"},
+{id:"acv",n:"Acyclovir",b:"Zovirax",t:"Rx",c:"Antiviral (herpes)",u:"Genital herpes, shingles, chickenpox.",d:"Shingles: 800 mg five times daily 7 to 10 days. Genital first episode: 400 mg three times daily 7 to 10 days. Chickenpox (adult): 800 mg four times daily 5 days.",k:"Weight-based: see FDA label.",w:"Kidney injury if dehydrated; reduce in kidney disease.",g:[],fda:"acyclovir"},
+{id:"nys",n:"Nystatin oral suspension",b:"Mycostatin, Bio-Statin",t:"Rx",c:"Antifungal (topical in mouth)",u:"Oral thrush (white patches that wipe off leaving red base), diaper yeast (cream).",d:"Adults/children: 4 to 6 mL (400,000 to 600,000 units) four times daily, swish and hold, then swallow, for 48 h past clearing. Cream: 2 to 3 times daily.",k:"Infants: see FDA label (smaller volume painted on each cheek).",w:"Minimal. Treat nipples too if breastfeeding.",g:[],fda:"nystatin"},
+{id:"terb",n:"Terbinafine (oral)",b:"Lamisil tablets",t:"Rx",c:"Oral antifungal",u:"Fungal nails, scalp ringworm, extensive skin fungus.",d:"250 mg once daily: fingernails 6 weeks, toenails 12 weeks.",k:"See FDA label.",w:"Liver failure (rare): stop for dark urine, yellow eyes, fatigue. Taste/smell loss.",g:[],fda:"terbinafine"},
+{id:"tac",n:"Triamcinolone 0.1% cream/ointment",b:"Kenalog, Triderm",t:"Rx",c:"Medium potency topical steroid",u:"Eczema, severe poison ivy, psoriasis, allergic rash.",d:"Thin layer 2 to 3 times daily, up to 2 weeks.",k:"Short courses; avoid diaper area.",w:"Skin thinning; avoid face, groin, armpits long term. Not on infected skin.",g:[],fda:"triamcinolone acetonide"},
+{id:"hyz",n:"Hydroxyzine",b:"Atarax, Vistaril",t:"Rx",c:"Sedating antihistamine",u:"Severe itching, hives, anxiety, sleep.",d:"25 mg three to four times daily (10 to 50 mg range).",k:"See FDA label.",w:"Drowsy, dry mouth, QT prolongation. Avoid early pregnancy.",g:["sedative","anticholinergic","qt"],fda:"hydroxyzine"},
+{id:"pmz",n:"Promethazine",b:"Phenergan",t:"Rx",c:"Antiemetic / antihistamine",u:"Nausea/vomiting, motion sickness, allergic reactions, sedation.",d:"12.5 to 25 mg every 4 to 6 h as needed (tablet or suppository).",k:"<b>Boxed warning: never under 2 years</b> (fatal breathing suppression). Caution in older children.",w:"Heavy sedation, confusion in elderly, breathing suppression with other sedatives.",g:["sedative","anticholinergic","qt_minor"],fda:"promethazine"},
+{id:"dex",n:"Dexamethasone",b:"Decadron",t:"Rx",c:"Long-acting oral corticosteroid",u:"Croup (single dose), asthma flare (2 doses), altitude illness, severe allergic reactions, brain swelling.",d:"Adult asthma flare: 12 to 16 mg once, repeat next day (2 doses total). Strong anti-inflammatory: 0.75 mg dexamethasone ≈ 5 mg prednisone.",k:"Croup: single weight-based dose, see FDA label.",w:"As prednisone: blood sugar, mood, insomnia, infection masking.",g:["steroid"],fda:"dexamethasone"},
+{id:"mpd",n:"Methylprednisolone dose pack",b:"Medrol Dosepak",t:"Rx",c:"Oral corticosteroid (6 day taper)",u:"Allergic reactions, poison ivy (often too short for it), back/nerve pain flares, bursitis.",d:"4 mg tablets, 21 tablets: 24 mg day 1 tapering to 4 mg day 6 per package diagram.",k:"See FDA label.",w:"As prednisone.",g:["steroid"],fda:"methylprednisolone"},
+{id:"ivm",n:"Ivermectin",b:"Stromectol",t:"Rx",c:"Antiparasitic",u:"Strongyloides, scabies (crusted or household outbreaks, oral alternative), lice resistant to topical.",d:"200 mcg/kg once (e.g. 150 lb / 68 kg ≈ 13.6 mg ≈ four and a half 3 mg tablets, rounded per label table). Scabies: repeat in 7 to 14 days. Take on empty stomach with water.",k:"Not for children under 15 kg (33 lb).",w:"Avoid in pregnancy. Dizziness, itching. Severe neurologic reactions in people with heavy Loa loa infection (Central Africa).",g:["warf_mild"],fda:"ivermectin"},
+{id:"meb",n:"Mebendazole",b:"Emverm (chewable 100 mg)",t:"Rx",c:"Antiparasitic",u:"Pinworm (night anal itching in kids), roundworm, hookworm, whipworm.",d:"Pinworm: 100 mg once, repeat in 2 to 3 weeks; treat whole household. Roundworm/hookworm/whipworm: 100 mg twice daily 3 days. Same dose for ages 2 and up.",k:"Label dose applies to age 2+. Under 2: doctor.",w:"Avoid in pregnancy. Abdominal pain.",g:[],fda:"mebendazole"},
+{id:"bzn",n:"Benzonatate",b:"Tessalon Perles",t:"Rx",c:"Cough suppressant",u:"Persistent dry cough.",d:"100 to 200 mg three times daily, max 600 mg/day. Swallow whole.",k:"<b>Not under 10</b>: accidental ingestion of even 1 to 2 capsules by a young child can be fatal. Lock it up.",w:"Chewing or sucking numbs the throat (choking).",g:[],fda:"benzonatate"},
+{id:"cbp",n:"Cyclobenzaprine",b:"Flexeril, Amrix",t:"Rx",c:"Muscle relaxant",u:"Acute back/neck muscle spasm.",d:"5 to 10 mg three times daily, max 2 to 3 weeks.",k:"Not under 15.",w:"Drowsy, dry mouth, confusion in elderly. Serotonin syndrome with SSRIs; contraindicated with MAOIs.",g:["sedative","anticholinergic","serotonergic"],fda:"cyclobenzaprine"},
+{id:"mlx",n:"Meloxicam",b:"Mobic",t:"Rx",c:"NSAID (once daily)",u:"Arthritis, back pain, inflammation.",d:"7.5 to 15 mg once daily with food.",k:"See FDA label.",w:"All NSAID warnings: GI bleed, kidney, heart. Never with another NSAID.",g:["nsaid"],fda:"meloxicam"},
+{id:"lidv",n:"Lidocaine viscous 2%",b:"Xylocaine Viscous",t:"Rx",c:"Topical anesthetic",u:"Painful mouth sores, sore throat (adults).",d:"15 mL swish and spit (or gargle) every 3 h, max 8 doses/day.",k:"<b>Never for teething or young children</b>: seizures and deaths reported.",w:"Numb throat: don't eat for 1 h (choking).",g:[],fda:"lidocaine hydrochloride viscous"},
+{id:"oflo",n:"Ofloxacin 0.3% ear drops",b:"Floxin Otic",t:"Rx",c:"Antibiotic ear drops",u:"Swimmer's ear (outer ear infection), ear infection with tubes or ruptured drum (draining).",d:"Adults: 10 drops in affected ear once daily for 7 days; lie ear-up 5 min.",k:"See FDA label (fewer drops).",w:"Safe with a perforated eardrum (most other drops are not).",g:[],fda:"ofloxacin otic"},
+{id:"ptm",n:"Polymyxin B / trimethoprim eye drops",b:"Polytrim",t:"Rx",c:"Antibiotic eye drops",u:"Bacterial pink eye.",d:"1 drop every 3 h while awake (max 6 doses/day) for 7 to 10 days.",k:"2 months and older per label.",w:"Contact lenses out.",g:[],fda:"polymyxin b sulfate and trimethoprim"},
+{id:"ntg",n:"Nitroglycerin sublingual",b:"Nitrostat, NitroMist",t:"Rx",c:"Nitrate vasodilator",u:"Angina chest pain in a person who has it prescribed.",d:"0.4 mg under the tongue every 5 min, max 3 doses in 15 min. If pain not better after the first dose, this is a heart attack until proven otherwise.",k:"No.",w:"<b>Never within 24 to 48 h of sildenafil/tadalafil</b> (fatal blood pressure drop). Sit down before taking. Headache. Tablets lose potency once opened: keep in original glass bottle.",g:["nitrate"],fda:"nitroglycerin"},
+{id:"pde5",n:"Sildenafil / tadalafil",b:"Viagra, Revatio, Cialis, Adcirca",t:"HOME",c:"PDE5 inhibitor",u:"Erectile dysfunction, pulmonary hypertension, enlarged prostate.",d:"Individual.",k:"",w:"Deadly with nitrates.",g:["pde5"],fda:"sildenafil"},
+{id:"mtf",n:"Metformin",b:"Glucophage, Glumetza, Fortamet; in Janumet, Jentadueto",t:"HOME",c:"Diabetes (biguanide)",u:"Type 2 diabetes.",d:"500 to 2,550 mg/day divided with meals; ER once daily with evening meal.",k:"",w:"Hold during vomiting, diarrhea, dehydration, or severe illness (lactic acidosis). Stomach upset.",g:["sickday"],fda:"metformin hydrochloride"},
+{id:"aml",n:"Amlodipine",b:"Norvasc; in Exforge, Lotrel, Azor",t:"HOME",c:"Calcium channel blocker",u:"High blood pressure, angina.",d:"2.5 to 10 mg once daily.",k:"",w:"Ankle swelling, flushing. Raises simvastatin levels (cap at 20 mg).",g:["statin_x_minor"],fda:"amlodipine besylate"},
+{id:"mtk",n:"Montelukast",b:"Singulair",t:"HOME",c:"Leukotriene blocker",u:"Asthma control, allergies.",d:"10 mg nightly (adults).",k:"Chewables for kids; see FDA label.",w:"Boxed warning: mood changes, nightmares, suicidal thoughts. Not a rescue drug.",g:[],fda:"montelukast"}
+);
+/* FDA lookup names for existing entries */
+Object.assign(DM, Object.fromEntries(D.map(x=>[x.id,x])));
+const FDA_NAMES={apap:"acetaminophen",ibu:"ibuprofen",nap:"naproxen sodium",asa:"aspirin",dph:"diphenhydramine",cet:"cetirizine",lor:"loratadine",fex:"fexofenadine",fam:"famotidine",ome:"omeprazole",tums:"calcium carbonate",lop:"loperamide",bss:"bismuth subsalicylate",peg:"polyethylene glycol 3350",sen:"sennosides",doc:"docusate sodium",mec:"meclizine",dmh:"dimenhydrinate",pse:"pseudoephedrine",phe:"phenylephrine",oxy:"oxymetazoline",flu_n:"fluticasone propionate",gua:"guaifenesin",dxm:"dextromethorphan",hc:"hydrocortisone",tab:"bacitracin",clo:"clotrimazole",mic:"miconazole nitrate",perm1:"permethrin",nal:"naloxone",
+amox:"amoxicillin",amc:"amoxicillin and clavulanate potassium",cex:"cephalexin",doxy:"doxycycline",smx:"sulfamethoxazole and trimethoprim",nit:"nitrofurantoin",cip:"ciprofloxacin",azi:"azithromycin",cli:"clindamycin",met:"metronidazole",tin:"tinidazole",flc:"fluconazole",osel:"oseltamivir",pred:"prednisone",alb:"albuterol sulfate",epi:"epinephrine",ond:"ondansetron",ssd:"silver sulfadiazine",mup:"mupirocin",erye:"erythromycin",perm5:"permethrin",alben:"albendazole",
+warf:"warfarin",doac:"apixaban",clop:"clopidogrel",ssri:"sertraline",lith:"lithium carbonate",ace:"lisinopril",diur:"hydrochlorothiazide",spir:"spironolactone",bb:"metoprolol",stat:"atorvastatin",mtxd:"methotrexate",levo:"levothyroxine",insu:"insulin glargine"};
+D.forEach(x=>{if(!x.fda&&FDA_NAMES[x.id])x.fda=FDA_NAMES[x.id]});
+
+/* Extra interaction rules */
+RULES.push(
+["nitrate","pde5",3,"Nitroglycerin + sildenafil/tadalafil: life-threatening blood pressure collapse. No nitrate within 24 h of sildenafil or 48 h of tadalafil."],
+["statin_x_minor","statin",1,"Amlodipine raises simvastatin levels; simvastatin should not exceed 20 mg."],
+["sickday","diuretic",1,"During vomiting/diarrhea/dehydration, metformin, diuretics, ACE/ARBs and NSAIDs are usually held ('sick day rules') to protect the kidneys."],
+["sickday","nsaid",2,"Metformin + NSAID while dehydrated: kidney injury raises lactic acidosis risk."]
+);
+
+/* ---------- Monographs: full prescribing detail ----------
+ m = mechanism, s = strengths/forms, i = indications [condition, adult regimen],
+ ci = contraindications, se = common side effects, sr = serious/boxed,
+ rn = kidney/liver dosing, pg = pregnancy, la = breastfeeding,
+ od = overdose, st = storage/shelf life, ix = key interactions, nt = practical notes */
+const MONO={
+amox:{m:"Beta-lactam; blocks bacterial cell wall synthesis. Covers strep, most pneumococcus, some H. flu, E. coli (resistance common), Lyme spirochete.",s:"Capsules 250, 500 mg; tablets 500, 875 mg; chewables 125 to 250 mg; suspension 125, 200, 250, 400 mg/5 mL.",
+i:[["Strep throat","500 mg twice daily or 1,000 mg once daily × 10 days"],["Ear, nose, throat (mild/moderate)","500 mg q12h or 250 mg q8h"],["Severe ENT, lower respiratory, skin, GU","875 mg q12h or 500 mg q8h"],["Community pneumonia (healthy adult)","1,000 mg q8h × 5 days"],["Early Lyme (doxycycline alternative)","500 mg three times daily × 14 days"],["Dental infection","500 mg three times daily × 5 to 7 days"],["Dental-procedure endocarditis prophylaxis (high-risk heart)","2 g once, 30 to 60 min before"],["H. pylori ulcer (with PPI + clarithromycin)","1,000 mg twice daily × 14 days"]],
+ci:"Penicillin or beta-lactam allergy (hives, swelling, anaphylaxis).",se:"Diarrhea, nausea, rash, vaginal yeast.",sr:"Anaphylaxis; C. difficile colitis; Stevens-Johnson/TEN (blistering rash with mouth sores: stop); rash with mononucleosis (very common, not true allergy).",
+rn:"CrCl 10 to 30: 250 to 500 mg q12h (avoid 875 mg). CrCl under 10: 250 to 500 mg q24h. No liver adjustment.",pg:"Considered safe; widely used.",la:"Compatible; may loosen infant stools.",od:"Mostly GI upset; rare kidney crystals. Supportive care, fluids.",st:"Room temperature, dry. Mixed suspension: refrigerate, discard after 14 days. Capsules/tablets generally hold potency well past date if stored cool and dry.",ix:"Warfarin (INR up), methotrexate (levels up), allopurinol (rash), probenecid (raises amoxicillin), live typhoid vaccine.",nt:"With or without food. Finish the course. Rash that is flat and appears day 5 to 7 is often non-allergic; hives or swelling = true allergy."},
+amc:{m:"Amoxicillin plus clavulanate, which blocks beta-lactamase enzymes; adds coverage of resistant H. flu, Moraxella, staph (not MRSA), anaerobes, and bite organisms (Pasteurella, Eikenella).",s:"Tablets 250/125, 500/125, 875/125 mg; XR 1,000/62.5 mg; chewables; suspensions 200/28.5, 400/57, 600/42.9 per 5 mL. Two 250 mg tablets ≠ one 500 mg tablet (too much clavulanate).",
+i:[["Animal/human bite (prophylaxis)","875/125 mg twice daily × 3 to 5 days"],["Infected bite","875/125 mg twice daily × 7 to 14 days"],["Bacterial sinusitis","875/125 mg twice daily × 5 to 7 days (or XR 2,000 mg twice daily)"],["Ear infection, amoxicillin failure","875/125 mg twice daily × 5 to 10 days"],["Pneumonia (with comorbidities, plus azithro or doxy)","875/125 mg twice daily or XR 2,000 mg twice daily"],["Dental / diabetic foot / skin with anaerobes","875/125 mg twice daily × 7 to 10 days"]],
+ci:"Penicillin allergy; prior liver injury (cholestatic jaundice) from amoxicillin-clavulanate.",se:"Diarrhea (more than amoxicillin), nausea, yeast infections.",sr:"Liver injury (cholestatic, can appear weeks after the course, mostly older men); C. difficile; anaphylaxis; severe skin reactions.",
+rn:"CrCl under 30: do not use 875 mg; 250 to 500 mg q12h (CrCl 10 to 30) or q24h (under 10). Caution in liver disease.",pg:"Generally considered safe; avoided in preterm membrane rupture.",la:"Compatible.",od:"GI upset; rare kidney injury.",st:"Tablets room temp; suspension refrigerate, discard after 10 days.",ix:"Warfarin, methotrexate, allopurinol, probenecid.",nt:"Take at the start of a meal to reduce stomach upset and improve clavulanate absorption."},
+cex:{m:"First generation cephalosporin; cell wall inhibitor. Covers strep and MSSA (not MRSA), some E. coli.",s:"Capsules 250, 500, 750 mg; suspension 125, 250 mg/5 mL.",
+i:[["Cellulitis (non-purulent)","500 mg four times daily × 5 days (extend to 10 if slow)"],["Strep throat (penicillin allergy, non-severe)","500 mg twice daily × 10 days"],["Uncomplicated UTI","500 mg twice daily × 7 days"],["Bone infection (adjunct)","500 mg four times daily, weeks (needs clinician)"],["General","250 to 500 mg q6h; max 4 g/day"]],
+ci:"Cephalosporin allergy. Avoid if a penicillin caused anaphylaxis (cross reaction low, about 1 to 2%, but serious).",se:"Diarrhea, nausea, rash.",sr:"Anaphylaxis, C. difficile, seizures with high doses in kidney failure.",
+rn:"CrCl 30 to 59: max 1 g/day. CrCl 15 to 29: 250 mg q8 to 12h. CrCl 5 to 14: 250 mg q24h.",pg:"Considered safe.",la:"Compatible.",od:"GI upset; seizures in kidney failure.",st:"Room temp; suspension refrigerate, 14 days.",ix:"Metformin (levels up), probenecid.",nt:"With or without food."},
+doxy:{m:"Tetracycline; blocks bacterial protein synthesis (30S). Very broad: tick-borne rickettsia, Lyme, MRSA, atypical pneumonia, chlamydia, leptospirosis, tularemia, anthrax, plague, cholera, malaria prevention.",s:"Hyclate capsules/tablets 50, 75, 100, 150 mg; monohydrate capsules/tablets 50, 75, 100, 150 mg; delayed release (Doryx); suspension 25 mg/5 mL.",
+i:[["Rocky Mountain spotted fever / ehrlichiosis","100 mg twice daily until 3 days after fever ends, minimum 5 to 7 days"],["Lyme, erythema migrans","100 mg twice daily × 10 days"],["Lyme prevention after high-risk tick bite (attached 36+ h, deer tick, within 72 h)","200 mg once"],["Tularemia (CDC)","200 mg first dose, then 100 mg twice daily × 14 to 21 days"],["Leptospirosis","100 mg twice daily × 7 days; prevention 200 mg once weekly"],["Community pneumonia","100 mg twice daily × 5 days"],["MRSA skin abscess/cellulitis","100 mg twice daily × 5 to 10 days"],["Chlamydia","100 mg twice daily × 7 days"],["Anthrax exposure","100 mg twice daily × 60 days"],["Malaria prevention","100 mg daily, start 1 to 2 days before, continue 4 weeks after"],["Acne","50 to 100 mg daily"]],
+ci:"Tetracycline allergy.",se:"Nausea (take with food, not dairy), sun sensitivity (severe sunburn), esophagus irritation.",sr:"Pill esophagitis/ulcer (always a full glass of water, upright 30 min, not at bedtime); intracranial hypertension (severe headache, vision changes); C. difficile; severe skin reactions; liver injury rare.",
+rn:"No kidney adjustment (one of the few). Caution in liver disease.",pg:"Avoid after first trimester (tooth staining, bone); use if life-threatening (RMSF).",la:"Short courses (up to 3 weeks) considered acceptable.",od:"GI upset; supportive.",st:"Room temp, dry, dark. <b>Do not use expired</b>: degraded tetracyclines have caused kidney damage.",ix:"Calcium, dairy, antacids, iron, magnesium, zinc, bismuth (separate 2 to 3 h); warfarin; isotretinoin (brain pressure); carbamazepine, phenytoin, barbiturates (lower doxy levels); may reduce penicillin effect.",nt:"Children: CDC recommends doxycycline at any age for suspected RMSF; short courses do not stain teeth."},
+smx:{m:"Two drugs blocking sequential steps of bacterial folate synthesis. Covers MRSA, many E. coli UTI (resistance 20%+), Pneumocystis, some others; poor strep coverage.",s:"DS tablet 800/160 mg; SS tablet 400/80 mg; suspension 200/40 mg per 5 mL.",
+i:[["Uncomplicated cystitis (women)","1 DS twice daily × 3 days"],["UTI in men / complicated","1 DS twice daily × 7 to 14 days"],["Kidney infection (if susceptible)","1 DS twice daily × 14 days"],["MRSA abscess/cellulitis","1 to 2 DS twice daily × 5 to 10 days"],["Pneumocystis prevention (immune-compromised)","1 DS or SS daily"]],
+ci:"Sulfa allergy; folate-deficiency anemia; infants under 2 months; severe kidney (CrCl under 15) or liver disease; with dofetilide; pregnancy at term; history of drug-induced low platelets.",se:"Nausea, rash, sun sensitivity.",sr:"Stevens-Johnson/TEN (stop at any rash with blisters or mouth sores); high potassium; low blood sugar; low blood counts; liver injury; kidney crystals (drink water); aseptic meningitis.",
+rn:"CrCl 15 to 30: half dose. Under 15: avoid.",pg:"Avoid in first trimester (folate) and near term (newborn jaundice).",la:"Avoid in premature, jaundiced, or G6PD-deficient infants; otherwise usually acceptable.",od:"Nausea, vomiting, confusion; bone marrow depression. Leucovorin is the antidote in hospital.",st:"Room temp, light-protected.",ix:"Warfarin (major), ACE/ARB/spironolactone (potassium), methotrexate (major), phenytoin, sulfonylureas (lows), dofetilide, digoxin.",nt:"Lots of fluids."},
+nit:{m:"Concentrates in urine and damages bacterial DNA; only treats bladder infections. Low resistance.",s:"Macrobid capsules 100 mg; Macrodantin 25, 50, 100 mg; suspension 25 mg/5 mL.",
+i:[["Uncomplicated cystitis","Macrobid 100 mg twice daily × 5 days"],["Recurrent UTI prevention","50 to 100 mg at bedtime"]],
+ci:"CrCl under 30 (label says under 60; guidelines allow 30 to 60); pregnancy at 38 to 42 weeks or labor; infants under 1 month; prior nitrofurantoin liver injury.",se:"Nausea, headache, brown urine.",sr:"Acute lung reaction (fever, cough, short of breath within days: stop); chronic lung fibrosis and liver injury with long use; nerve damage; hemolysis in G6PD deficiency.",
+rn:"Avoid if CrCl under 30.",pg:"Avoid first trimester when alternatives exist and at term.",la:"Avoid with infants under 1 month or G6PD deficiency.",od:"Vomiting; supportive.",st:"Room temp.",ix:"Magnesium antacids reduce absorption; probenecid.",nt:"Take with food. Not for kidney infection or men's prostate infection."},
+cip:{m:"Fluoroquinolone; blocks bacterial DNA gyrase. Strong against gram-negatives (E. coli, Pseudomonas, Salmonella, Shigella), tularemia, plague, anthrax; weak against strep.",s:"Tablets 250, 500, 750 mg; extended release 500, 1,000 mg; suspension 250, 500 mg/5 mL; ear/eye drops.",
+i:[["Kidney infection","500 mg twice daily × 7 days"],["Cystitis (only if no alternative)","250 mg twice daily × 3 days"],["Bacterial / traveler's diarrhea","500 mg twice daily × 1 to 3 days, or 750 mg once"],["Typhoid","500 mg twice daily × 7 to 10 days"],["Tularemia (CDC)","750 mg twice daily × 10 days"],["Plague","750 mg twice daily × 10 to 14 days"],["Anthrax exposure","500 mg twice daily × 60 days"],["Prostatitis","500 mg twice daily × 4 weeks"]],
+ci:"Fluoroquinolone allergy; with tizanidine.",se:"Nausea, diarrhea, dizziness, insomnia.",sr:"<b>Boxed warning</b>: tendon rupture (Achilles; higher over 60, with steroids, transplant), peripheral neuropathy (can be permanent), CNS effects (confusion, psychosis, seizures), worsens myasthenia gravis. Also aortic aneurysm/dissection, QT prolongation, low or high blood sugar, C. difficile, sun sensitivity, liver injury.",
+rn:"CrCl 30 to 50: 250 to 500 mg q12h. CrCl 5 to 29: 250 to 500 mg q18h.",pg:"Avoid when alternatives exist.",la:"Generally avoid; short courses may be acceptable.",od:"Kidney injury, seizures; supportive, hydrate.",st:"Room temp.",ix:"Calcium, dairy, antacids, iron, zinc (take cipro 2 h before or 6 h after); tizanidine (contraindicated); theophylline; warfarin; QT drugs; sulfonylureas/insulin; caffeine; steroids (tendons).",nt:"Stop at first tendon pain and rest the limb. Children: avoided except plague/anthrax/complicated UTI."},
+azi:{m:"Macrolide; blocks protein synthesis (50S). Covers atypical pneumonia (Mycoplasma, Chlamydia, Legionella), pertussis, Campylobacter, Shigella, chlamydia STI; strep resistance common.",s:"Tablets 250, 500, 600 mg; suspension 100, 200 mg/5 mL; 1 g packet.",
+i:[["Z-Pak (bronchitis/pneumonia add-on)","500 mg day 1, then 250 mg days 2 to 5"],["3-day regimen","500 mg once daily × 3 days"],["Bacterial / bloody diarrhea","1,000 mg once, or 500 mg daily × 3 days"],["Chlamydia (doxy preferred)","1,000 mg once"],["Whooping cough","500 mg day 1, 250 mg days 2 to 5"],["Strep (penicillin anaphylaxis)","500 mg day 1, 250 mg days 2 to 5"]],
+ci:"Macrolide allergy; prior liver injury from azithromycin.",se:"Diarrhea, nausea, belly pain.",sr:"QT prolongation and fatal arrhythmia (worse with low potassium/magnesium, heart disease, other QT drugs); liver injury; C. difficile; worsens myasthenia; pyloric stenosis in newborns.",
+rn:"Caution CrCl under 10. Caution in liver disease.",pg:"Considered acceptable.",la:"Compatible (watch infant for vomiting/diarrhea).",od:"GI upset, hearing loss (high dose).",st:"Room temp; mixed suspension room temp, 10 days.",ix:"QT drugs (ondansetron, fluconazole, hydroxyzine, citalopram, cipro); warfarin; digoxin; Al/Mg antacids (separate).",nt:"Long tissue half-life: 5 days covers about 10."},
+cli:{m:"Lincosamide; protein synthesis inhibitor. Covers strep, staph incl. many MRSA, anaerobes (mouth, abscesses). No gram-negative coverage.",s:"Capsules 75, 150, 300 mg; suspension 75 mg/5 mL; topical gel/lotion; vaginal cream.",
+i:[["Dental abscess (penicillin allergy)","300 to 450 mg every 6 to 8 h × 5 to 7 days"],["Skin infection incl. MRSA","300 to 450 mg three to four times daily × 5 to 10 days"],["Strep (penicillin allergy)","300 mg three times daily × 10 days"],["Bite (with ciprofloxacin or Bactrim, penicillin allergy)","300 mg three to four times daily"]],
+ci:"Clindamycin/lincomycin allergy.",se:"Diarrhea, nausea, metallic taste, rash.",sr:"<b>Boxed warning</b>: C. difficile colitis (highest risk of common antibiotics; can occur up to 2 months later); esophageal ulcer (full glass of water); severe skin reactions.",
+rn:"No kidney adjustment; caution severe liver disease.",pg:"Acceptable.",la:"Generally acceptable; watch infant for diarrhea.",od:"GI; supportive.",st:"Room temp; suspension do not refrigerate, 14 days.",ix:"Neuromuscular blockers (hospital); erythromycin antagonism.",nt:"Frequent watery diarrhea during/after = stop and treat as C. diff."},
+met:{m:"Nitroimidazole; damages DNA of anaerobes and protozoa. Covers Giardia, amoeba, trichomonas, C. difficile, BV, anaerobic abdominal/dental infections.",s:"Tablets 250, 500 mg; ER 750 mg; capsules 375 mg; gel/cream; IV.",
+i:[["Giardia","250 mg three times daily × 5 to 7 days (500 mg twice daily also used)"],["Amoebic dysentery","500 to 750 mg three times daily × 7 to 10 days, then a luminal agent"],["C. difficile (when oral vancomycin unavailable)","500 mg three times daily × 10 days"],["Bacterial vaginosis","500 mg twice daily × 7 days"],["Trichomonas","Women 500 mg twice daily × 7 days; men 2 g once"],["Anaerobic abdominal infection (with cipro or Bactrim)","500 mg every 8 to 12 h"],["H. pylori combinations","500 mg twice daily × 14 days"]],
+ci:"Alcohol during and 3 days after; disulfiram within 2 weeks; Cockayne syndrome; first trimester for trichomonas (label).",se:"Metallic taste, nausea, headache, dark urine.",sr:"Boxed warning: carcinogenic in rodents (avoid unnecessary use). Seizures, peripheral neuropathy and brain toxicity with long use; QT; severe liver injury in Cockayne syndrome.",
+rn:"Severe liver disease: reduce dose by half. No kidney adjustment usually.",pg:"Generally acceptable after first trimester; often used throughout.",la:"Single 2 g dose: pump and discard 12 to 24 h. Standard courses usually acceptable.",od:"Nausea, ataxia; supportive.",st:"Room temp, light-protected.",ix:"Alcohol (major), warfarin (major), lithium (toxicity), disulfiram, busulfan, QT drugs, phenytoin.",nt:"Take with food."},
+tin:{m:"Nitroimidazole like metronidazole, longer acting: single doses work.",s:"Tablets 250, 500 mg.",
+i:[["Giardia","2 g once with food"],["Trichomonas","2 g once"],["Amoebic dysentery","2 g daily × 3 days"],["Bacterial vaginosis","2 g daily × 2 days or 1 g daily × 5 days"]],
+ci:"First trimester; breastfeeding during and 72 h after; alcohol within 3 days; disulfiram within 2 weeks; nitroimidazole allergy.",se:"Metallic taste, nausea, fatigue.",sr:"Boxed warning: carcinogenic in rodents. Seizures, neuropathy.",
+rn:"Dialysis: extra dose after. Caution in liver disease.",pg:"Avoid in first trimester.",la:"Stop breastfeeding for 72 h.",od:"Supportive.",st:"Room temp.",ix:"Same as metronidazole: alcohol, warfarin, lithium, disulfiram.",nt:"Can crush into cherry syrup for children over 3 (label instructions)."},
+flc:{m:"Azole antifungal; blocks fungal membrane synthesis. Candida (yeast, thrush), cryptococcus.",s:"Tablets 50, 100, 150, 200 mg; suspension 10, 40 mg/mL.",
+i:[["Vaginal yeast","150 mg once (severe/recurrent: 150 mg every 72 h × 3 doses)"],["Oral thrush","200 mg day 1, then 100 mg daily × 7 to 14 days"],["Esophageal yeast","200 mg day 1, then 100 to 400 mg daily × 14 to 21 days"]],
+ci:"Azole allergy; with QT drugs cleared by CYP3A4 (erythromycin, pimozide, quinidine).",se:"Headache, nausea, belly pain.",sr:"Liver injury; QT prolongation; rare severe skin reactions; birth defects with high-dose long use.",
+rn:"Multi-dose: CrCl 50 or under, give half dose after the first day. Single 150 mg dose needs no change.",pg:"Avoid (use vaginal cream instead).",la:"Compatible.",od:"Hallucinations, paranoia (rare); supportive.",st:"Room temp.",ix:"Warfarin (major), simvastatin/atorvastatin (muscle), sulfonylureas (lows), phenytoin, tacrolimus, cyclosporine, QT drugs, celecoxib, some benzodiazepines.",nt:""},
+osel:{m:"Neuraminidase inhibitor; stops influenza virus release from cells.",s:"Capsules 30, 45, 75 mg; suspension 6 mg/mL.",
+i:[["Influenza treatment","75 mg twice daily × 5 days (start within 48 h; any time if severe/high-risk)"],["Household prevention","75 mg once daily × 10 days after exposure"],["Community outbreak prevention","75 mg daily up to 6 weeks"]],
+ci:"Allergy to oseltamivir.",se:"Nausea, vomiting, headache.",sr:"Neuropsychiatric events (confusion, abnormal behavior), mostly in children; severe skin reactions (rare).",
+rn:"CrCl 30 to 60: 30 mg twice daily. CrCl 10 to 30: 30 mg once daily (treatment).",pg:"Recommended (pregnancy is high-risk for flu).",la:"Compatible.",od:"Nausea, vomiting.",st:"Room temp; mixed suspension 10 days room temp or 17 days refrigerated.",ix:"Live nasal flu vaccine (inactivates it).",nt:"Take with food."},
+pred:{m:"Synthetic glucocorticoid; suppresses inflammation and immune response.",s:"Tablets 1, 2.5, 5, 10, 20, 50 mg; oral solution 5 mg/mL. (Prednisolone liquid is the pediatric form.)",
+i:[["Asthma flare","40 to 50 mg once daily × 5 to 7 days (no taper needed)"],["COPD flare","40 mg daily × 5 days"],["Severe poison ivy","40 to 60 mg daily, tapered over 14 to 21 days"],["Gout flare","30 to 40 mg daily until improving, then taper over 7 to 10 days"],["Bell's palsy (within 72 h)","60 mg daily × 5 days, then taper over 5 days"],["Severe allergic reaction (after epinephrine)","40 to 60 mg daily × 3 to 5 days"]],
+ci:"Systemic fungal infection; live vaccines during high-dose therapy.",se:"Insomnia, appetite, mood swings, high blood sugar, fluid retention, indigestion.",sr:"Infection masking and increased infection risk; psychosis; GI bleeding (with NSAIDs); adrenal suppression after 2 to 3+ weeks (must taper); high blood pressure; long-term: bone loss, cataracts, diabetes.",
+rn:"No adjustment. Liver disease: prednisolone preferred.",pg:"Acceptable when needed.",la:"Compatible.",od:"Acute overdose rarely dangerous; high blood sugar, agitation.",st:"Room temp.",ix:"NSAIDs (ulcers), fluoroquinolones (tendons), diabetes meds (highs), warfarin, live vaccines, rifampin/phenytoin (lower effect).",nt:"Take in the morning with food. Diabetics: check sugar more often."},
+alb:{m:"Short-acting beta-2 agonist; relaxes airway smooth muscle within minutes, lasts 4 to 6 h.",s:"HFA inhaler 90 mcg/puff (200 puffs); nebulizer solution 2.5 mg/3 mL; tablets 2, 4 mg; syrup.",
+i:[["Rescue","2 puffs every 4 to 6 h as needed"],["Acute attack","4 to 8 puffs via spacer every 20 min × 3, then every 1 to 4 h as needed"],["Exercise/cold air prevention","2 puffs 15 to 30 min before"],["Nebulizer","2.5 mg every 20 min × 3, then every 1 to 4 h"]],
+ci:"Allergy to albuterol.",se:"Tremor, racing heart, nervousness, headache.",sr:"Paradoxical bronchospasm; low potassium at high doses; arrhythmia in heart disease.",
+rn:"None.",pg:"Safe; uncontrolled asthma is the bigger risk.",la:"Compatible.",od:"Fast heart, tremor, low potassium, chest pain.",st:"Room temp; don't puncture or heat canister; prime if unused 2 weeks; count doses (floats are unreliable).",ix:"Beta blockers (non-selective block it), MAOIs/TCAs, diuretics (potassium).",nt:"A spacer roughly doubles the dose delivered to the lungs; a cut plastic bottle works in a pinch."},
+epi:{m:"Alpha and beta adrenergic agonist; reverses airway swelling, low blood pressure and bronchospasm of anaphylaxis.",s:"Auto-injectors 0.3 mg, 0.15 mg, 0.1 mg; neffy nasal 2 mg/1 mg; vials 1 mg/mL (1:1,000).",
+i:[["Anaphylaxis, over ~30 kg","0.3 mg IM outer thigh; repeat every 5 to 15 min as needed"],["Anaphylaxis, 15 to 30 kg","0.15 mg IM"],["Anaphylaxis, 7.5 to 15 kg","0.1 mg device (or label of 0.15 mg device per clinician)"],["From a 1 mg/mL vial (if trained)","0.01 mg/kg IM (0.01 mL/kg), max 0.5 mg adult"]],
+ci:"None in true anaphylaxis.",se:"Anxiety, tremor, pounding heart, pale skin, headache.",sr:"Arrhythmia, chest pain in heart disease (still give it); accidental injection into a finger (warm, seek care).",
+rn:"None.",pg:"Give it: anaphylaxis harms the fetus more.",la:"Compatible.",od:"Severe high blood pressure, arrhythmia.",st:"Room temp 68 to 77°F, never refrigerate or freeze or leave in a hot car. Check the window: discard if brown or cloudy. Expired devices lose some potency but are better than nothing in an emergency.",ix:"Beta blockers (may need more doses), TCAs/MAOIs, digoxin.",nt:"Give through clothing into the outer thigh. Keep 2 devices per person. Watch at least 4 hours: symptoms can rebound."},
+ond:{m:"Serotonin 5-HT3 blocker in gut and brain vomiting center.",s:"Tablets 4, 8, 24 mg; dissolving ODT 4, 8 mg; solution 4 mg/5 mL; injection.",
+i:[["Gastroenteritis vomiting","4 to 8 mg every 8 h as needed"],["Chemotherapy","8 mg twice daily"],["Post-op","16 mg once"]],
+ci:"With apomorphine; congenital long QT; allergy.",se:"Headache, constipation, fatigue, dizziness.",sr:"QT prolongation; serotonin syndrome with other serotonergic drugs; can mask bowel obstruction.",
+rn:"Severe liver disease: max 8 mg/day.",pg:"Small possible cleft/heart defect signal in first trimester; often used when vomiting is severe.",la:"Probably compatible.",od:"Sudden blindness (transient), low blood pressure, arrhythmia.",st:"Room temp.",ix:"QT drugs, SSRIs/SNRIs (serotonin), apomorphine, tramadol (less pain relief).",nt:"ODT dissolves on the tongue: works when the person can't keep pills down. Give, wait 15 to 30 min, then start sips of ORS."},
+ssd:{m:"Silver plus sulfonamide; broad topical antimicrobial for burns.",s:"1% cream (jars, tubes).",i:[["Partial and full thickness burns","1/16 inch layer once or twice daily, sterile glove, covered"]],
+ci:"Sulfa allergy; pregnancy near term; premature infants and newborns under 2 months (kernicterus).",se:"Burning, itching, gray skin discoloration.",sr:"Transient low white blood cells; hemolysis in G6PD deficiency; systemic sulfa effects with very large burns.",rn:"Caution with large burns in kidney/liver disease.",pg:"Avoid near term.",la:"Avoid with newborns.",od:"N/A",st:"Room temp.",ix:"Topical enzymatic debriders.",nt:"Delays healing in clean superficial burns; many burn centers now prefer non-adherent dressings for small burns. Avoid face (use bacitracin)."},
+mup:{m:"Topical antibiotic blocking bacterial protein synthesis; strep and staph incl. MRSA.",s:"2% ointment, 2% cream, nasal ointment.",i:[["Impetigo","3 times daily × 5 to 10 days"],["MRSA nasal decolonization","Nasal ointment twice daily × 5 days"]],
+ci:"Allergy.",se:"Burning, itching.",sr:"Ointment base (polyethylene glycol) absorbed through large open wounds can harm kidneys.",rn:"Avoid large open areas with kidney disease.",pg:"Acceptable.",la:"Acceptable (not on nipple).",od:"N/A",st:"Room temp.",ix:"None.",nt:"Re-evaluate if no response in 3 to 5 days."},
+erye:{m:"Macrolide eye ointment.",s:"0.5% ophthalmic ointment.",i:[["Bacterial conjunctivitis","½ inch ribbon up to 6 times daily × 5 to 7 days"],["Newborn eye prophylaxis","Once after birth"]],
+ci:"Allergy.",se:"Blurred vision for minutes, irritation.",sr:"None common.",rn:"None.",pg:"Safe.",la:"Safe.",od:"N/A",st:"Room temp.",ix:"None.",nt:"Pull lower lid down, apply into the pocket, close eye 1 to 2 min."},
+perm5:{m:"Pyrethroid; paralyzes mites and lice.",s:"5% cream, 60 g tube (one adult application ~30 g).",i:[["Scabies","Neck to toes (include scalp/face in infants), wash off after 8 to 14 h, repeat in 7 days"]],
+ci:"Allergy to pyrethroids/chrysanthemums.",se:"Burning, stinging, itching (itch may persist 2 to 4 weeks).",sr:"Rare.",rn:"None.",pg:"Considered safe.",la:"Safe.",od:"N/A",st:"Room temp.",ix:"None.",nt:"Treat all household and close contacts the same day. Wash bedding and clothes hot or seal in bags 3 days."},
+alben:{m:"Benzimidazole; starves worms by blocking glucose uptake.",s:"Tablets 200 mg; chewables 400 mg in some markets.",i:[["Trichinosis","400 mg twice daily × 8 to 14 days"],["Pinworm","400 mg once, repeat in 2 weeks"],["Roundworm, hookworm","400 mg once"],["Tapeworm cyst disease","Needs clinician"]],
+ci:"Allergy to benzimidazoles.",se:"Belly pain, nausea, headache, hair thinning (long courses).",sr:"Bone marrow suppression and liver injury with long courses (blood tests); birth defects.",rn:"Caution with liver disease.",pg:"Avoid; use contraception during and 3 days after.",la:"Probably compatible for short courses.",od:"Supportive.",st:"Room temp.",ix:"Dexamethasone, praziquantel, cimetidine (raise levels).",nt:"Take with a fatty meal for systemic infections."},
+penvk:{m:"Oral natural penicillin. Narrow: strep, mouth anaerobes, syphilis (not oral).",s:"Tablets 250, 500 mg; suspension 125, 250 mg/5 mL.",i:[["Strep throat","500 mg twice daily or 250 mg four times daily × 10 days"],["Dental infection","500 mg four times daily × 5 to 7 days"],["Rheumatic fever prevention","250 mg twice daily (long term)"]],
+ci:"Penicillin allergy.",se:"Diarrhea, nausea, rash.",sr:"Anaphylaxis, C. diff.",rn:"Reduce interval in severe kidney failure.",pg:"Safe.",la:"Safe.",od:"GI.",st:"Room temp; suspension refrigerate 14 days.",ix:"Methotrexate, probenecid.",nt:"Empty stomach (1 h before or 2 h after meals)."},
+cfd:{m:"Third generation oral cephalosporin; better against H. flu/Moraxella than cephalexin.",s:"Capsules 300 mg; suspension 125, 250 mg/5 mL.",i:[["Sinusitis","300 mg twice daily or 600 mg daily × 10 days"],["Community pneumonia","300 mg twice daily × 10 days"],["Strep throat","300 mg twice daily × 5 to 10 days"],["Skin infection","300 mg twice daily × 10 days"]],
+ci:"Cephalosporin allergy.",se:"Diarrhea, red-tinged stool with iron, yeast.",sr:"C. diff, anaphylaxis.",rn:"CrCl under 30: 300 mg once daily.",pg:"Safe.",la:"Safe.",od:"GI.",st:"Room temp; suspension 10 days room temp.",ix:"Iron, antacids (separate 2 h).",nt:""},
+cfx:{m:"Second generation oral cephalosporin.",s:"Tablets 250, 500 mg; suspension.",i:[["Early Lyme (alternative)","500 mg twice daily × 14 days"],["Sinusitis / bronchitis","250 to 500 mg twice daily × 5 to 10 days"],["UTI","250 mg twice daily × 7 to 10 days"]],
+ci:"Cephalosporin allergy.",se:"Diarrhea, nausea, bad taste.",sr:"C. diff, anaphylaxis.",rn:"CrCl 10 to 29: every 24 h; under 10: every 48 h.",pg:"Safe.",la:"Safe.",od:"GI.",st:"Room temp.",ix:"Antacids/H2 blockers reduce absorption.",nt:"Take with food. Don't crush tablets (very bitter)."},
+lvx:{m:"Respiratory fluoroquinolone; covers pneumococcus plus gram-negatives and atypicals.",s:"Tablets 250, 500, 750 mg; solution 25 mg/mL.",i:[["Community pneumonia","750 mg daily × 5 days"],["Kidney infection","750 mg daily × 5 days"],["Complicated UTI","750 mg daily × 5 days"],["Sinusitis (last line)","500 to 750 mg daily × 5 to 10 days"],["Anthrax / plague","500 to 750 mg daily, 10 to 60 days"]],
+ci:"Fluoroquinolone allergy.",se:"Nausea, headache, insomnia, dizziness.",sr:"Same boxed warning as ciprofloxacin (tendons, nerves, CNS, myasthenia), plus aortic aneurysm, QT, glucose swings, C. diff.",rn:"CrCl 20 to 49: 750 mg every 48 h; CrCl 10 to 19: 750 mg once then 500 mg every 48 h.",pg:"Avoid if possible.",la:"Avoid if possible.",od:"Seizures, arrhythmia.",st:"Room temp.",ix:"Chelators (separate 2 h), warfarin, QT drugs, diabetes meds, steroids.",nt:""},
+vala:{m:"Prodrug of acyclovir with better absorption.",s:"Tablets 500 mg, 1 g.",i:[["Cold sores","2 g twice in one day, 12 h apart, at first tingle"],["Shingles","1 g three times daily × 7 days (start within 72 h of rash)"],["Genital herpes, first episode","1 g twice daily × 10 days"],["Genital herpes, recurrence","500 mg twice daily × 3 days"],["Suppression","500 mg to 1 g daily"]],
+ci:"Allergy to valacyclovir or acyclovir.",se:"Headache, nausea, belly pain.",sr:"Kidney injury; confusion/hallucinations in elderly or kidney disease; TTP/HUS in advanced HIV at high doses.",rn:"Shingles: CrCl 30 to 49: 1 g q12h; 10 to 29: 1 g q24h; under 10: 500 mg q24h.",pg:"Acceptable.",la:"Compatible.",od:"Kidney failure, confusion.",st:"Room temp.",ix:"Nephrotoxic drugs.",nt:"Drink plenty of water."},
+acv:{m:"Antiviral nucleoside; blocks herpes virus DNA polymerase.",s:"Capsules 200 mg; tablets 400, 800 mg; suspension 200 mg/5 mL; cream.",i:[["Shingles","800 mg five times daily × 7 to 10 days"],["Chickenpox (adult/teen)","800 mg four times daily × 5 days"],["Genital first episode","400 mg three times daily × 7 to 10 days"],["Recurrence","800 mg twice daily × 5 days or 800 mg three times daily × 2 days"]],
+ci:"Allergy.",se:"Nausea, headache, malaise.",sr:"Kidney injury (crystals) when dehydrated; neurotoxicity in kidney failure.",rn:"Shingles: CrCl 10 to 25: 800 mg q8h; under 10: 800 mg q12h.",pg:"Acceptable.",la:"Compatible.",od:"Kidney failure, agitation, seizures.",st:"Room temp.",ix:"Probenecid, nephrotoxic drugs.",nt:"Hydrate well."},
+ivm:{m:"Paralyzes parasites via chloride channels.",s:"Tablets 3 mg.",i:[["Strongyloides","200 mcg/kg once daily × 1 to 2 days"],["Scabies (oral alternative)","200 mcg/kg, repeat in 7 to 14 days"],["Head lice (resistant)","200 to 400 mcg/kg, repeat in 7 days"]],
+ci:"Allergy.",se:"Dizziness, nausea, itching.",sr:"Brain toxicity (Loa loa high burden); low blood pressure.",rn:"None.",pg:"Avoid.",la:"Low amounts; generally avoid.",od:"Confusion, ataxia, seizures, coma.",st:"Room temp.",ix:"Warfarin (INR up).",nt:"Empty stomach with water. Weight-based for adults too: use the label's weight table."},
+};
+/* Monographs for long-term (home) medications and classes */
+Object.assign(MONO,{
+warf:{m:"Vitamin K antagonist.",s:"Tablets 1, 2, 2.5, 3, 4, 5, 6, 7.5, 10 mg (color coded).",i:[["Clot prevention","Individual, guided by INR (usual target 2 to 3)"]],ci:"Active bleeding, pregnancy (except mechanical valves).",se:"Bruising.",sr:"Major bleeding; skin necrosis; purple toe.",rn:"",pg:"Avoid (birth defects).",la:"Compatible.",od:"Bleeding; vitamin K (oral 2.5 to 5 mg for high INR without bleeding, in hospital practice).",st:"Room temp.",ix:"Hundreds: most antibiotics, azole antifungals, NSAIDs, aspirin, acetaminophen (regular), amiodarone, many supplements; vitamin K-rich foods lower effect.",nt:"Grid-down: without INR testing, keep diet consistent, avoid new drugs where possible, watch for bleeding signs (gums, urine, black stool, headache)."},
+doac:{m:"Direct factor Xa (apixaban, rivaroxaban) or thrombin (dabigatran) inhibitors.",s:"Apixaban 2.5, 5 mg; rivaroxaban 2.5, 10, 15, 20 mg; dabigatran 75, 110, 150 mg.",i:[["Atrial fibrillation","Apixaban 5 mg twice daily; rivaroxaban 20 mg with evening meal"],["Clot treatment","Loading phase then maintenance (individual)"]],ci:"Active bleeding; mechanical heart valve.",se:"Bruising.",sr:"Major bleeding; stopping abruptly raises stroke risk (boxed warning).",rn:"Dose reductions by kidney function and age (prescriber).",pg:"Avoid.",la:"Avoid.",od:"Bleeding.",st:"Room temp; dabigatran must stay in original bottle (moisture).",ix:"NSAIDs, aspirin, SSRIs, strong CYP3A4/P-gp inhibitors or inducers.",nt:"Missed dose: take same day if remembered; don't double."},
+clop:{m:"P2Y12 platelet inhibitor.",s:"Tablets 75 mg.",i:[["After stent/heart attack/stroke","75 mg daily"]],ci:"Active bleeding.",se:"Bruising.",sr:"Bleeding; TTP (rare). Stopping early after a stent can cause stent clot (heart attack).",rn:"",pg:"Limited data.",la:"Avoid.",od:"Bleeding.",st:"Room temp.",ix:"Omeprazole/esomeprazole reduce effect (use famotidine or pantoprazole); NSAIDs, warfarin.",nt:"Do not run out within 12 months of a stent."},
+ssri:{m:"Serotonin (± norepinephrine) reuptake inhibitors.",s:"Sertraline 25 to 200 mg; fluoxetine 10 to 80 mg; citalopram 10 to 40 mg; escitalopram 5 to 20 mg; venlafaxine 37.5 to 225 mg; duloxetine 20 to 120 mg.",i:[["Depression / anxiety","Individual, usually once daily"]],ci:"MAOI within 14 days (5 weeks for fluoxetine); pimozide; citalopram with QT drugs.",se:"Nausea, sleep change, sexual dysfunction.",sr:"Boxed warning: suicidal thinking under 25; serotonin syndrome; bleeding; low sodium in elderly; mania.",rn:"",pg:"Individual risk/benefit; often continued.",la:"Sertraline preferred.",od:"Serotonin toxicity, seizures, QT (citalopram, escitalopram, venlafaxine).",st:"Room temp.",ix:"Dextromethorphan, tramadol, triptans, linezolid, MAOIs, NSAIDs/aspirin/anticoagulants, QT drugs.",nt:"Grid-down: running out causes discontinuation syndrome (dizziness, 'brain zaps', irritability, flu-like) within days for paroxetine/venlafaxine, weeks for fluoxetine. Stretch supply by tapering slowly rather than stopping abruptly; fluoxetine self-tapers."},
+maoi:{m:"Monoamine oxidase inhibitors.",s:"Phenelzine 15 mg; tranylcypromine 10 mg; selegiline patch.",i:[["Depression","Individual"]],ci:"Many drugs and tyramine foods.",se:"Dizziness, insomnia.",sr:"Hypertensive crisis (aged cheese, cured meats, tap beer, soy sauce, decongestants); serotonin syndrome.",rn:"",pg:"",la:"",od:"Severe hypertension or serotonin toxicity.",st:"",ix:"Decongestants, dextromethorphan, SSRIs, tramadol, meperidine, cyclobenzaprine, stimulants.",nt:"Strict food rules matter more when eating preserved/cured foods."},
+lith:{m:"Mood stabilizer.",s:"Capsules 150, 300, 600 mg; ER 300, 450 mg.",i:[["Bipolar","Individual by blood level"]],ci:"Severe kidney disease, severe dehydration.",se:"Tremor, thirst, frequent urination.",sr:"Toxicity: vomiting, diarrhea, coarse tremor, confusion, unsteady walk, seizures. Kidney and thyroid effects long-term.",rn:"Major dose changes needed.",pg:"Heart defect risk (individual).",la:"Avoid.",od:"Dangerous; requires dialysis.",st:"Room temp.",ix:"NSAIDs, ACE/ARBs, diuretics (all raise levels), dehydration, low-salt diet.",nt:"Grid-down: the biggest risk is dehydration (vomiting, diarrhea, sweating). Hold and seek care if toxicity signs appear."},
+ace:{m:"ACE inhibitors (lisinopril, enalapril, ramipril) and ARBs (losartan, valsartan, olmesartan, irbesartan) relax blood vessels and protect kidneys.",s:"Lisinopril 2.5 to 40 mg; enalapril 2.5 to 20 mg; losartan 25 to 100 mg; valsartan 40 to 320 mg.",i:[["High blood pressure","Lisinopril 10 to 40 mg daily; losartan 50 to 100 mg daily"],["Heart failure / diabetic kidney","Individual"]],ci:"Pregnancy; prior angioedema (ACE); bilateral renal artery stenosis.",se:"Dry cough (ACE), dizziness.",sr:"Angioedema (sudden tongue/lip/throat swelling: emergency, even years into therapy); high potassium; kidney injury when dehydrated.",rn:"Lower doses in kidney disease.",pg:"<b>Contraindicated</b> (fetal kidney damage).",la:"Enalapril/captopril preferred.",od:"Low blood pressure.",st:"Room temp.",ix:"NSAIDs, potassium supplements/salt substitutes, Bactrim, spironolactone, lithium.",nt:"Sick day rule: hold during vomiting/diarrhea/dehydration, restart when eating and drinking normally."},
+diur:{m:"Thiazides (hydrochlorothiazide, chlorthalidone) and loops (furosemide, bumetanide) increase urine salt and water loss.",s:"HCTZ 12.5 to 50 mg; chlorthalidone 12.5 to 25 mg; furosemide 20 to 80 mg.",i:[["Blood pressure","HCTZ 12.5 to 25 mg daily"],["Fluid overload / heart failure","Furosemide individual"]],ci:"Sulfa allergy (relative); no urine output.",se:"Frequent urination, dizziness.",sr:"Low potassium/sodium/magnesium, dehydration, kidney injury, gout flares.",rn:"Thiazides weak below CrCl 30.",pg:"Generally avoided unless needed.",la:"May reduce milk.",od:"Dehydration, electrolyte disorders.",st:"Room temp.",ix:"NSAIDs, lithium, digoxin (low potassium), steroids.",nt:"Sick day rule: hold during vomiting/diarrhea. Heart failure patients: daily weights; gain of 2 to 3 lb in a day signals fluid."},
+spir:{m:"Aldosterone blocker; potassium-sparing.",s:"Tablets 25, 50, 100 mg.",i:[["Heart failure","12.5 to 50 mg daily"],["Resistant hypertension","25 to 100 mg daily"]],ci:"High potassium; Addison's; severe kidney disease.",se:"Breast tenderness, frequent urination.",sr:"Dangerous high potassium.",rn:"Avoid CrCl under 30.",pg:"Avoid.",la:"Compatible.",od:"High potassium.",st:"Room temp.",ix:"ACE/ARBs, Bactrim, potassium, NSAIDs.",nt:"Avoid salt substitutes (potassium chloride)."},
+bb:{m:"Beta blockers slow heart rate and lower blood pressure.",s:"Metoprolol tartrate 25 to 100 mg, succinate 25 to 200 mg; atenolol 25 to 100 mg; carvedilol 3.125 to 25 mg; propranolol 10 to 80 mg.",i:[["BP / angina / after heart attack / atrial fibrillation / heart failure","Individual"]],ci:"Severe slow heart rate, heart block, decompensated heart failure; non-selective ones in asthma.",se:"Fatigue, cold hands, slow pulse.",sr:"<b>Never stop abruptly</b>: rebound fast heart, angina, heart attack. Masks low blood sugar warning signs.",rn:"Atenolol reduced in kidney disease.",pg:"Labetalol/metoprolol used.",la:"Metoprolol/propranolol preferred.",od:"Very slow heart, low blood pressure, low sugar, seizures (propranolol).",st:"Room temp.",ix:"Epinephrine and albuterol (blunted), verapamil/diltiazem (block), clonidine.",nt:"If supply runs short, halve the dose over 1 to 2 weeks rather than stopping."},
+stat:{m:"HMG-CoA reductase inhibitors lower LDL cholesterol.",s:"Atorvastatin 10 to 80 mg; rosuvastatin 5 to 40 mg; simvastatin 5 to 40 mg; pravastatin 10 to 80 mg.",i:[["Cholesterol / heart protection","Individual, once daily"]],ci:"Active liver disease; pregnancy.",se:"Muscle aches.",sr:"Rhabdomyolysis (severe muscle pain, dark urine): stop.",rn:"Rosuvastatin reduced in kidney disease.",pg:"Generally stopped.",la:"Avoid.",od:"Low toxicity.",st:"Room temp.",ix:"Fluconazole, clarithromycin, amlodipine/diltiazem (simvastatin), gemfibrozil, grapefruit (simvastatin/lovastatin).",nt:"Grid-down: missing a statin for weeks has little short-term risk. Lowest priority to stockpile."},
+mtxd:{m:"Antimetabolite immune suppressant.",s:"Tablets 2.5 mg; injection.",i:[["Rheumatoid arthritis / psoriasis","7.5 to 25 mg <b>once weekly</b> with folic acid"]],ci:"Pregnancy, liver disease, alcoholism.",se:"Mouth sores, nausea, fatigue.",sr:"Daily dosing by mistake is fatal; bone marrow suppression; liver/lung toxicity.",rn:"Reduce in kidney disease.",pg:"Contraindicated.",la:"Contraindicated.",od:"Bone marrow failure; leucovorin in hospital.",st:"Room temp.",ix:"Bactrim (major), NSAIDs, penicillins, PPIs.",nt:"Weekly, not daily."},
+levo:{m:"Synthetic thyroid hormone T4.",s:"Tablets 25 to 300 mcg (color coded).",i:[["Hypothyroidism","1.6 mcg/kg/day typical; individual"]],ci:"Untreated adrenal insufficiency.",se:"None at correct dose.",sr:"Overdose: palpitations, arrhythmia, bone loss.",rn:"",pg:"Dose usually increases 25 to 30%.",la:"Compatible.",od:"Fast heart, agitation.",st:"Room temp, dry.",ix:"Calcium, iron, antacids, PPIs, soy, coffee (separate 4 h).",nt:"Grid-down: very long half-life (7 days). Missing doses for a few weeks is usually tolerated; people without a thyroid gland get symptomatic over weeks. Stretching to every other day dose is a common temporary measure."},
+iron:{m:"Mineral supplements.",s:"",i:[],ci:"",se:"Constipation (iron).",sr:"Iron overdose in children is a leading poisoning death: lock up.",rn:"",pg:"",la:"",od:"Iron: vomiting, bloody diarrhea, then shock.",st:"",ix:"Doxycycline, ciprofloxacin, levothyroxine, cefdinir.",nt:""},
+insu:{m:"Insulin replaces or supplements the body's own; sulfonylureas push the pancreas to release more.",s:"Insulin U-100 vials/pens: basal (glargine, detemir, degludec), rapid (lispro, aspart), NPH, regular. Sulfonylureas: glipizide 2.5 to 20 mg, glimepiride 1 to 8 mg, glyburide.",i:[["Diabetes","Individual"]],ci:"Hypoglycemia.",se:"Low blood sugar, weight gain.",sr:"Severe hypoglycemia (seizures, death); DKA if a type 1 diabetic runs out or under-doses.",rn:"Lower doses in kidney disease.",pg:"Insulin preferred.",la:"Compatible.",od:"Severe prolonged hypoglycemia (sulfonylurea lows can recur for 24 h+).",st:"<b>Unopened</b>: refrigerate 36 to 46°F until the printed date. Out of the fridge (below 86°F): most vials/pens last 28 days (degludec 56; detemir 42). Never freeze or let it get hot. Without power, use a clay pot evaporative cooler, a cool basement, or a cooler with water-changed (not ice-contact) bottles. Discard if clumped or frosted.",ix:"Steroids and illness raise sugar; fluoroquinolones, Bactrim, alcohol and missed meals cause lows; beta blockers mask lows.",nt:"Type 1: <b>never stop basal insulin</b> even when not eating; check sugar every 3 to 4 h when sick, check urine ketones. Sulfonylureas: hold if not eating."},
+mtf:{m:"Lowers liver glucose production.",s:"Tablets 500, 850, 1,000 mg; ER 500, 750, 1,000 mg; solution.",i:[["Type 2 diabetes","500 mg once or twice daily, up to 2,000 to 2,550 mg/day with meals"],["Prediabetes / PCOS","Individual"]],ci:"eGFR under 30; acute illness with dehydration/shock; metabolic acidosis; iodinated contrast.",se:"Diarrhea, nausea, metallic taste (less with ER and food).",sr:"Boxed warning: lactic acidosis (rare; vomiting, fast breathing, belly pain, weakness) with dehydration, kidney failure, heavy alcohol. B12 deficiency long-term.",rn:"eGFR 30 to 45: max 1,000 mg/day; under 30: stop.",pg:"Used in gestational diabetes.",la:"Compatible.",od:"Lactic acidosis.",st:"Room temp.",ix:"Alcohol, cimetidine, cephalexin, topiramate, contrast.",nt:"Sick day rule (vomiting, diarrhea, can't drink): hold until eating and drinking normally for 24 to 48 h."},
+aml:{m:"Dihydropyridine calcium channel blocker.",s:"Tablets 2.5, 5, 10 mg.",i:[["Blood pressure / angina","5 to 10 mg once daily"]],ci:"Allergy; cardiogenic shock.",se:"Ankle swelling, flushing, headache.",sr:"Low blood pressure; worsening angina rarely at start.",rn:"Start 2.5 mg in liver disease.",pg:"Used when needed.",la:"Probably compatible.",od:"Profound low blood pressure (dangerous; long-acting).",st:"Room temp.",ix:"Simvastatin (max 20 mg), CYP3A4 inhibitors.",nt:"Long half-life: a missed day matters little."},
+mtk:{m:"Leukotriene receptor blocker.",s:"Tablets 10 mg; chewables 4, 5 mg; granules 4 mg.",i:[["Asthma control / allergy","10 mg nightly"],["Exercise asthma","10 mg 2 h before"]],ci:"Allergy.",se:"Headache, belly pain.",sr:"Boxed warning: agitation, nightmares, depression, suicidal thoughts (watch kids especially).",rn:"None.",pg:"Acceptable.",la:"Compatible.",od:"Mild.",st:"Room temp, protect from light.",ix:"Phenobarbital.",nt:"Not a rescue inhaler substitute."},
+nys:{m:"Polyene antifungal, not absorbed from gut.",s:"Suspension 100,000 units/mL; tablets 500,000 units; cream/ointment/powder 100,000 units/g.",i:[["Oral thrush (adults, children)","4 to 6 mL four times daily, swish then swallow, until 48 h after clear"],["Skin yeast / diaper","Cream 2 to 3 times daily"]],ci:"Allergy.",se:"Nausea, diarrhea at high dose.",sr:"Rare.",rn:"None.",pg:"Safe.",la:"Safe.",od:"GI.",st:"Room temp.",ix:"None.",nt:"Boil pacifiers/bottle nipples daily during treatment."},
+terb:{m:"Allylamine antifungal (squalene epoxidase).",s:"Tablets 250 mg; granules.",i:[["Fingernail fungus","250 mg daily × 6 weeks"],["Toenail fungus","250 mg daily × 12 weeks"],["Scalp ringworm","Weight-based × 6 weeks (see label)"]],ci:"Chronic or active liver disease.",se:"Headache, diarrhea, rash, taste disturbance.",sr:"Liver failure (rare); severe skin reactions; taste/smell loss that can be prolonged; depression.",rn:"Not recommended CrCl under 50.",pg:"Defer (elective).",la:"Avoid.",od:"Nausea, dizziness.",st:"Room temp.",ix:"CYP2D6 drugs (some antidepressants, metoprolol), cimetidine, rifampin.",nt:"Elective: lowest priority in a crisis."},
+tac:{m:"Medium potency corticosteroid.",s:"0.025%, 0.1%, 0.5% cream/ointment/lotion.",i:[["Eczema, contact dermatitis, psoriasis","Thin layer 2 to 3 times daily, up to 2 weeks"]],ci:"Untreated skin infections (fungal, bacterial, viral).",se:"Burning, dryness.",sr:"Skin atrophy, stretch marks, adrenal suppression with large areas or occlusion in kids.",rn:"None.",pg:"Acceptable small areas.",la:"Not on nipple.",od:"N/A",st:"Room temp.",ix:"None.",nt:"Fingertip unit (one adult fingertip of cream) covers two adult palms."},
+hyz:{m:"First generation H1 antihistamine with anti-anxiety effect.",s:"Tablets 10, 25, 50 mg; capsules (pamoate) 25, 50, 100 mg; syrup 10 mg/5 mL.",i:[["Itch / hives","25 mg three to four times daily"],["Anxiety","50 to 100 mg four times daily (max)"],["Sleep / sedation","50 to 100 mg"]],ci:"Early pregnancy; prolonged QT.",se:"Drowsiness, dry mouth, headache.",sr:"QT prolongation; confusion and falls in elderly; seizures in overdose.",rn:"Reduce 50% in liver or kidney disease.",pg:"Avoid in early pregnancy.",la:"Avoid.",od:"Sedation, QT, seizures.",st:"Room temp.",ix:"Other sedatives, alcohol, QT drugs, anticholinergics.",nt:""},
+pmz:{m:"Phenothiazine antihistamine, antiemetic.",s:"Tablets 12.5, 25, 50 mg; syrup 6.25 mg/5 mL; suppositories 12.5, 25, 50 mg; injection.",i:[["Nausea/vomiting","12.5 to 25 mg every 4 to 6 h"],["Motion sickness","25 mg 30 to 60 min before, then twice daily"],["Allergy","25 mg at bedtime or 12.5 mg before meals"]],ci:"<b>Under 2 years (boxed)</b>; coma; intra-arterial injection.",se:"Heavy drowsiness, dry mouth, confusion.",sr:"Respiratory depression (kids, with opioids); neuroleptic malignant syndrome; seizures; severe tissue injury from injection.",rn:"Caution liver disease.",pg:"Used for nausea in pregnancy sometimes.",la:"Avoid.",od:"Coma, seizures, agitation in kids.",st:"Room temp; suppositories cool.",ix:"Opioids, benzos, alcohol (breathing), anticholinergics, QT drugs.",nt:"Suppository route works when vomiting."},
+dex:{m:"Potent long-acting glucocorticoid.",s:"Tablets 0.5, 0.75, 1, 1.5, 2, 4, 6 mg; solution 0.5 mg/5 mL, 1 mg/mL; injection.",i:[["Asthma flare (adult)","12 to 16 mg once, repeat once next day"],["Altitude sickness (HACE/HAPE treatment)","8 mg once then 4 mg every 6 h"],["Croup","Single weight-based dose: see label"],["Severe allergic reaction","4 to 10 mg once"]],ci:"Systemic fungal infection.",se:"Insomnia, appetite, mood.",sr:"As prednisone; higher hyperglycemia and psychiatric risk at high doses.",rn:"None.",pg:"Used when indicated.",la:"Compatible short-term.",od:"See prednisone.",st:"Room temp.",ix:"As prednisone; CYP3A4 inducers/inhibitors.",nt:"Long-acting: 1 to 2 doses equal a 5 day prednisone course for asthma."},
+mpd:{m:"Glucocorticoid.",s:"Tablets 2, 4, 8, 16, 32 mg; Dosepak 4 mg × 21.",i:[["Dosepak","Day 1: 24 mg, then 20, 16, 12, 8, 4 mg on days 2 to 6 per pack layout"]],ci:"Systemic fungal infection.",se:"As prednisone.",sr:"As prednisone.",rn:"None.",pg:"Acceptable.",la:"Compatible.",od:"See prednisone.",st:"Room temp.",ix:"As prednisone.",nt:"4 mg methylprednisolone = 5 mg prednisone."},
+meb:{m:"Benzimidazole antiparasitic.",s:"Chewable tablet 100 mg (Emverm), 500 mg (Vermox).",i:[["Pinworm","100 mg once, repeat in 2 to 3 weeks"],["Roundworm, hookworm, whipworm","100 mg twice daily × 3 days or 500 mg once"]],ci:"Allergy.",se:"Belly pain, diarrhea.",sr:"Seizures in infants under 1 (rare); severe skin reactions with metronidazole together.",rn:"None.",pg:"Avoid in first trimester.",la:"Probably compatible.",od:"GI.",st:"Room temp.",ix:"Metronidazole (SJS reports), carbamazepine/phenytoin lower levels.",nt:"Pinworm: wash bedding hot, short nails, morning showers; treat the whole family."},
+bzn:{m:"Numbs stretch receptors in the lungs.",s:"Capsules 100, 150, 200 mg.",i:[["Cough","100 to 200 mg three times daily, max 600 mg/day"]],ci:"Allergy to ester anesthetics.",se:"Drowsiness, headache, nausea.",sr:"Choking/laryngospasm if chewed; bizarre behavior; <b>accidental ingestion in children under 10 can kill within an hour</b>.",rn:"None.",pg:"Limited data.",la:"Limited data.",od:"Seizures, cardiac arrest.",st:"Room temp, child-proof.",ix:"None major.",nt:""},
+cbp:{m:"Centrally acting muscle relaxant (structurally like tricyclic antidepressants).",s:"Tablets 5, 7.5, 10 mg; ER 15, 30 mg.",i:[["Acute muscle spasm","5 to 10 mg three times daily × up to 2 to 3 weeks"]],ci:"MAOI within 14 days; recent heart attack; arrhythmia, heart block, heart failure; hyperthyroidism.",se:"Drowsiness, dry mouth, dizziness.",sr:"Serotonin syndrome; arrhythmia; confusion in elderly.",rn:"Liver disease: 5 mg, less often.",pg:"Probably acceptable.",la:"Unknown.",od:"Arrhythmia, seizures, coma (like TCA overdose).",st:"Room temp.",ix:"MAOIs, SSRIs, tramadol, alcohol, sedatives, anticholinergics.",nt:"Often 5 mg at night is enough."},
+mlx:{m:"Preferential COX-2 NSAID, once daily.",s:"Tablets 7.5, 15 mg; capsules 5, 10 mg; suspension.",i:[["Arthritis / back pain","7.5 to 15 mg once daily"]],ci:"NSAID/aspirin allergy or aspirin-triggered asthma; after heart bypass surgery.",se:"Indigestion, diarrhea, swelling.",sr:"Boxed warnings: heart attack/stroke, GI bleeding/perforation. Kidney injury.",rn:"Avoid in significant kidney disease.",pg:"Avoid from 20 weeks.",la:"Probably compatible.",od:"GI bleed, kidney injury.",st:"Room temp.",ix:"Other NSAIDs, anticoagulants, SSRIs, ACE/ARB, diuretics, lithium, methotrexate.",nt:""},
+lidv:{m:"Amide local anesthetic gel.",s:"2% viscous solution, 100 mL bottles.",i:[["Mouth/throat pain (adult)","15 mL swish and spit every 3 h; max 8 doses/24 h"]],ci:"Teething; young children; allergy.",se:"Numbness.",sr:"Seizures, arrhythmia if swallowed in large amounts; choking.",rn:"Caution liver disease.",pg:"Acceptable.",la:"Compatible.",od:"Seizures, cardiac arrest.",st:"Room temp.",ix:"Antiarrhythmics.",nt:""},
+oflo:{m:"Fluoroquinolone ear drops.",s:"0.3% otic solution 5 mL, 10 mL.",i:[["Swimmer's ear (adults)","10 drops once daily × 7 days"],["Draining ear with tubes/perforation","10 drops twice daily × 10 days (adults)"]],ci:"Allergy.",se:"Itch, bitter taste.",sr:"Rare.",rn:"None.",pg:"Acceptable.",la:"Acceptable.",od:"N/A",st:"Room temp.",ix:"None.",nt:"Warm the bottle in your hand (cold drops cause vertigo). Lie ear-up 5 min; pump the tragus."},
+ptm:{m:"Two antibiotics for eye drops.",s:"Ophthalmic solution 10 mL.",i:[["Bacterial conjunctivitis","1 drop every 3 h (max 6/day) × 7 to 10 days"]],ci:"Allergy.",se:"Stinging.",sr:"Rare.",rn:"None.",pg:"Acceptable.",la:"Acceptable.",od:"N/A",st:"Room temp, protect from light.",ix:"None.",nt:""},
+ntg:{m:"Nitric oxide donor; dilates veins and coronary arteries.",s:"Sublingual tablets 0.3, 0.4, 0.6 mg; spray 0.4 mg/dose; patches; ointment.",i:[["Angina attack","0.4 mg under tongue every 5 min, max 3 doses"],["Before exertion","0.4 mg 5 to 10 min before"]],ci:"PDE5 inhibitors (sildenafil, tadalafil, vardenafil), riociguat; severe low blood pressure; right ventricle heart attack.",se:"Headache, flushing, lightheaded.",sr:"Severe low blood pressure and fainting.",rn:"None.",pg:"Limited data.",la:"Unknown.",od:"Collapse, methemoglobinemia.",st:"Original amber glass bottle, tightly capped; potency fades after opening. Spray lasts longer.",ix:"PDE5 inhibitors (deadly), alcohol, BP drugs.",nt:"Sit or lie down before taking. Chest pain not gone 5 min after the first dose = treat as a heart attack (aspirin, evacuate)."},
+pde5:{m:"PDE5 inhibitors.",s:"Sildenafil 20, 25, 50, 100 mg; tadalafil 2.5 to 20 mg.",i:[],ci:"Nitrates.",se:"Headache, flushing.",sr:"Deadly low blood pressure with nitrates.",rn:"",pg:"",la:"",od:"Low blood pressure.",st:"Room temp.",ix:"Nitrates, alpha blockers.",nt:""}
+});
+
+/* ---------- FDA full-label support ---------- */
+const FDA_ORDER=[["boxed_warning","Boxed warning"],["indications_and_usage","Indications and usage"],["dosage_and_administration","Dosage and administration"],["dosage_forms_and_strengths","Dosage forms and strengths"],["contraindications","Contraindications"],["warnings_and_cautions","Warnings and precautions"],["warnings","Warnings"],["precautions","Precautions"],["adverse_reactions","Adverse reactions"],["drug_interactions","Drug interactions"],["use_in_specific_populations","Use in specific populations"],["pregnancy","Pregnancy"],["teratogenic_effects","Teratogenic effects"],["nursing_mothers","Nursing mothers"],["lactation","Lactation"],["pediatric_use","Pediatric use"],["geriatric_use","Geriatric use"],["drug_abuse_and_dependence","Abuse and dependence"],["overdosage","Overdosage"],["description","Description"],["clinical_pharmacology","Clinical pharmacology"],["mechanism_of_action","Mechanism of action"],["pharmacokinetics","Pharmacokinetics"],["microbiology","Microbiology"],["how_supplied","How supplied"],["storage_and_handling","Storage and handling"],["information_for_patients","Information for patients"],["patient_medication_information","Patient medication information"],["spl_patient_package_insert","Patient package insert"],["active_ingredient","Active ingredient"],["purpose","Purpose"],["do_not_use","Do not use"],["ask_doctor","Ask a doctor before use"],["ask_doctor_or_pharmacist","Ask a doctor or pharmacist"],["when_using","When using this product"],["stop_use","Stop use and ask a doctor"],["pregnancy_or_breast_feeding","Pregnancy or breastfeeding"],["keep_out_of_reach_of_children","Keep out of reach of children"],["other_safety_information","Other information"],["inactive_ingredient","Inactive ingredients"]];
+
+/* ======================= CHILDREN ======================= */
+Object.assign(SX,{mouthsores:"Mouth sores / blisters on hands, feet",pullarm:"Toddler won't use arm after a pull",swallowed:"Swallowed battery, magnet, pills or chemical",itchbottom:"Itchy bottom at night",diaper:"Diaper rash",blisters:"Itchy blisters in crops all over",sandpaper:"Sandpaper rash + sore throat"});
+C.push(
+{n:"Hand, foot and mouth disease",cat:"Children",f:"c",s:["mouthsores","fever","sorethroat","rash"],r:"Under 5 mostly. Fever, painful mouth sores, then small blisters/spots on hands, feet, diaper area. Lasts 7 to 10 days.",k:"Look in the mouth with a flashlight.",f2:"Refusing all fluids (dehydration), stiff neck, very sleepy, breathing trouble.",h:"Cold fluids, popsicles, soft bland food, avoid acidic juice. Strict handwashing; contagious.",o:["apap","ibu"],x:"No antibiotics: viral."},
+{n:"Chickenpox",cat:"Children",f:"c",s:["blisters","fever","itch","rash"],r:"Itchy red spots that become blisters then crusts, appearing in crops over several days, starting on the trunk.",k:"Vaccinated children get milder cases.",f2:"Blister skin red, hot, spreading (strep infection), breathing trouble, confusion, unsteady walking, newborn, immune-weak.",h:"Short nails, oatmeal baths, calamine.",o:["apap","cet","dph"],x:"<b>Use acetaminophen, not ibuprofen</b> (linked to severe skin infections). <b>Never aspirin</b> (Reye syndrome). Acyclovir for teens/adults or high-risk within 24 h of rash.",rx:["acv"]},
+{n:"Scarlet fever",cat:"Children",f:"c",s:["sandpaper","sorethroat","fever","rash"],r:"Strep throat plus a red sandpaper-feeling rash starting on neck/chest, flushed cheeks, 'strawberry' tongue.",k:"Same as strep throat; rash feels like fine sandpaper.",f2:"Same as strep.",h:"",o:["apap","ibu"],x:"Same as strep throat: amoxicillin for 10 days (pediatric weight-based dose from label/pediatrician).",rx:["amox"]},
+{n:"Roseola",cat:"Children",f:"c",s:["fever","rash"],r:"6 months to 2 years: 3 to 5 days of high fever with a fairly happy child, then fever breaks and a pink spotty rash appears on the trunk.",k:"Rash appears after the fever ends.",f2:"Febrile seizure over 5 min, lethargic during fever.",h:"Comfort care.",o:["apap","ibu"],x:""},
+{n:"Urinary infection in young children",cat:"Children",f:"u",s:["fever","lethargy","nausea","dysuria"],r:"Under 2: often only fever without a cold, fussiness, vomiting, poor feeding, foul urine. Older: pain peeing, accidents, belly pain.",k:"Urine dipstick from a clean catch (nitrite/leukocytes).",f2:"Infant under 3 months; vomiting can't keep fluids; very ill appearing.",h:"Fluids.",o:["apap","ibu"],x:"Needs weight-based antibiotics (cephalexin or amoxicillin-clavulanate commonly); get a pediatric dose from a clinician or the FDA label.",rx:["cex","amc"]},
+{n:"Diaper rash",cat:"Children",f:"c",s:["diaper","rash"],r:"Red irritated skin in the diaper area.",k:"Bright red with satellite dots at edges and in skin folds = yeast.",f2:"Blisters, pus, fever, bleeding.",h:"Change often, air time, rinse with water (no wipes with alcohol), thick zinc oxide barrier every change.",o:["clo"],x:"Yeast: clotrimazole or nystatin cream under the zinc paste.",rx:["nys"]},
+{n:"Pinworms",cat:"Children",f:"c",s:["itchbottom","itch"],r:"Intense anal itching at night, restless sleep. Tiny white threads seen at the anus 1 to 2 h after bedtime.",k:"Tape test at first waking: press clear tape to the anus, look for eggs/worms.",f2:"Rarely serious.",h:"Morning baths, short nails, wash hands, hot wash bedding/underwear. Treat whole household.",o:[],x:"Mebendazole 100 mg once, repeat in 2 to 3 weeks (age 2+ per label).",rx:["meb","alben"]},
+{n:"Oral thrush",cat:"Children",f:"c",s:["mouthsores"],r:"White patches on tongue, cheeks that don't wipe off easily (milk wipes off).",k:"",f2:"Not drinking.",h:"Boil pacifiers and bottle nipples; treat nipples if breastfeeding.",o:[],x:"Nystatin suspension (infant dose from label).",rx:["nys"]},
+{n:"Nursemaid's elbow",cat:"Children",f:"c",s:["pullarm"],r:"Age 1 to 4, after being lifted or pulled by the hand/arm: holds arm straight and still, won't use it, little swelling.",k:"No swelling, deformity, or point tenderness (those suggest fracture).",f2:"Swelling, bruising, fall onto the arm (fracture), numb or pale hand.",h:"A trained person can reduce it with a quick, gentle twist; if no one is trained, put the arm in a comfortable sling and get care. Many reduce on their own.",o:["apap","ibu"],x:""},
+{n:"Swallowed battery, magnet or poison",cat:"Children",f:"u",s:["swallowed","drool","nausea"],r:"Seen or suspected swallowing of a button battery, magnets, pills, or chemicals. Drooling, refusing food, vomiting, chest pain.",k:"See the Children tab, 'Swallowed objects and poisons'.",f2:"This entire condition is a red flag.",h:"Call Poison Control 1-800-222-1222 if any line works. Button battery: honey 10 mL every 10 min (age 1+) on the way to care.",o:[],x:""}
+);
+
+
+/* ======================= UI ======================= */
+const $=s=>document.querySelector(s), esc=s=>s;
+const store={get(k){try{return JSON.parse(localStorage.getItem('gdmed:'+k))}catch(e){return null}},set(k,v){try{localStorage.setItem('gdmed:'+k,JSON.stringify(v))}catch(e){}}};
+const th=store.get('theme'); if(th) document.documentElement.dataset.theme=th;
+$('#theme').onclick=()=>{const cur=document.documentElement.dataset.theme||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light');const nx=cur==='dark'?'light':'dark';document.documentElement.dataset.theme=nx;store.set('theme',nx)};
+$('#printAll').onclick=()=>{document.querySelectorAll('details').forEach(d=>d.open=true);setTimeout(()=>window.print(),100)};
+
+// tabs
+const tabs=[...document.querySelectorAll('nav.tabs button')];
+function show(p){tabs.forEach(t=>t.setAttribute('aria-selected',t.dataset.p===p));document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on',x.id===p));store.set('tab',p);window.scrollTo(0,0)}
+tabs.forEach(t=>t.onclick=()=>show(t.dataset.p));
+const lastTab=store.get('tab'); if(lastTab&&document.getElementById(lastTab)) show(lastTab);
+
+const typePill=t=>({OTC:'<span class="pill g">OTC</span>',BTC:'<span class="pill y">BTC</span>',Rx:'<span class="pill r">Rx</span>',HOME:'<span class="pill m">Rx · LONG-TERM</span>'}[t]);
+const drugLink=id=>DM[id]?`<a class="dr" data-d="${id}">${DM[id].n}</a>`:id;
+document.addEventListener('click',e=>{const a=e.target.closest('a.dr');if(!a)return;e.preventDefault();show('drugs');$('#dQ').value=DM[a.dataset.d].n;$('#dType').value='';renderDrugs();const el=document.getElementById('drug-'+a.dataset.d);if(el){el.open=true;el.scrollIntoView({block:'start'})}});
+
+// condition card
+function condCard(c,extra=''){
+  const freq=c.f==='u'?'<span class="pill r">UNCOMMON / DANGEROUS</span>':'<span class="pill b">COMMON</span>';
+  return `<details class="card"><summary><b>${c.n}</b> ${freq} <span class="pill m">${c.cat}</span> ${extra}</summary><div class="body">
+  <h4>Recognize</h4><p>${c.r}</p>
+  ${c.k?`<h4>How to check</h4><p>${c.k}</p>`:''}
+  <div class="box danger"><b class="tag">Red flags: evacuate</b>${c.f2}</div>
+  ${c.h?`<h4>Home care</h4><p>${c.h}</p>`:''}
+  ${c.o&&c.o.length?`<h4>OTC options</h4><p>${c.o.map(drugLink).join(' · ')}</p>`:''}
+  ${c.x?`<h4>Treatment / Rx regimen (adult)</h4><p>${c.x}</p>`:''}
+  ${c.rx&&c.rx.length?`<p class="foot">Drug details: ${c.rx.map(drugLink).join(' · ')}</p>`:''}
+  </div></details>`;
+}
+
+// symptom checker
+const chipWrap=$('#scChips'); let picked=new Set(store.get('sx')||[]);
+const sxUsed=new Set(C.flatMap(c=>c.s));
+Object.entries(SX).filter(([k])=>sxUsed.has(k)).forEach(([k,v])=>{const b=document.createElement('button');b.className='chip'+(picked.has(k)?' on':'');b.textContent=v;b.type='button';b.onclick=()=>{picked.has(k)?picked.delete(k):picked.add(k);b.classList.toggle('on');store.set('sx',[...picked]);runSC()};chipWrap.appendChild(b)});
+$('#scClear').onclick=()=>{picked.clear();store.set('sx',[]);chipWrap.querySelectorAll('.chip').forEach(c=>c.classList.remove('on'));runSC()};
+$('#scAge').onchange=runSC;
+function runSC(){
+  const out=$('#scOut'); if(!picked.size){out.innerHTML='<p class="muted">Select symptoms to see likely conditions.</p>';return}
+  const age=$('#scAge').value;
+  const scored=C.map(c=>{const m=c.s.filter(s=>picked.has(s)).length;return {c,m,sc:m*2-(c.s.length-m)*0.25+(c.f==='u'&&m>=2?0.5:0)}}).filter(x=>x.m>0)
+    .sort((a,b)=>b.sc-a.sc).slice(0,10);
+  let warn='';
+  if(age==='i'&&picked.has('fever')) warn='<div class="box danger"><b class="tag">Infant + fever</b>Any fever of 100.4°F+ in a baby under 3 months is an emergency. Infants 3 to 12 months with fever plus poor feeding, lethargy, or fast breathing need urgent care.</div>';
+  out.innerHTML=warn+(scored.length?scored.map(x=>condCard(x.c,`<span class="score">${x.m}/${x.c.s.length} match</span>`)).join(''):'<p class="muted">No match.</p>');
+}
+runSC();
+
+// vitals
+const VR=[[100,180,30,60],[100,160,25,50],[90,150,24,40],[80,140,22,34],[70,120,18,30],[60,100,12,20]];
+function vit(){
+  const a=+$('#vAge').value,[hl,hh,rl,rh]=VR[a],hr=+$('#vHR').value,rr=+$('#vRR').value,t=+$('#vT').value;
+  let s=`Normal for age: heart ${hl}–${hh}/min · breathing ${rl}–${rh}/min\n`.replace(/–/g,' to ');
+  if(hr) s+=`Heart ${hr}: `+(hr<hl?'LOW':hr>hh?'HIGH (fever, pain, dehydration, blood loss, infection, fear)':'normal')+'\n';
+  if(rr) s+=`Breathing ${rr}: `+(rr<rl?'LOW (drugs/sedation, head injury, exhaustion)':rr>rh?'HIGH (pneumonia, asthma, sepsis, acidosis, fever)':'normal')+'\n';
+  if(t){ if(t>=104) s+=`Temp ${t}°F: HIGH FEVER, actively cool, look for the source\n`; else if(t>=100.4) s+=`Temp ${t}°F: fever`+(a===0?'. INFANT UNDER 3 MONTHS: EMERGENCY':'')+'\n'; else if(t<95) s+=`Temp ${t}°F: HYPOTHERMIA, emergency\n`; else if(t<97) s+=`Temp ${t}°F: low, rewarm and recheck\n`; else s+=`Temp ${t}°F: normal\n`;}
+  $('#vOut').textContent=s.trim();
+}
+['#vAge','#vHR','#vRR','#vT'].forEach(i=>$(i).addEventListener('input',vit));vit();
+
+// conditions list
+const cats=[...new Set(C.map(c=>c.cat))];cats.forEach(c=>{const o=document.createElement('option');o.value=o.textContent=c;$('#cCat').appendChild(o)});
+function renderCond(){
+  const q=$('#cQ').value.toLowerCase().trim(),cat=$('#cCat').value,fr=$('#cFreq').value;
+  const list=C.filter(c=>(!cat||c.cat===cat)&&(!fr||c.f===fr)&&(!q||JSON.stringify(c).toLowerCase().includes(q)||c.s.some(s=>SX[s].toLowerCase().includes(q))));
+  $('#cList').innerHTML=list.map(c=>condCard(c)).join('')||'<p class="muted">No match.</p>';
+}
+['#cQ','#cCat','#cFreq'].forEach(i=>$(i).addEventListener('input',renderCond));renderCond();
+
+// drugs
+const H=t=>String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+let LABELS={};
+try{const el=document.getElementById('fdaLabels');if(el)LABELS=JSON.parse(el.textContent)}catch(e){}
+function labelHTML(L){
+  if(!L) return '';
+  const meta=[L.brand,L.generic,L.mfr,L.date?('label date '+L.date):''].filter(Boolean).map(H).join(' · ');
+  const secs=FDA_ORDER.filter(([k])=>L[k]).map(([k,t])=>`<details class="card" style="margin:6px 0"><summary><b style="font-size:14px">${t}</b></summary><div class="body"><p style="white-space:pre-wrap;font-size:14px">${H(L[k])}</p></div></details>`).join('');
+  return `<h4>Full FDA package insert</h4><p class="foot">${meta}</p>${secs}`;
+}
+function monoHTML(m){
+  if(!m) return '';
+  const row=(t,v)=>v?`<dt>${t}</dt><dd>${v}</dd>`:'';
+  const ind=m.i&&m.i.length?`<div class="tbl"><table><tr><th>Indication</th><th>Adult regimen</th></tr>${m.i.map(r=>`<tr><td>${r[0]}</td><td>${r[1]}</td></tr>`).join('')}</table></div>`:'';
+  return `${ind}<dl class="dl">${row('How it works',m.m)}${row('Forms / strengths',m.s)}${row('Contraindications',m.ci)}${row('Common side effects',m.se)}${row('Serious / boxed',m.sr)}${row('Kidney / liver dosing',m.rn)}${row('Pregnancy',m.pg)}${row('Breastfeeding',m.la)}${row('Overdose',m.od)}${row('Storage / shelf life',m.st)}${row('Interactions',m.ix)}${row('Practical notes',m.nt)}</dl>`;
+}
+function drugCard(x){
+  const L=LABELS[x.id];
+  const lab=L?labelHTML(L):(x.fda?`<p class="foot noprint">Full FDA insert not downloaded yet (use the button at top of this tab).</p>`:'');
+  return `<details class="card" id="drug-${x.id}"><summary><b>${x.n}</b> ${typePill(x.t)} <span class="muted" style="font-size:14px">${x.c}</span> ${L?'<span class="pill g">FDA LABEL</span>':''}</summary><div class="body"><dl class="dl">
+  <dt>Brands / labels</dt><dd>${x.b}</dd>
+  ${x.u?`<dt>Used for</dt><dd>${x.u}</dd>`:''}
+  ${x.d?`<dt>${x.t==='HOME'?'Dose':'Adult dose'}</dt><dd>${x.d}</dd>`:''}
+  ${x.k?`<dt>Children</dt><dd>${x.k}</dd>`:''}
+  ${x.w?`<dt>Warnings</dt><dd>${x.w}</dd>`:''}
+  </dl>${monoHTML(MONO[x.id])}${lab}<p class="noprint"><button class="b" data-add="${x.id}" type="button">+ Add to interaction check</button></p></div></details>`;
+}
+/* --- openFDA fetch --- */
+function slimLabel(r){const o={};FDA_ORDER.forEach(([k])=>{if(r[k])o[k]=r[k].join('\n\n')});const f=r.openfda||{};o.brand=(f.brand_name||[]).join(', ');o.generic=(f.generic_name||[]).join(', ');o.mfr=(f.manufacturer_name||[])[0]||'';o.date=r.effective_time||'';return o}
+function lscore(r){return FDA_ORDER.reduce((n,[k])=>n+(r[k]?r[k].join('').length:0),0)+(r.dosage_and_administration?1e6:0)}
+async function getLabel(name,rx){
+  const tries=[];
+  if(rx) tries.push(`openfda.generic_name:"${name}" AND openfda.product_type:"HUMAN PRESCRIPTION DRUG"`);
+  tries.push(`openfda.generic_name:"${name}"`,`openfda.substance_name:"${name}"`);
+  for(const q of tries){
+    const r=await fetch('https://api.fda.gov/drug/label.json?search='+encodeURIComponent(q)+'&limit=10');
+    if(r.status===404) continue;
+    if(!r.ok) throw new Error('openFDA HTTP '+r.status);
+    const j=await r.json();const res=j.results||[];if(!res.length)continue;
+    res.sort((a,b)=>lscore(b)-lscore(a));return slimLabel(res[0]);
+  }
+  return null;
+}
+function fdaStatus(){
+  const n=D.filter(x=>LABELS[x.id]).length,tot=D.filter(x=>x.fda).length,extra=Object.keys(LABELS).filter(k=>k.startsWith('q:')).length;
+  $('#fdaStatus').innerHTML=n?`<b>${n} of ${tot}</b> drug labels stored${extra?` plus ${extra} extra lookup(s)`:''}. Each drug card now shows the complete insert: pediatric dosing, all warnings, full interaction list, overdose, storage.`:`Not downloaded yet. While online (Wi-Fi), tap <b>Download all</b> and wait 1 to 2 minutes. In the phone app the inserts are then stored on the phone for offline use. On a computer, also click <b>Save offline copy</b>.`;
+}
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+$('#fdaAll').onclick=async()=>{
+  const list=D.filter(x=>x.fda);let ok=0,miss=[];
+  for(let i=0;i<list.length;i++){const x=list[i];$('#fdaProg').textContent=`Fetching ${i+1}/${list.length}: ${x.n}…`;
+    try{const L=await getLabel(x.fda,x.t!=='OTC');if(L){LABELS[x.id]=L;ok++}else miss.push(x.n)}catch(e){$('#fdaProg').textContent='Stopped: '+e.message+'. Check the internet connection and try again (already fetched labels are kept).';fdaStatus();renderDrugs();return}
+    await sleep(300);}
+  $('#fdaProg').textContent=`Done: ${ok} labels fetched.`+(miss.length?` Not found: ${miss.join(', ')}.`:'')+' Stored in this app. On a computer, also click Save offline copy.';
+  persistLabels();fdaStatus();renderDrugs();
+};
+$('#fdaOne').onclick=async()=>{
+  const q=$('#fdaOneQ').value.trim().toLowerCase();if(!q)return;
+  if(LABELS['q:'+q]){$('#fdaOneOut').innerHTML=labelHTML(LABELS['q:'+q]);return}
+  $('#fdaOneOut').innerHTML='<p class="foot">Fetching…</p>';
+  try{const L=await getLabel(q,false);if(!L){$('#fdaOneOut').innerHTML='<p class="foot">No FDA label found for that generic name.</p>';return}
+    LABELS['q:'+q]=L;persistLabels();$('#fdaOneOut').innerHTML=labelHTML(L);fdaStatus();}
+  catch(e){$('#fdaOneOut').innerHTML='<p class="foot">Could not reach openFDA ('+H(e.message)+'). Needs internet.</p>'}
+};
+$('#fdaOneQ').addEventListener('keydown',e=>{if(e.key==='Enter')$('#fdaOne').click()});
+$('#fdaSave').onclick=()=>{
+  let base=SNAP.replace(/\n<script id="fdaLabels" type="application\/json">[^<]*<\/script>\n/,'\n');
+  const json=JSON.stringify(LABELS).replace(/</g,'\\u003c');
+  const i=base.lastIndexOf('<script>\nconst SNAP');
+  const html=base.slice(0,i)+'\n<script id="fdaLabels" type="application/json">'+json+'<\/script>\n'+base.slice(i);
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([html],{type:'text/html'}));a.download='grid-down-medical.html';document.body.appendChild(a);a.click();a.remove();
+  $('#fdaProg').textContent='Saved. Replace your old copy with the downloaded grid-down-medical.html (in Downloads).';
+};
+fdaStatus();
+function renderDrugs(){
+  const q=$('#dQ').value.toLowerCase().trim(),t=$('#dType').value;
+  const list=D.filter(x=>(!t||x.t===t)&&(!q||(x.n+' '+x.b+' '+x.c+' '+x.u).toLowerCase().includes(q)));
+  $('#dList').innerHTML=list.map(drugCard).join('')||'<p class="muted">Not in this database. Check the package insert.</p>';
+}
+['#dQ','#dType'].forEach(i=>$(i).addEventListener('input',renderDrugs));renderDrugs();
+document.addEventListener('click',e=>{const b=e.target.closest('[data-add]');if(!b)return;addIx(b.dataset.add);b.textContent='✓ Added';});
+
+// interactions
+let sel=store.get('ix')||[];
+const dl=$('#iList');D.forEach(x=>{const o=document.createElement('option');o.value=x.n;o.label=x.b.replace(/<[^>]+>/g,'');dl.appendChild(o)});
+function findDrug(v){v=v.toLowerCase().trim();if(!v)return null;return D.find(x=>x.n.toLowerCase()===v)||D.find(x=>(x.n+' '+x.b).toLowerCase().replace(/<[^>]+>/g,'').includes(v))}
+function addIx(id){if(!sel.includes(id))sel.push(id);store.set('ix',sel);renderIx()}
+$('#iAdd').onclick=()=>{const d=findDrug($('#iQ').value);if(d){addIx(d.id);$('#iQ').value=''}else{$('#iOut').innerHTML='<p class="muted">Not found. Try the generic name.</p>'}};
+$('#iQ').addEventListener('keydown',e=>{if(e.key==='Enter')$('#iAdd').click()});
+$('#iClr').onclick=()=>{sel=[];store.set('ix',sel);renderIx()};
+function renderIx(){
+  $('#iSel').innerHTML=sel.map(id=>`<span>${DM[id].n}<button data-rm="${id}" aria-label="remove">×</button></span>`).join('');
+  $('#iSel').querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{sel=sel.filter(x=>x!==b.dataset.rm);store.set('ix',sel);renderIx()});
+  if(sel.length<2){$('#iOut').innerHTML='<p class="muted">Add two or more drugs.</p>';return}
+  const hits=[];
+  for(let i=0;i<sel.length;i++)for(let j=i+1;j<sel.length;j++){
+    const A=DM[sel[i]],B=DM[sel[j]],seen=new Set();
+    RULES.forEach(([ta,tb,sv,msg])=>{
+      if((A.g.includes(ta)&&B.g.includes(tb))||(A.g.includes(tb)&&B.g.includes(ta))){if(!seen.has(msg)){seen.add(msg);hits.push({sv,msg,a:A.n,b:B.n})}}
+    });
+  }
+  hits.sort((x,y)=>y.sv-x.sv);
+  const lab={3:'MAJOR',2:'MODERATE',1:'MINOR'};
+  $('#iOut').innerHTML=hits.length?hits.map(h=>`<div class="ix sev${h.sv}"><b>${lab[h.sv]}</b> · ${h.a} + ${h.b}<br>${h.msg}</div>`).join('')+'<p class="foot">Not finding a problem here does not prove a combination is safe. Check the package inserts.</p>':'<div class="ix sev1">No interaction found among these in this tool\'s rule set. Still check each package insert.</div>';
+}
+renderIx();
+
+// OTC table
+function renderCombo(){const q=$('#oQ').value.toLowerCase();$('#oTbl tbody').innerHTML=COMBO.filter(r=>!q||r.join(' ').toLowerCase().includes(q)).map(r=>`<tr><td><b>${r[0]}</b></td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join('')}
+$('#oQ').addEventListener('input',renderCombo);renderCombo();
+const IDB={open(){return new Promise((res,rej)=>{const r=indexedDB.open('gdmed',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+async get(k){const db=await this.open();return new Promise(res=>{const q=db.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result);q.onerror=()=>res(null)})},
+async set(k,v){const db=await this.open();return new Promise(res=>{const tx=db.transaction('kv','readwrite');tx.objectStore('kv').put(v,k);tx.oncomplete=()=>res(true);tx.onerror=()=>res(false)})}};
+function persistLabels(){try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist();IDB.set('labels',LABELS)}catch(e){}}
+try{IDB.get('labels').then(v=>{if(v&&typeof v==='object'){LABELS=Object.assign({},v,LABELS);fdaStatus();renderDrugs()}}).catch(()=>{})}catch(e){}
+const AGE_NOW=new Date();
+let KIDS=store.get('kids')||[{name:"",y:"",m:"",lb:""}];
+let DLOG=store.get('dlog')||{};
+function ageMonths(k){const y=+k.y;if(!y)return null;const mo=k.m?+k.m:6;return (AGE_NOW.getFullYear()-y)*12+(AGE_NOW.getMonth()+1-mo)}
+function band(w,bands){for(const [lo,hi,v] of bands) if(w>=lo&&w<=hi) return v; return null}
+function apapDose(lb,am){
+  const B=[[24,35,"5 mL"],[36,47,"7.5 mL"],[48,59,"10 mL"],[60,71,"12.5 mL"],[72,95,"15 mL"]];
+  const A=[[24,47,"5 mL"],[48,71,"7.5 mL"],[72,107,"10 mL"],[108,131,"12.5 mL"],[132,143,"15 mL"]];
+  if(lb){ if(lb<24) return {ask:1}; if(lb>95) return {adult:1}; return {v:band(lb,B),by:"weight"}; }
+  if(am==null) return null; if(am<24) return {ask:1}; if(am>=144) return {adult:1}; return {v:band(am,A),by:"age (enter weight for better accuracy)"};
+}
+function ibuDose(lb,am){
+  if(am!=null&&am<6) return {ask:1};
+  const infant=am!=null&&am<24;
+  if(infant){
+    if(lb){ if(lb<12) return {ask:1}; if(lb<=17) return {v:"1.25 mL",prod:"Infants' drops 50 mg/1.25 mL",by:"weight"}; if(lb<=23) return {v:"1.875 mL",prod:"Infants' drops 50 mg/1.25 mL",by:"weight"}; return {ask:1,note:"Weight above the infant chart but under age 2: label says ask a doctor."}; }
+    return {v:am<12?"1.25 mL":"1.875 mL",prod:"Infants' drops 50 mg/1.25 mL",by:"age (enter weight)"};
+  }
+  const B=[[24,35,"5 mL"],[36,47,"7.5 mL"],[48,59,"10 mL"],[60,71,"12.5 mL"],[72,95,"15 mL"]];
+  const A=[[24,47,"5 mL"],[48,71,"7.5 mL"],[72,107,"10 mL"],[108,131,"12.5 mL"],[132,143,"15 mL"]];
+  if(lb){ if(lb<24) return {ask:1}; if(lb>95) return {adult:1}; return {v:band(lb,B),prod:"Children's 100 mg/5 mL",by:"weight"}; }
+  if(am==null) return null; if(am>=144) return {adult:1}; return {v:band(am,A),prod:"Children's 100 mg/5 mL",by:"age (enter weight)"};
+}
+function cetDose(am){ if(am==null) return null; if(am<24) return {ask:1}; if(am<72) return {v:"2.5 mL once daily (may increase to 5 mL once daily or 2.5 mL every 12 h); max 5 mL/24 h"}; return {v:"5 or 10 mL once daily; max 10 mL/24 h"}; }
+function vitBand(am){ if(am==null) return null; const i=am<3?0:am<12?1:am<36?2:am<72?3:am<144?4:5; return VR[i]; }
+function fmtT(t){const d=new Date(t);return d.toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'})}
+function logInfo(i,med,intervalH,max){
+  const key=i+':'+med, arr=(DLOG[key]||[]).filter(t=>Date.now()-t<864e5);
+  if(!arr.length) return `<span class="muted">No doses logged in 24 h.</span>`;
+  const last=Math.max(...arr), next=last+intervalH*36e5, ok=Date.now()>=next&&arr.length<max;
+  return `Last: <b>${fmtT(last)}</b> · ${arr.length}/${max} in 24 h · ${arr.length>=max?'<b style="color:var(--danger)">24 h max reached</b>':ok?'<b style="color:var(--ok)">OK to give now</b>':'Next allowed: <b>'+fmtT(next)+'</b>'}`;
+}
+function renderKids(){
+  $('#kidCards').innerHTML=KIDS.map((k,i)=>{
+    const am=ageMonths(k), lb=parseFloat(k.lb)||0, kg=lb?(lb/2.2):0;
+    const ageTxt=am==null?'':am<24?`${Math.max(am,0)} months`:`${Math.floor(am/12)} years ${am%12} months`;
+    const ageTxt2=ageTxt+(k.m?'':(am!=null?' (birth month not set, assumed June)':''));
+    const ap=apapDose(lb,am), ib=ibuDose(lb,am), ce=cetDose(am), vb=vitBand(am);
+    const show=(d,prod,int,max)=>!d?'<span class="muted">Enter birth year or weight.</span>':d.ask?`<b>Label: "ask a doctor"</b>${d.note?' '+d.note:''}${k.doc?' · see Doctor\'s doses below':''}`:d.adult?'Over the children\'s chart: use the adult product label.':`<b>${d.v}</b> ${d.prod||prod} · every ${int} · max ${max} doses/24 h <span class="foot">(by ${d.by})</span>`;
+    const ors=kg?`Plan B (moderate dehydration): <b>${Math.round(kg*75)} mL</b> (≈ ${(kg*75/240).toFixed(1)} cups) over 4 h. Per loose stool: ${am!=null&&am<24?'50 to 100 mL':'100 to 200 mL'}.`:'Enter weight.';
+    const rr=am==null?'':am<2?60:am<12?50:am<60?40:null;
+    return `<div class="card" style="padding:14px 16px">
+    <div class="row" style="margin-bottom:6px">
+      <label>Name<input type="search" value="${H(k.name)}" data-k="${i}" data-f="name" style="width:130px"></label>
+      <label>Birth year<input type="number" value="${k.y}" data-k="${i}" data-f="y" style="width:90px"></label>
+      <label>Birth month (1 to 12)<input type="number" min="1" max="12" value="${k.m}" data-k="${i}" data-f="m" style="width:90px"></label>
+      <label>Weight (lb)<input type="number" step="0.1" value="${k.lb}" data-k="${i}" data-f="lb" style="width:100px"></label>
+      <span class="muted" style="align-self:center">${ageTxt2}${kg?` · ${kg.toFixed(1)} kg`:''}</span>
+      <button class="b noprint" data-del="${i}" type="button" style="margin-left:auto">Remove</button>
+    </div>
+    <div class="tbl"><table>
+    <tr><th style="width:190px">Acetaminophen<br><span class="foot">Infants'/Children's 160 mg/5 mL</span></th><td>${show(ap,'',"4 h",5)}<br>${logInfo(i,'apap',4,5)} <button class="b noprint" data-log="${i}:apap" type="button">Log dose now</button></td></tr>
+    <tr><th>Ibuprofen</th><td>${show(ib,'',"6 to 8 h",4)}<br>${logInfo(i,'ibu',6,4)} <button class="b noprint" data-log="${i}:ibu" type="button">Log dose now</button></td></tr>
+    <tr><th>Cetirizine<br><span class="foot">Children's 1 mg/mL</span></th><td>${ce?ce.ask?'<b>Label: "ask a doctor"</b>':'<b>'+ce.v+'</b>':'<span class="muted">Enter birth year.</span>'}</td></tr>
+    <tr><th>Oral rehydration</th><td>${ors}</td></tr>
+    <tr><th>Normal vitals</th><td>${vb?`Heart ${vb[0]} to ${vb[1]}/min · breathing ${vb[2]} to ${vb[3]}/min${rr?` · <b>fast breathing (possible pneumonia) at ${rr}+/min</b>`:''}`:''}</td></tr>
+    <tr><th>Fever rule</th><td>${am==null?'':am<3?'<b>Any fever 100.4°F+ = emergency</b>':am<6?'102°F+ or fever over 24 h needs care; lethargy = emergency':am<24?'Fever over 24 h without cold symptoms: check urine. Over 3 days: needs care.':'Over 3 days, or returns after 24 h fever-free: needs care.'}</td></tr>
+    <tr><th>Epinephrine size</th><td>${kg?kg>=30?'0.3 mg auto-injector':kg>=15?'0.15 mg auto-injector':kg>=7.5?'0.1 mg auto-injector (Auvi-Q 0.1)':'Under 7.5 kg: clinician guidance':'Enter weight.'} <span class="foot">(only if prescribed)</span></td></tr>
+    </table></div>
+    <label style="display:block;font-size:13px;color:var(--muted)">Doctor's doses (write what your pediatrician gives you: drug, product strength, dose, how often, date)
+    <textarea data-k="${i}" data-f="doc" rows="3" style="width:100%;padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:14px var(--sans)">${H(k.doc||'')}</textarea></label>
+    </div>`;}).join('');
+}
+function saveKids(){store.set('kids',KIDS)}
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.k!==undefined&&t.dataset.f){KIDS[+t.dataset.k][t.dataset.f]=t.value;saveKids();renderKids()}});
+document.addEventListener('click',e=>{
+  const d=e.target.closest('[data-del]');if(d){if(!confirm('Remove this child card?'))return;KIDS.splice(+d.dataset.del,1);saveKids();renderKids();return}
+  const l=e.target.closest('[data-log]');if(l){const key=l.dataset.log;(DLOG[key]=DLOG[key]||[]).push(Date.now());DLOG[key]=DLOG[key].filter(t=>Date.now()-t<2*864e5);store.set('dlog',DLOG);renderKids();}
+});
+$('#kidAdd').onclick=()=>{KIDS.push({name:"",y:"",m:"",lb:""});saveKids();renderKids()};
+renderKids(); setInterval(()=>{if(!document.activeElement||!document.activeElement.closest('#kidCards'))renderKids()},60000);
+$('#kidConds').innerHTML=C.filter(c=>c.cat==='Children').map(c=>condCard(c)).join('');
+
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}</script>
+</body>
+</html>

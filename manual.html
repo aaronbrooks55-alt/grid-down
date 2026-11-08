@@ -1,0 +1,916 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Grid Down Manual</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Grid Down">
+<meta name="theme-color" content="#1d1f1c">
+
+<style>
+:root{
+  --bg:#f4f1ea; --panel:#fffdf8; --ink:#1d1f1c; --muted:#5d6158; --line:#d9d3c4;
+  --accent:#a3401c; --accent-soft:#f6e3d8; --ok:#2f6b3a; --ok-soft:#e0efe1;
+  --warn:#8a5a00; --warn-soft:#fbf0d4; --danger:#9b1c1c; --danger-soft:#fbe1e1;
+  --mono: ui-monospace, "Cascadia Mono", Consolas, Menlo, monospace;
+  --sans: system-ui, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#141612; --panel:#1d201b; --ink:#e9e6dd; --muted:#a3a79a; --line:#33372f;
+    --accent:#e07a4f; --accent-soft:#3a2419; --ok:#7cc287; --ok-soft:#1d3121;
+    --warn:#e3b350; --warn-soft:#352a12; --danger:#f08080; --danger-soft:#3a1a1a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#141612; --panel:#1d201b; --ink:#e9e6dd; --muted:#a3a79a; --line:#33372f;
+  --accent:#e07a4f; --accent-soft:#3a2419; --ok:#7cc287; --ok-soft:#1d3121;
+  --warn:#e3b350; --warn-soft:#352a12; --danger:#f08080; --danger-soft:#3a1a1a;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
+a{color:var(--accent)}
+header.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:2px solid var(--ink);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header.top h1{font:800 18px/1.1 var(--sans);letter-spacing:.06em;text-transform:uppercase;margin:0 12px 0 0}
+header.top h1 small{display:block;font:500 11px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:none}
+#q{flex:1;min-width:180px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:15px var(--sans)}
+button{font:600 13px var(--sans);padding:8px 12px;border:1px solid var(--ink);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
+button:hover{background:var(--accent-soft)}
+.wrap{display:grid;grid-template-columns:240px 1fr;max-width:1200px;margin:0 auto}
+nav.toc{position:sticky;top:64px;align-self:start;height:calc(100vh - 64px);overflow:auto;padding:16px 8px 40px 16px;border-right:1px solid var(--line)}
+nav.toc a{display:block;padding:5px 8px;border-radius:5px;text-decoration:none;color:var(--ink);font-size:14px}
+nav.toc a:hover{background:var(--accent-soft)}
+nav.toc .grp{font:700 11px var(--mono);color:var(--muted);text-transform:uppercase;margin:14px 8px 4px}
+main{padding:16px 24px 80px;min-width:0}
+section{scroll-margin-top:72px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:0 0 18px}
+section.hide{display:none}
+h2{font:800 22px/1.2 var(--sans);margin:0 0 4px;display:flex;gap:10px;align-items:baseline}
+h2 .num{font:700 13px var(--mono);color:var(--accent)}
+.lede{color:var(--muted);margin:0 0 14px}
+h3{font:700 16px var(--sans);margin:20px 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
+p,li{max-width:78ch}
+ul,ol{padding-left:22px}
+li{margin:3px 0}
+table{border-collapse:collapse;width:100%;margin:8px 0 12px;font-size:14px}
+th,td{border:1px solid var(--line);padding:6px 8px;text-align:left;vertical-align:top}
+th{background:var(--bg);font-weight:700}
+.tbl{overflow-x:auto}
+.box{border-left:4px solid var(--ink);padding:10px 14px;margin:12px 0;border-radius:0 6px 6px 0;background:var(--bg)}
+.box.danger{border-color:var(--danger);background:var(--danger-soft)}
+.box.warn{border-color:var(--warn);background:var(--warn-soft)}
+.box.ok{border-color:var(--ok);background:var(--ok-soft)}
+.box.local{border-color:var(--accent);background:var(--accent-soft)}
+.box b.tag{font:700 11px var(--mono);text-transform:uppercase;letter-spacing:.06em;display:block;margin-bottom:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+.card{border:1px solid var(--line);border-radius:8px;padding:12px 14px;background:var(--bg)}
+.card h4{margin:0 0 6px;font-size:15px}
+.chk label{display:flex;gap:8px;align-items:flex-start;padding:3px 0;cursor:pointer}
+.chk input{margin-top:5px;width:16px;height:16px;flex:none}
+.chk input:checked + span{text-decoration:line-through;color:var(--muted)}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.calc label{font-size:13px;color:var(--muted);display:flex;flex-direction:column;gap:3px}
+.calc input,.calc select{padding:7px 8px;border:1px solid var(--line);border-radius:6px;background:var(--panel);color:var(--ink);font:15px var(--sans)}
+.out{font:600 15px var(--mono);background:var(--ok-soft);border:1px solid var(--ok);border-radius:6px;padding:10px 12px;margin-top:10px;white-space:pre-line}
+.pill{display:inline-block;font:700 11px var(--mono);padding:2px 7px;border-radius:20px;border:1px solid currentColor;margin-right:4px}
+.pill.r{color:var(--danger)} .pill.y{color:var(--warn)} .pill.g{color:var(--ok)}
+kbd,code{font:13px var(--mono);background:var(--bg);border:1px solid var(--line);border-radius:4px;padding:0 4px}
+.foot{font-size:13px;color:var(--muted)}
+.prog{font:600 12px var(--mono);color:var(--muted)}
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr}
+  nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);columns:2;padding:10px 16px}
+  nav.toc .grp{display:none}
+  main{padding:12px 16px 60px}
+  section{padding:14px 14px}
+}
+@media print{
+  header.top,nav.toc,.noprint{display:none!important}
+  .wrap{display:block}
+  body{background:#fff;color:#000;font-size:11pt}
+  section{border:0;padding:0;margin:0 0 14pt;page-break-before:always;background:#fff}
+  section:first-of-type{page-break-before:auto}
+  section.hide{display:block}
+  .box{background:#fff!important;border-left-width:3pt}
+  a{color:#000;text-decoration:none}
+  table,.box,.card{page-break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Grid Down Manual<small>Oregonia, OH · Warren County · offline reference · v1 Nov 2026</small></h1>
+  <input id="q" type="search" placeholder="Search: bleach, deer, hypothermia, well, formula…" aria-label="Search the manual">
+  <a href="index.html" class="noprint" style="font:700 13px system-ui,sans-serif;padding:8px 12px;border:1px solid currentColor;border-radius:6px;color:inherit;text-decoration:none">⌂ Home</a>
+  <button id="clr" class="noprint">Show all</button>
+  <button onclick="window.print()" class="noprint">Print</button>
+  <button id="theme" class="noprint" aria-label="Toggle dark mode">◐</button>
+</header>
+<div class="wrap">
+<nav class="toc" id="toc">
+  <div class="grp">Act now</div>
+  <a href="#start">0. Start here</a>
+  <a href="#timeline">1. Outage timeline</a>
+  <a href="#tools">2. Calculators</a>
+  <div class="grp">Survive</div>
+  <a href="#water">3. Water</a>
+  <a href="#heat">4. Heat &amp; shelter</a>
+  <a href="#cold">5. Cold injuries &amp; kids</a>
+  <a href="#co">6. Fire, CO &amp; generators</a>
+  <a href="#food">7. Food &amp; cooking</a>
+  <div class="grp">Procure</div>
+  <a href="#game">8. Hunting &amp; processing</a>
+  <a href="#fish">9. Fishing</a>
+  <a href="#forage">10. Winter foraging</a>
+  <a href="#preserve">11. Preserving meat</a>
+  <div class="grp">Sustain</div>
+  <a href="#sanitation">12. Sanitation</a>
+  <a href="#medical">13. Medical</a>
+  <a href="#power">14. Power &amp; light</a>
+  <a href="#comms">15. Comms</a>
+  <a href="#security">16. Security &amp; community</a>
+  <div class="grp">Prepare</div>
+  <a href="#docs">17. Documents binder</a>
+  <a href="#kit">18. Supply checklist</a>
+  <a href="#sources">19. Sources</a>
+</nav>
+<main id="main">
+
+<!-- 0 START -->
+<section id="start" data-k="start priorities first hour">
+<h2><span class="num">00</span>Start here</h2>
+<p class="lede">Assume no restoration date and no outside help. Work the priorities in order. Everything below is for a 2 adult, 3 young child household in a rural Warren County winter.</p>
+<div class="box danger"><b class="tag">The three killers in a winter outage</b>
+<ol>
+<li><b>Carbon monoxide.</b> Generators, grills, camp stoves, and gas ovens used to heat or cook indoors. Kills silently, often at night. See §6.</li>
+<li><b>Cold.</b> Hypothermia in infants and toddlers starts before adults feel it. See §4 and §5.</li>
+<li><b>Fire.</b> Candles, space heaters, overloaded cords, stove ash. Fire department response may be slow or absent.</li>
+</ol>
+Contaminated water (diarrheal illness, dehydration in small kids) is the fourth, and it builds over days, not hours.</div>
+<h3>Priority order</h3>
+<ol>
+<li><b>Safety:</b> CO alarms on battery, fire extinguisher located, everyone accounted for.</li>
+<li><b>Warmth:</b> pick one warm room now, before the house cools. Close off the rest.</li>
+<li><b>Water:</b> capture what is in the pipes and water heater before it freezes or drains (§3).</li>
+<li><b>Information:</b> radio on, find out scope (local storm vs regional grid event).</li>
+<li><b>Food:</b> eat fridge food first, keep freezer shut.</li>
+<li><b>Sanitation:</b> set up the bucket toilet before you need it.</li>
+<li><b>Sustain:</b> fuel, power rationing, hunting/foraging only once the above are stable.</li>
+</ol>
+<div class="box local"><b class="tag">Local context · Oregonia / Warren County</b>
+<ul>
+<li>You are on the PJM grid (13 states plus DC). Western PJM includes Duke Energy Ohio, which serves much of Warren County. In January 2026 Winter Storm Fern pushed PJM into a Level 1 emergency and federal emergency orders; PJM has publicly warned demand could outrun supply as early as 2027. A cold snap is the most likely trigger for a long outage here.</li>
+<li><b>If you are on a private well, your water stops when the power stops.</b> The pump needs electricity. Treat water capture (§3) as a first hour task.</li>
+<li>Nearby surface water: Little Miami River, Todd Fork, Caesar Creek Lake. The Little Miami is widely impaired by E. coli and receives agricultural runoff. Always filter <i>and</i> disinfect, and never use it for infant formula (§3).</li>
+</ul></div>
+</section>
+
+<!-- 1 TIMELINE -->
+<section id="timeline" data-k="timeline first hour day plan schedule">
+<h2><span class="num">01</span>Outage timeline</h2>
+<p class="lede">What to do and when. Tick items in the Supply checklist (§18) beforehand so this list is execution, not shopping.</p>
+<div class="tbl"><table>
+<tr><th style="width:110px">When</th><th>Actions</th></tr>
+<tr><td><b>Hour 0 to 1</b></td><td>Note the time (use the Outage Clock in §2). Check CO and smoke alarms. Turn off/unplug electronics and most breakers to avoid surge on restoration; leave one light circuit on so you know when power returns. Turn fridge and freezer to coldest setting if not already. Radio on. Phones to low power mode. Fill every container, tub, and pot from the taps while pressure remains.</td></tr>
+<tr><td><b>Hour 1 to 6</b></td><td>Choose the warm room (small, interior or south facing, with a door). Hang blankets over doorways and windows. Move bedding, kid supplies, water, lighting, and the bucket toilet nearby. Bring pets in. If temps will be below freezing: protect pipes (§4) or drain the house.</td></tr>
+<tr><td><b>Day 1</b></td><td>Eat refrigerated perishables first; fridge is safe about 4 hours closed. Start the cooking routine (outdoors or with a vented wood stove only). Inventory fuel, water, food, meds. Agree on a household routine: sleep times, watch rotation for any combustion heater, one person checks kids' hands, feet, and energy every few hours.</td></tr>
+<tr><td><b>Day 2 to 3</b></td><td>Freezer limit: full freezer about 48 hours, half full about 24. Cook, can, or dry the meat before it thaws past safe. Check on neighbors, especially elderly and those on medical devices. Establish water treatment as a daily batch job. Ration generator fuel to defined windows (well pump, freezer pulls, charging).</td></tr>
+<tr><td><b>Day 4 to 14</b></td><td>Shift from stored to procured: hunting, trapping, fishing, foraging within your skill and the law. Formalize sanitation (latrine or composting buckets). Hygiene discipline matters more each day. Pool resources with a few trusted neighbors.</td></tr>
+<tr><td><b>Beyond 2 weeks</b></td><td>Long horizon: fuelwood supply, seed and garden planning for spring, meat preservation at scale, community watch, barter. Reassess whether to relocate to family or a better heated site while roads and fuel still allow it.</td></tr>
+</table></div>
+</section>
+
+<!-- 2 TOOLS -->
+<section id="tools" data-k="calculator bleach drops gallons water storage outage clock fridge freezer">
+<h2><span class="num">02</span>Calculators</h2>
+<p class="lede">Work offline. Inputs are remembered on this computer only.</p>
+
+<h3>Bleach dose for water disinfection</h3>
+<div class="calc">
+  <label>Gallons of water<input id="bGal" type="number" min="0.25" step="0.25" value="1"></label>
+  <label>Water condition<select id="bCond"><option value="1">Clear</option><option value="2">Cloudy, colored, or very cold</option></select></label>
+  <label>Bleach strength<select id="bStr"><option value="6">5 to 6% (regular)</option><option value="8.25">8.25% (concentrated)</option></select></label>
+</div>
+<div class="out" id="bOut"></div>
+<p class="foot">Unscented, plain bleach only (no "splash-less", no scent, no added cleaners). Bleach loses strength with age; use bottles under a year old if possible. Basis: CDC / EPA emergency disinfection guidance.</p>
+
+<h3>Water storage target</h3>
+<div class="calc">
+  <label>People<input id="wPpl" type="number" min="1" value="5"></label>
+  <label>Pets<input id="wPet" type="number" min="0" value="0"></label>
+  <label>Days<input id="wDays" type="number" min="1" value="14"></label>
+  <label>Gallons / person / day<select id="wRate"><option value="1">1 (CDC minimum: drink and cook)</option><option value="2" selected>2 (adds basic hygiene)</option><option value="3">3 (comfortable)</option></select></label>
+</div>
+<div class="out" id="wOut"></div>
+
+<h3>Outage clock (fridge and freezer)</h3>
+<div class="calc">
+  <label>Power went out at<input id="oStart" type="datetime-local"></label>
+  <label>Freezer is<select id="oFz"><option value="48">Full (about 48 h)</option><option value="24">Half full (about 24 h)</option></select></label>
+  <label>&nbsp;<button id="oNow" type="button">Outage started now</button></label>
+</div>
+<div class="out" id="oOut">Enter a start time.</div>
+<p class="foot">Times assume doors stay shut. A thermometer beats any clock: fridge food is safe at 40°F or below; frozen food with ice crystals or at 40°F or below can be refrozen. When in doubt, throw it out.</p>
+</section>
+
+<!-- 3 WATER -->
+<section id="water" data-k="water purification bleach boil filter well water heater snow rain river little miami nitrates formula pool shock calcium hypochlorite storage">
+<h2><span class="num">03</span>Water: collection and purification</h2>
+<p class="lede">Store at least 1 gallon per person per day (CDC minimum). For five people that is 70 gallons for two weeks before any hygiene.</p>
+
+<h3>Sources inside the house (use first, in this order)</h3>
+<ol>
+<li><b>Water already in containers</b> you filled at Hour 0.</li>
+<li><b>Water heater tank (40 to 80 gal).</b> Cut power (breaker) or set a gas unit to pilot/off first. Close the cold inlet valve on top. Open a hot tap somewhere in the house to let air in, then drain from the bottom valve into a clean container. First liter may have sediment; let it settle. This is safe drinking water if your supply was safe.</li>
+<li><b>House plumbing.</b> Open the highest faucet, then drain from the lowest faucet or outside spigot.</li>
+<li><b>Toilet tank</b> (the back tank, not the bowl): usable for flushing or, after disinfection, drinking if no tank cleaner tablets were ever used.</li>
+<li>Ice cubes, canned fruit and vegetable liquid.</li>
+</ol>
+
+<h3>Sources outside</h3>
+<ul>
+<li><b>Snow and ice:</b> melt first, then disinfect. Do not eat snow to hydrate; it drops body temperature. Collect fresh snow away from roads and roofs treated with chemicals.</li>
+<li><b>Rain and roof runoff:</b> discard the first flush of each rain, then filter and disinfect. Asphalt shingles add debris and chemicals; prefer a tarp or clean metal roof catchment.</li>
+<li><b>Streams, river, lake:</b> highest risk. Settle, prefilter, filter, then disinfect.</li>
+</ul>
+<div class="box danger"><b class="tag">Surface water and agriculture</b>
+Boiling and bleach kill germs. They do <b>not</b> remove farm chemicals, fuel, or nitrates. Boiling actually <b>concentrates</b> nitrates, which are dangerous to infants. In farm country after rain or snowmelt, runoff is worst.
+<ul><li>Activated carbon filters help with many pesticides, fuel and taste, but not nitrates.</li>
+<li><b>Infants and formula:</b> use stored bottled water or water drawn from your own system before the outage. Ready to feed formula is the best emergency option because it needs no water at all. Never mix formula with river, pond, or ditch water.</li>
+<li>Avoid water with an oily sheen, fuel smell, or near flooded fields, barns, or septic fields.</li></ul></div>
+
+<h3>Treatment sequence</h3>
+<ol>
+<li><b>Settle:</b> let cloudy water stand in a bucket for hours; pour off the clear top.</li>
+<li><b>Prefilter:</b> through a clean cloth, coffee filter, or sand/charcoal layered bucket. This makes chemical disinfection work.</li>
+<li><b>Filter:</b> a 0.1 to 0.2 micron hollow fiber filter (Sawyer, LifeStraw family, ceramic) removes bacteria and protozoa like Giardia and Cryptosporidium. Most do <b>not</b> stop viruses. Hollow fiber filters are ruined if they freeze when wet; keep them in a pocket or the warm room.</li>
+<li><b>Disinfect</b> by one of these:
+  <ul>
+  <li><b>Boil:</b> rolling boil for 1 minute. Most reliable method. Costs fuel.</li>
+  <li><b>Bleach</b> (5 to 9% unscented): 8 drops per gallon clear water, 16 drops if cloudy or very cold. 8.25% bleach: 6 drops clear, 12 cloudy. Stir, wait 30 minutes. You should smell a faint chlorine odor; if not, repeat the dose and wait 15 more minutes. Use the calculator in §2.</li>
+  <li><b>Pool shock (calcium hypochlorite, 65 to 78%, no algaecide or clarifier):</b> stores for years, far better shelf life than bleach. EPA method: dissolve one heaping teaspoon (about ¼ oz) in 2 gallons of water to make a stock solution. Then add 1 part stock to 100 parts water to be treated (about 6½ fl oz, a bit over ¾ cup, per 5 gallons; 1 pint per 12½ gallons). Wait 30 minutes. Store the granules sealed, cool, and away from fuels and acids; it is a strong oxidizer and fire risk.</li>
+  <li><b>Chlorine dioxide tablets:</b> effective against Crypto with longer contact time; follow the package.</li>
+  </ul></li>
+<li><b>Store</b> treated water in clean, covered food grade containers. Label "TREATED" with the date.</li>
+</ol>
+<div class="box warn"><b class="tag">Taste fix</b>
+Flat tasting boiled water: pour back and forth between two clean containers, or let it stand a few hours. Add a pinch of salt per quart if needed.</div>
+
+<h3>Storage notes</h3>
+<ul>
+<li>Use food grade containers (blue barrels, water bricks, commercially bottled). Not milk jugs (they degrade and leak).</li>
+<li>Stored tap water: rotate every 6 months. Commercial bottled water: follow the date.</li>
+<li>In freezing temps, store water in the warm room, or leave headspace so frozen jugs do not split. Frozen jugs in a cooler double as refrigeration.</li>
+</ul>
+</section>
+
+<!-- 4 HEAT -->
+<section id="heat" data-k="heat shelter warm room insulation pipes freeze wood stove kerosene heater blankets winter">
+<h2><span class="num">04</span>Heat and shelter (winter)</h2>
+<p class="lede">Heat people, not the house. A small sealed room with five bodies, insulation, and a safe heat source can hold livable temperatures for days.</p>
+
+<h3>Set up the warm room</h3>
+<ul>
+<li>Pick a small room with few windows, ideally south facing and interior. One door, closable.</li>
+<li>Close every other room. Stuff towels at door gaps. Hang blankets or quilts over windows and doorways; tack plastic sheeting over windows (trapped air layer). Open south curtains on sunny days, close at sunset.</li>
+<li>Put foam pads, rugs, or cardboard on the floor; cold floors pull heat fast.</li>
+<li>Make a <b>room within a room</b>: a tent pitched indoors, or a blanket canopy over a table. The smaller the air volume around sleeping people, the warmer.</li>
+<li>Everyone sleeps together in the warm room. Hats on at night. Sleeping bags rated for cold, inside the tent.</li>
+</ul>
+
+<h3>Clothing</h3>
+<ul>
+<li>Layers: wicking base (wool or synthetic, never cotton next to skin in cold), insulating middle (fleece, down, wool), wind/water shell outside.</li>
+<li>Stay dry. Sweat is the enemy. Strip a layer before working hard, add it back when you stop.</li>
+<li>Change into dry socks before bed. Keep tomorrow's clothes in the sleeping bag.</li>
+<li>Eat and drink well. Calories are fuel for body heat; dehydration speeds cold injury.</li>
+</ul>
+
+<h3>Heat sources, safest to riskiest</h3>
+<div class="tbl"><table>
+<tr><th>Source</th><th>Notes</th></tr>
+<tr><td><span class="pill g">BEST</span>Bodies, insulation, hot water bottles</td><td>Fill bottles or Nalgenes with hot water at night; put in sleeping bags (wrapped in a sock for kids).</td></tr>
+<tr><td><span class="pill g">GOOD</span>Wood stove or insert, properly vented</td><td>Chimney inspected beforehand. Keep a 3 ft clear zone. Burn seasoned hardwood. Ash goes outside in a covered metal can, on dirt, never in a paper bag or near the house.</td></tr>
+<tr><td><span class="pill y">CAUTION</span>Open fireplace</td><td>Inefficient; can pull more heat out of the house than it gives. Use a screen. Good for cooking and morale, not as the main heat.</td></tr>
+<tr><td><span class="pill y">CAUTION</span>Indoor rated kerosene or propane heater</td><td>Only units labeled for indoor use. Crack a window an inch for ventilation. CO alarm in the room. Never refuel indoors or while hot. Use only 1-K kerosene. Never leave running while everyone sleeps.</td></tr>
+<tr><td><span class="pill r">NEVER</span>Gas oven or range for heat, charcoal, camp stoves, grills, generators, or vehicles indoors or in an attached garage</td><td>Carbon monoxide. See §6.</td></tr>
+</table></div>
+
+<h3>Pipes and plumbing</h3>
+<ul>
+<li>Short outage: open sink cabinet doors, let a cold faucet drip on exterior walls. Disconnect and drain outdoor hoses; close interior valves to hose bibs.</li>
+<li><b>Long outage with the house going below freezing: drain the system.</b> Shut the main valve (or well pump breaker), open all faucets top floor to bottom, flush toilets, drain the water heater (save that water, §3). Pour RV antifreeze (non toxic, propylene glycol) into sink and tub drains and toilet bowls to protect traps.</li>
+<li>Frozen pipe: open the faucet, warm the pipe from the faucet end back with warm towels or a hair dryer on a generator. Never use an open flame.</li>
+</ul>
+</section>
+
+<!-- 5 COLD -->
+<section id="cold" data-k="hypothermia frostbite infant baby toddler kids children sleep cold injury rewarm">
+<h2><span class="num">05</span>Cold injuries and young kids</h2>
+<p class="lede">Babies and small children lose heat much faster than adults and cannot tell you. Check them, do not wait for complaints.</p>
+
+<div class="grid2">
+<div class="card"><h4>Hypothermia: adults</h4>
+<ul><li>Shivering, exhaustion</li><li>Confusion, fumbling hands</li><li>Memory loss, slurred speech</li><li>Drowsiness</li></ul>
+<p>Below 95°F (35°C) body temperature is an emergency. Hypothermia can happen above 40°F if someone is wet.</p></div>
+<div class="card"><h4>Hypothermia: babies and toddlers</h4>
+<ul><li><b>Bright red, cold skin</b></li><li><b>Very low energy</b>, floppy, hard to wake</li><li>Poor feeding, weak cry</li></ul>
+<p>Feel the chest and back of the neck, not the hands, to judge core warmth.</p></div>
+<div class="card"><h4>Frostbite</h4>
+<ul><li>Redness or pain first</li><li>White or grayish yellow skin</li><li>Unusually firm or waxy feel, numbness</li></ul>
+<p>Fingers, toes, ears, nose, cheeks.</p></div>
+</div>
+
+<h3>Rewarming</h3>
+<ol>
+<li>Get the person into the warm room. Remove wet clothing.</li>
+<li>Warm the <b>core first</b>: chest, neck, head, groin. Use skin to skin contact under loose, dry blankets. For a child, a parent's bare chest inside a sleeping bag is ideal.</li>
+<li>Warm, sweet, non alcoholic drinks if fully awake. Nothing by mouth if drowsy or unconscious.</li>
+<li>If no pulse or breathing, start CPR and keep going while warming. People in severe hypothermia have been revived after appearing dead.</li>
+</ol>
+<h3>Frostbite care</h3>
+<ul>
+<li>Do not rub or massage, and never rub with snow.</li>
+<li>Do not walk on frostbitten feet unless you must.</li>
+<li>Rewarm in warm, not hot, water (comfortable to an unaffected hand). Do not rewarm if there is any chance of refreezing; refreeze damage is worse.</li>
+<li>Do not use heaters, fires, or heating pads on numb skin; it burns without being felt.</li>
+</ul>
+
+<h3>Kids in a cold house</h3>
+<ul>
+<li><b>Infant sleep:</b> keep the safe sleep rules even in the cold. Baby on back, own firm surface, no loose blankets, pillows, or bumpers. Add warmth with layers and a wearable blanket or sleep sack, plus a hat for sleep only in a cold room, and keep the crib or bassinet in the warm room. One more layer than an adult is comfortable in is a good rule.</li>
+<li>Check hands, feet, ears, and energy every few hours and at every diaper change.</li>
+<li>Keep small kids well fed and drinking. Toddlers burn through calories fast in cold.</li>
+<li>Combustion heaters: barrier around them. Kids and pets out of the 3 ft zone.</li>
+<li>Keep routines (meals, story, bedtime). It cuts stress for everyone.</li>
+<li>Diarrhea in a small child is an emergency without power. Start oral rehydration early (§13).</li>
+</ul>
+</section>
+
+<!-- 6 CO -->
+<section id="co" data-k="carbon monoxide generator fire extinguisher backfeed transfer switch candles symptoms">
+<h2><span class="num">06</span>Fire, carbon monoxide and generators</h2>
+
+<div class="box danger"><b class="tag">Carbon monoxide</b>
+Colorless, odorless. More than 400 Americans die each year from non fire CO poisoning. Symptoms: headache, dizziness, weakness, nausea, vomiting, chest pain, confusion. Several people sick at once, or symptoms that improve outside, means CO. <b>Get everyone outside into fresh air immediately.</b>
+<ul><li>Battery or battery backup CO alarm on every level and in the warm room. Spare batteries.</li></ul></div>
+
+<h3>Generator rules</h3>
+<ul>
+<li>Outdoors only. Never in the house, basement, crawl space, shed, or attached garage, even with doors open.</li>
+<li>At least <b>20 feet</b> from any window, door, or vent (CDC). NIST modeling found 15 feet was not always enough for a two story house; 25 to 30 feet with the exhaust pointed away from the house performed much better. Calm, still nights are the worst case.</li>
+<li>Use a heavy gauge outdoor extension cord longer than 20 feet.</li>
+<li>Prefer units with automatic CO shutoff (certified to PGMA G300 or UL 2201).</li>
+<li>Keep dry: run under an open canopy, not enclosed.</li>
+<li>Refuel only when cool. Store fuel in approved cans away from the house.</li>
+<li><b>Never backfeed</b> the house by plugging the generator into a wall outlet. It can energize the utility lines and kill line workers and can burn your house. Use a transfer switch or a code compliant interlock installed by an electrician.</li>
+</ul>
+
+<h3>Fire</h3>
+<ul>
+<li>Use LED lanterns and headlamps, not candles. If candles are unavoidable: stable holder, away from anything that burns, never unattended, never near kids.</li>
+<li>Fire extinguishers (ABC) in kitchen, warm room, and near the wood stove. Everyone knows where.</li>
+<li>Escape plan from the warm room. Kids' window route known.</li>
+<li>Do not overload extension cords. No daisy chaining power strips.</li>
+<li>Smoke alarms tested; spare 9V and AA batteries.</li>
+</ul>
+</section>
+
+<!-- 7 FOOD -->
+<section id="food" data-k="food cooking fridge freezer pantry calories rocket stove grill outside dry ice">
+<h2><span class="num">07</span>Food and cooking</h2>
+
+<h3>Use food in this order</h3>
+<ol>
+<li><b>Refrigerator</b> perishables: safe about 4 hours with the door shut. After 4 hours above 40°F, discard meat, poultry, fish, eggs, soft cheese, milk, leftovers.</li>
+<li><b>Freezer:</b> full about 48 hours, half full about 24, door shut. Fifty pounds of dry ice keeps a full 18 cu ft freezer cold about 2 days. Food that still has ice crystals or is at 40°F or below can be refrozen.</li>
+<li><b>Pantry</b> shelf stable foods.</li>
+</ol>
+<div class="box warn"><b class="tag">Winter "free refrigeration" trap</b>
+USDA warns against just putting food outside in snow: sun can warm it even on cold days, temperatures swing, and animals get into it. Better: fill jugs with water, freeze them outside overnight, and put them in coolers or the fridge. A cooler in a shaded, unheated garage or on a north porch, checked with a thermometer, is far safer than a snowbank.</div>
+
+<h3>Calories</h3>
+<p>Plan roughly 2,000 to 2,500 kcal per adult per day in cold weather (more if hauling wood or hunting), and about 1,000 to 1,600 for young children depending on age. Fat matters in the cold and with lean game (see rabbit starvation in §8).</p>
+
+<h3>What to stock (low effort, long shelf life)</h3>
+<ul>
+<li>Rice, oats, pasta, flour, dried beans and lentils (beans need lots of fuel; canned beans are fuel efficient).</li>
+<li>Canned meat, fish, soups, vegetables, fruit. Peanut butter, nuts, honey, sugar, salt, cooking oil, shortening.</li>
+<li>Powdered milk, ready to feed infant formula, baby food, toddler snacks.</li>
+<li>Multivitamins. Coffee and tea (morale).</li>
+<li>Manual can opener (two).</li>
+</ul>
+
+<h3>Cooking without power</h3>
+<ul>
+<li><b>Outdoors:</b> propane grill, charcoal grill, camp stove, rocket stove, fire pit. Under an open overhang at most, never inside or in an attached garage.</li>
+<li><b>Indoors:</b> only a properly vented wood stove or fireplace.</li>
+<li>Save fuel: one pot meals, lids on, soak beans and grains overnight, retained heat cooking (bring to a boil, then wrap the pot in blankets or a cooler for a few hours).</li>
+<li>Use a food thermometer: game and ground meat to 160°F, poultry and game birds to 165°F.</li>
+</ul>
+</section>
+
+<!-- 8 GAME -->
+<section id="game" data-k="hunting deer field dressing gutting skinning rabbit squirrel turkey goose duck raccoon groundhog opossum tularemia cwd venison processing season dates license">
+<h2><span class="num">08</span>Hunting and animal processing (Warren County species)</h2>
+<p class="lede">Assumes legal harvest under current ODNR rules. Season dates below are the 2026 to 2027 approved seasons; verify current regulations at wildohio.gov before relying on them.</p>
+
+<div class="box"><b class="tag">2026 to 2027 Ohio seasons relevant to winter</b>
+<div class="tbl"><table>
+<tr><th>Species</th><th>Season</th><th>Limit</th></tr>
+<tr><td>White-tailed deer, archery</td><td>Sept 26, 2026 to Feb 7, 2027</td><td>County bag limit map; 1 antlered statewide</td></tr>
+<tr><td>Deer, gun</td><td>Nov 30 to Dec 6, 2026; Dec 19 to 20, 2026</td><td>Same</td></tr>
+<tr><td>Deer, muzzleloader</td><td>Jan 2 to Jan 5, 2027</td><td>Same</td></tr>
+<tr><td>Squirrel (fox, gray)</td><td>Sept 1, 2026 to Jan 31, 2027</td><td>6 daily</td></tr>
+<tr><td>Cottontail rabbit</td><td>Nov 6, 2026 to Feb 28, 2027</td><td>4 daily</td></tr>
+<tr><td>Raccoon, opossum, fox, skunk, weasel (hunting and trapping)</td><td>Nov 10, 2026 to Jan 31, 2027</td><td>None. Fur taker permit required in addition to the hunting license</td></tr>
+<tr><td>Beaver (trapping)</td><td>Dec 26, 2026 to Feb 28, 2027</td><td>None</td></tr>
+<tr><td>Groundhog (woodchuck), coyote</td><td>No closed season</td><td>None</td></tr>
+</table></div>
+Hunting hours: 30 minutes before sunrise to 30 minutes after sunset. Waterfowl and turkey have separate zones and dates.</div>
+
+<h3>Universal handling rules</h3>
+<ul>
+<li><b>Never harvest an animal acting sick</b>: stumbling, unafraid, emaciated, drooling, circling, or found dead. Rabbits with tularemia often run slowly and are easy to catch; that is a warning sign, not luck.</li>
+<li><b>Gloves</b> (nitrile or rubber) for all field dressing, especially rabbits and rodents. Cover cuts on your hands. Do not touch eyes or mouth.</li>
+<li>Gut quickly and cool fast. Heat and bacteria spoil meat, not time alone. In winter, an opened deer cools well hanging in shade at 34 to 40°F.</li>
+<li>Inspect organs. Discard the animal if the liver has white or yellow spots, there are abscesses, or the meat smells off.</li>
+<li>Cook all wild game thoroughly: <b>160°F</b> for game meat and ground meat, <b>165°F</b> for game birds.</li>
+<li>Wash hands, knives, and surfaces with soap and treated water; sanitize with a bleach solution.</li>
+<li>Kids should not handle sick or dead animals.</li>
+</ul>
+
+<h3>Species notes</h3>
+<div class="tbl"><table>
+<tr><th>Animal</th><th>Food value</th><th>Specific hazards and tips</th></tr>
+<tr><td><b>White-tailed deer</b></td><td>Best return: a field dressed adult yields roughly 40 to 60 lb boneless meat</td><td>Chronic wasting disease is confirmed in Ohio, so far concentrated in north central and northwest counties (Wyandot, Hardin, Allen, Marion, Morrow, Hancock, Crawford), not Warren County as of the 2025 to 2026 season. Still: do not eat brain, spinal cord, eyes, spleen, tonsils or lymph nodes; bone out the meat; avoid sawing through the spine. EHD (summer die offs) does not infect people.</td></tr>
+<tr><td><b>Cottontail rabbit</b></td><td>Small, very lean</td><td>Tularemia: most human cases in the US come from rabbits. Gloves always. Check the liver for spots. Cook thoroughly. <b>Rabbit starvation:</b> a diet of only lean meat causes illness within days; pair with fat (oil, nuts, deer fat, raccoon, groundhog, pantry).</td></tr>
+<tr><td><b>Fox and gray squirrel</b></td><td>Good, abundant</td><td>Do not eat squirrel brains. Skin by cutting across the back and pulling the hide both ways. Tough older squirrels: braise or stew.</td></tr>
+<tr><td><b>Wild turkey</b></td><td>Excellent</td><td>Breast out or pluck. Cook to 165°F. Fall season only; out of season in winter.</td></tr>
+<tr><td><b>Canada goose, ducks</b></td><td>High fat, valuable in cold</td><td>Federal migratory bird rules apply. Breast out quickly; pluck for roasting. 165°F.</td></tr>
+<tr><td><b>Raccoon</b></td><td>Fatty, edible if prepared well</td><td>Rabies vector: avoid any that behave oddly. Raccoon roundworm eggs in feces can be fatal to people; gloves and keep kids clear of latrine areas. Remove the scent glands (pea sized nodules under the front legs and along the back) and trim fat. Cook thoroughly.</td></tr>
+<tr><td><b>Groundhog</b></td><td>Good, fatty in fall</td><td>Remove the scent glands under the front legs. Young ones are best. Hibernating in winter so harder to find.</td></tr>
+<tr><td><b>Opossum</b></td><td>Edible, greasy</td><td>Scavenger. Cook thoroughly; trim fat.</td></tr>
+<tr><td><b>Beaver, muskrat</b></td><td>Good, rich</td><td>Tularemia carriers like rabbits. Gloves. Beaver tail is fat.</td></tr>
+<tr><td><b>Coyote</b></td><td>Poor eating</td><td>Parasite load and rabies risk. Last resort.</td></tr>
+</table></div>
+
+<h3>Deer: field dressing step by step</h3>
+<ol>
+<li><b>Confirm dead.</b> Approach from behind, touch the eye with a stick. Tag per current law.</li>
+<li><b>Position</b> on its back, head slightly uphill. Gloves on.</li>
+<li><b>Cut around the anus</b> (core it out), free it a few inches, and tie it off with string so feces does not contaminate meat.</li>
+<li><b>Open the belly:</b> pinch the skin below the breastbone, make a small cut, insert two fingers in a V with the knife edge up between them, and cut toward the pelvis. Do not puncture the stomach or intestines.</li>
+<li><b>Free the organs:</b> reach up into the chest, cut the diaphragm along the ribs, reach forward and sever the windpipe and esophagus as far up as you can.</li>
+<li><b>Roll out the guts:</b> pull the windpipe back and down; the whole package should come out, pulling the cored anus through the pelvis. Save the heart and liver if they look clean (dark red, smooth, no spots).</li>
+<li><b>Drain and cool:</b> tip the deer to drain blood. Prop the cavity open with a stick. Keep it out of sun.</li>
+<li><b>Hang</b> by the hind legs (gambrel) or head in a cool, shaded spot, 34 to 40°F ideal. Skin soon if above 40°F; skinning speeds cooling. If it will freeze hard, skinning early avoids a frozen hide.</li>
+<li><b>Skin and quarter:</b> cut around the hind legs above the hocks, slit down the inside of each leg, peel the hide down. Remove front shoulders (no joint, just cut along the ribcage), backstraps along the spine, tenderloins inside the cavity, then hindquarters at the hip joint. Neck and rib meat for stew or grind.</li>
+<li><b>Trim</b> bloodshot meat, hair, fat (deer fat tastes bad), silverskin. Wrap or process the same day if above freezing.</li>
+</ol>
+<div class="box ok"><b class="tag">Use the whole animal</b>
+Bones: boil for stock (fat and calories). Hide: brain tan or salt for later use. Fat: render beef style tallow for cooking and candles. Hooves and sinew: cordage. Hide and offal not used: bury deep or bag and dispose far from the house to avoid drawing scavengers.</div>
+
+<h3>Small game: rabbit and squirrel</h3>
+<ol>
+<li>Gloves on. Pinch the back skin, cut a small slit across the middle of the back.</li>
+<li>Hook fingers in, pull one half toward the head and one toward the tail. Hide peels off like a sock.</li>
+<li>Cut off head, feet and tail. Open the belly carefully, remove organs. Inspect the liver.</li>
+<li>Rinse with treated water. Quarter: front legs, hind legs, saddle.</li>
+<li>Cook thoroughly; braise or stew older animals.</li>
+</ol>
+
+<h3>Raccoon, groundhog and opossum: shared rules</h3>
+<div class="box danger"><b class="tag">Before you touch one</b>
+<ul>
+<li><b>Rabies:</b> raccoons are a major rabies carrier in Ohio, and groundhogs account for most rabid rodent cases in the eastern US. Pass on any animal that is out in daylight acting tame, aggressive, wobbly, or paralyzed. Do not cut into the head, and do not eat the brain.</li>
+<li><b>Trichinella:</b> omnivores and carnivores can carry it. Wild strains can survive home freezing, so freezing is <b>not</b> a substitute for cooking. Cook every piece to 160°F all the way through.</li>
+<li><b>Gloves, eye protection, no kids nearby.</b> Wash hands and tools with soap, then sanitize with bleach solution.</li>
+<li><b>Fleas and ticks</b> leave a cooling carcass. Bag it for 30 minutes or hang it away from the house before you skin it.</li>
+<li><b>Fat is the flavor problem</b> on all three. Trim it hard. Parboiling (simmer 20 to 30 min in salted water, then discard the water) before roasting or stewing removes gamey taste and tenderizes older animals.</li>
+</ul></div>
+
+<h3>Raccoon: step by step</h3>
+<div class="box warn"><b class="tag">Raccoon roundworm</b>
+<i>Baylisascaris</i> eggs are shed in raccoon droppings and can get on fur. If swallowed, they can cause severe brain and eye damage, and young children are most at risk. Skin outdoors, on a surface you can sanitize or burn, never in the kitchen. Gloves on start to finish. Avoid the anus and intestines.</div>
+<ol>
+<li><b>Hang</b> by the hind legs from a gambrel at chest height.</li>
+<li><b>Ring cut</b> around each hind leg just above the ankle. Slit the skin down the inside of each leg to the vent. Cut around the vent without opening the gut.</li>
+<li><b>Peel down.</b> Work the hide down over the body, using the knife only to free connective tissue. For meat only, you can also open the hide down the belly and peel it off sideways. To save the pelt, case skin it (pull it off whole, inside out, like a sock). Cut off the front feet and head with the hide.</li>
+<li><b>Remove the scent ("kernel") glands before gutting.</b> They are small, pea to bean sized, waxy gray, brown, or reddish lumps buried in the fat: <b>in each armpit, on the inside of each hind thigh, and along the small of the back</b>. Cut around them with fat attached; do not slice into them. Tainted meat tastes and smells bad.</li>
+<li><b>Gut.</b> Cut through the belly wall shallowly from pelvis to breastbone, knife edge up. Roll out the guts without puncturing the bladder or intestines. Discard the organs unless they are clearly healthy; most people skip raccoon offal.</li>
+<li><b>Trim all fat.</b> Raccoon fat is heavy and strong. Render it separately for soap, leather, or lamp fuel rather than eating it.</li>
+<li><b>Quarter:</b> two hindquarters (the best meat), two front legs, and the backstraps. Rinse in treated water.</li>
+<li><b>Cook:</b> parboil, then roast, braise, or slow cook with onions and acid (vinegar, tomato) to 160°F. Tastes like dark, rich pork or mutton.</li>
+<li><b>Dispose:</b> bag and bury the hide scraps, guts, and head deep, or burn. Sanitize the work surface with bleach. Roundworm eggs resist most disinfectants, so a burned or discarded board is safer than a scrubbed one.</li>
+</ol>
+
+<h3>Groundhog (woodchuck): step by step</h3>
+<ol>
+<li><b>Choose young</b> (under about 6 lb) for tender meat. Big old males need long braising.</li>
+<li><b>Hang</b> by the hind legs. Ring cut above the ankles, slit down the inside legs, and peel the hide down like a raccoon. The hide is tight on the back; use the knife to free it. A belly cut and peel also works.</li>
+<li><b>Remove the glands:</b> one in <b>each armpit</b> under the front legs and <b>small glands near the base of the tail / small of the back</b>. They look like the raccoon's, small and waxy in the fat. Cut them out whole.</li>
+<li><b>Gut</b> as above, avoiding the bladder. A clean liver and heart can be kept.</li>
+<li><b>Trim the fat.</b> Fall groundhogs carry a lot of it. It is strong when roasted but usable rendered.</li>
+<li><b>Quarter</b> like a rabbit: front legs, hind legs, saddle.</li>
+<li><b>Cook:</b> parboil, then fry, roast, or stew to 160°F. Mild and dark, often compared to rabbit crossed with pork.</li>
+</ol>
+<p class="foot">Winter note: groundhogs hibernate from roughly late fall to February, so expect them mostly in fall and from late winter on.</p>
+
+<h3>Opossum: step by step</h3>
+<ol>
+<li><b>Consider "cleaning" first.</b> Opossums eat carrion and garbage. The traditional practice is to live trap one and keep it caged on clean food (corn, grain, fruit, scraps) and water for 1 to 2 weeks before butchering. A wild opossum taken directly is still edible if processed and cooked properly.</li>
+<li><b>Risks:</b> rabies is rare in opossums, but they can carry leptospirosis (spread through urine) along with fleas and ticks. Gloves on, and keep cuts covered.</li>
+<li><b>Scald or skin.</b> The hide is thin and peels easily. Hang by the hind legs, ring cut, slit the inside legs, and case skin it like a raccoon. Traditional alternative: scald in about 160°F water and scrape off the hair like a hog, which keeps the skin on.</li>
+<li><b>Remove the musk glands</b> located near the anus. Cut out the whole vent area with the glands attached, without cutting into them.</li>
+<li><b>Gut</b> carefully, then trim the heavy layer of fat, especially along the back and belly.</li>
+<li><b>Cook:</b> parboil (some change the water twice), then roast with sweet potatoes, the classic Southern way, or stew. Cook to 160°F. Greasy, dark meat. It's best for stews, where fat cooks off.</li>
+</ol>
+
+<h3>Birds</h3>
+<ul>
+<li><b>Breasting out (fast):</b> pluck a patch over the breastbone, cut the skin, peel back, slice the meat off each side of the keel. Take legs for slow cooking.</li>
+<li><b>Plucking:</b> scald larger birds at about 150°F for about a minute, then feathers pull easily. Ducks: dip in hot water with melted paraffin, cool, peel off the wax and down.</li>
+<li>Gut through a cut below the breastbone; remove crop at the neck.</li>
+</ul>
+
+<h3>Trapping basics</h3>
+<ul>
+<li>Ohio requires a fur taker permit and has specific trap rules (check daily, identification, legal types). Snares on land have restrictions; confirm before setting.</li>
+<li>Body grip and cage traps on trails, den entrances, and creek crossings. Rabbit and squirrel: box traps baited with apple or corn.</li>
+<li>Trapping runs 24/7 and frees you for other work, which is its real value in a long outage.</li>
+</ul>
+</section>
+
+<!-- 9 FISH -->
+<section id="fish" data-k="fishing fish catfish bass bluegill crappie carp crayfish little miami caesar creek ice fishing">
+<h2><span class="num">09</span>Fishing</h2>
+<ul>
+<li><b>Waters nearby:</b> Little Miami River (smallmouth bass, rock bass, channel catfish, sunfish), Caesar Creek Lake (crappie, bass, saugeye, catfish, bluegill), Todd Fork and farm ponds (bluegill, bass, catfish with permission).</li>
+<li><b>Winter methods:</b> slow, deep presentation. Catfish on cut bait or worms on the bottom; crappie and bluegill on small jigs or minnows near cover. Trotlines and set lines fish while you sleep (check Ohio limits on hooks and tagging).</li>
+<li><b>Ice:</b> only when solid ice is at least 4 inches, and never on rivers or near inlets, springs, or the dam. Southwest Ohio ice is often unreliable. Carry ice picks and a rope; never go alone.</li>
+<li><b>Contaminants:</b> Ohio EPA publishes fish consumption advisories (mercury, PCBs). Generally favor smaller panfish over large old catfish and carp; limit meals for kids. Check the advisory list in advance.</li>
+<li><b>Prep:</b> scale or skin, gut, remove the dark mud line on catfish. Cook to 145°F or until flaky. Crayfish: boil thoroughly.</li>
+<li>Fishing license required (age 16 and older).</li>
+</ul>
+</section>
+
+<!-- 10 FORAGE -->
+<section id="forage" data-k="foraging wild edible plants black walnut hickory acorn persimmon wild onion garlic chickweed garlic mustard cattail white pine needle tea rose hips sumac poison hemlock yew mushrooms">
+<h2><span class="num">10</span>Winter foraging (southwest Ohio)</h2>
+<div class="box danger"><b class="tag">Rule one</b>
+Eat nothing you cannot identify with 100% certainty. No wild mushrooms unless you are trained; the deadly ones look ordinary. Foraging is a supplement for calories and vitamins, not a primary food source in winter.</div>
+
+<div class="tbl"><table>
+<tr><th>Plant</th><th>What to use</th><th>Notes and lookalikes</th></tr>
+<tr><td><b>Black walnut</b></td><td>Nuts (fall, stored in husk into winter)</td><td>High fat and protein. Husks stain hard; wear gloves. Crack with a hammer on stone.</td></tr>
+<tr><td><b>Shagbark and other hickories</b></td><td>Nuts</td><td>Excellent fat source. Boil crushed nuts and skim the oil.</td></tr>
+<tr><td><b>Acorns (white oak group best)</b></td><td>Nuts</td><td>Must be leached of tannins: shell, grind, soak in repeated changes of water (cold for flour, hot for speed) until no bitterness remains.</td></tr>
+<tr><td><b>American persimmon</b></td><td>Fruit after frost</td><td>Only when soft and fully ripe; unripe is extremely astringent.</td></tr>
+<tr><td><b>Wild onion and wild garlic</b></td><td>Greens and bulbs</td><td><b>Must smell like onion.</b> No onion smell means do not eat; toxic lookalikes (star of Bethlehem, others) exist.</td></tr>
+<tr><td><b>Chickweed</b></td><td>Greens, stays green in winter</td><td>Has a single line of hairs on the stem. Mild, eat raw or cooked.</td></tr>
+<tr><td><b>Garlic mustard</b></td><td>Basal leaf rosettes year round</td><td>Invasive, abundant, garlicky. Cook or eat raw in moderation.</td></tr>
+<tr><td><b>Cattail</b></td><td>Rhizomes (starch) in winter</td><td>Only from clean water; cattails absorb pollutants. Avoid ditches and roadside or farm runoff areas. Do not confuse young shoots with iris (iris lacks the cattail's spongy center and smell).</td></tr>
+<tr><td><b>Eastern white pine</b></td><td>Needle tea (vitamin C)</td><td>Needles in bundles of 5. Steep, do not boil hard. <b>Avoid yew</b> (flat single needles, red berries): highly toxic. Avoid during pregnancy.</td></tr>
+<tr><td><b>Rose hips (multiflora rose)</b></td><td>Fruit, tea</td><td>Vitamin C. Remove the hairy seeds before eating.</td></tr>
+<tr><td><b>Staghorn sumac</b></td><td>Red fuzzy berry clusters, tea</td><td>Lemony drink, cold steep. Poison sumac has white or gray berries and grows in wet areas.</td></tr>
+</table></div>
+
+<div class="box danger"><b class="tag">Poison hemlock is common here</b>
+Poison hemlock is spreading across southern Ohio and is among the most toxic plants in the region; it causes respiratory failure. It resembles wild carrot (Queen Anne's lace) and wild parsnip.
+<ul><li><b>Poison hemlock:</b> smooth hairless stem with purple spots or blotches, hollow, musty or mousy smell, up to 10 ft.</li>
+<li><b>Wild carrot:</b> hairy stem and leaves, solid green stem, carrot smell.</li>
+<li>Do not burn it (the smoke is toxic) and do not forage anything in the carrot family unless you are expert.</li></ul></div>
+</section>
+
+<!-- 11 PRESERVE -->
+<section id="preserve" data-k="preserve preservation jerky smoking salting curing canning pressure canner freezing cold storage meat">
+<h2><span class="num">11</span>Preserving meat without power</h2>
+<ul>
+<li><b>Cold storage (winter only):</b> quartered meat in game bags hung in an unheated outbuilding or garage that stays 28 to 40°F, checked with a thermometer twice a day. Protect from animals and sun. Fails the moment a warm spell hits.</li>
+<li><b>Pressure canning:</b> the only safe home canning method for meat and low acid foods. Water bath canning is NOT safe for meat. Run the canner on a propane burner outdoors. Follow tested USDA or Ball times and pressures for your altitude (Warren County is under 1,000 ft).</li>
+<li><b>Jerky:</b> slice lean meat thin (¼ inch, across the grain), trim all fat (fat goes rancid). USDA guidance: heat meat to 160°F before or at the start of drying, then dry at 130 to 140°F until it cracks but does not break when bent. Use a smoker, a low oven on a generator, or a wood stove setup with a thermometer.</li>
+<li><b>Smoking:</b> hot smoking cooks and partially preserves (short term). Cold smoking alone does not make meat safe without a cure.</li>
+<li><b>Salting and curing:</b> dry cures need correct salt ratios and curing salt (sodium nitrite) to prevent botulism. Stock Prague Powder #1 and #2 and a tested recipe if you plan this.</li>
+<li><b>Pemmican:</b> dried meat pounded to powder, mixed roughly 1:1 by weight with rendered fat. Very calorie dense and long keeping if fully dried and fat is clean.</li>
+<li><b>Rendered fat (tallow, lard):</b> strain, store in clean jars, keeps months in cool storage.</li>
+</ul>
+</section>
+
+<!-- 12 SANITATION -->
+<section id="sanitation" data-k="sanitation toilet bucket septic latrine hygiene handwashing trash waste">
+<h2><span class="num">12</span>Sanitation and hygiene</h2>
+<p class="lede">In past disasters, poor sanitation caused more illness than injuries. Diarrhea in small children is dangerous without medical care.</p>
+<h3>Toilets</h3>
+<ul>
+<li><b>Gravity septic with water:</b> flush by pouring a bucket of non drinking water (2 to 3 gal) quickly into the bowl. Do this sparingly; "if it's yellow, let it mellow."</li>
+<li><b>Pumped or aerobic septic, or no water:</b> do not flush.</li>
+<li><b>Bucket toilet:</b> 5 gal bucket, heavy duty liners (double bag), toilet seat lid. Cover each use with sawdust, cat litter, peat, or wood ash. Tie off and store bags in a lidded can outside until disposal. Keep urine separate if possible (less smell, less volume).</li>
+<li><b>Long term:</b> a latrine trench at least 200 ft from any well or water source and downhill from it. Cover each use with soil.</li>
+</ul>
+<h3>Hygiene</h3>
+<ul>
+<li>Hand washing station: jug with spigot, soap, catch bucket. Wash before food and after toilet, diapers, and game. Sanitizer is a backup, not a replacement.</li>
+<li>Dish washing: wash, rinse, then sanitize in a bleach solution (about 1 tbsp unscented bleach per gallon), air dry.</li>
+<li>Diapers: stock disposables deep; cloth requires lots of hot water.</li>
+<li>Sponge baths in the warm room. Keep feet clean and dry.</li>
+<li>Trash: bag, seal, store outside away from the house. Burn only paper and wood. Bury food scraps or compost to avoid scavengers.</li>
+</ul>
+</section>
+
+<!-- 13 MEDICAL -->
+<section id="medical" data-k="medical first aid oral rehydration dehydration diarrhea medications prescriptions wound bleeding stop the bleed tourniquet cpr">
+<h2><span class="num">13</span>Medical</h2>
+<div class="box warn"><b class="tag">Limits of this page</b>
+This is reference only, not training. Take a hands-on first aid, CPR, and Stop the Bleed class, and pediatric CPR in particular.</div>
+<h3>Oral rehydration solution (WHO style home recipe)</h3>
+<p>1 liter (about 1 quart) treated water + 6 level teaspoons sugar + ½ level teaspoon salt. Stir until dissolved. Sip small amounts often. For infants and toddlers, commercial ORS (Pedialyte type) is preferred; stock several. Danger signs in kids: no urine for 8 hours (fewer wet diapers in babies), sunken eyes, no tears, very sleepy, sunken soft spot. Those need a doctor if any path to one exists.</p>
+<h3>Bleeding</h3>
+<ol><li>Firm direct pressure with gauze or cloth. Do not lift to peek.</li>
+<li>Pack deep wounds with gauze and press.</li>
+<li>Life threatening limb bleeding: commercial tourniquet (CAT or SOF-T) high and tight, note the time.</li></ol>
+<h3>Wounds and infection</h3>
+<ul><li>Irrigate cuts with lots of treated water. Clean, cover, change dressings daily.</li>
+<li>Watch for spreading redness, heat, swelling, pus, fever, red streaks. Infection without antibiotics is serious.</li>
+<li>Burns: cool water 10 to 20 minutes, cover loosely, no butter or ice.</li></ul>
+<h3>Medications</h3>
+<ul><li>Keep a written list of everyone's prescriptions, doses, allergies, and doctors.</li>
+<li>Build a 30 day buffer of essential prescriptions where legally possible.</li>
+<li>Insulin and some meds need cool storage: a cooler with frozen jugs, kept in the coldest safe spot. Do not let insulin freeze.</li>
+<li>Children's pain and fever reducers: dose strictly by the package label for the child's weight and the specific product. Keep the boxes with their dosing charts.</li></ul>
+<h3>Kit essentials</h3>
+<p>Gauze, roller bandages, trauma dressing, tourniquet, tape, nitrile gloves, saline or irrigation syringe, butterfly closures, antibiotic ointment, burn gel, thermometers (including a rectal/infant thermometer), tweezers, scissors, SAM splint, ORS packets, pain and fever reducers (adult and children's), antihistamine, antidiarrheal (adults), hydrocortisone cream, a printed first aid manual.</p>
+</section>
+
+<!-- 14 POWER -->
+<section id="power" data-k="power generator fuel solar power station battery lighting headlamp phone charging fuel storage stabilizer">
+<h2><span class="num">14</span>Power and lighting</h2>
+<h3>Load priority (if you have any power)</h3>
+<ol><li>Well pump (in bursts, fill containers then shut off)</li>
+<li>Freezer and fridge (run a few hours, then off; keep doors shut)</li>
+<li>Furnace blower for a gas furnace (needs a transfer switch; a gas furnace will not run without electricity)</li>
+<li>Medical devices, phone and radio charging, lights</li>
+<li>Comfort loads last</li></ol>
+<h3>Fuel</h3>
+<ul><li>Gasoline degrades in months; add stabilizer and rotate into vehicles every 6 to 12 months. Store in approved cans, detached from the house.</li>
+<li>Gas station pumps need power. Keep vehicles above half a tank all winter.</li>
+<li>Propane stores indefinitely and is the best long storage generator and cooking fuel. Dual fuel generators are worth it.</li>
+<li>Track run hours and fuel burn so you can forecast how many days you have.</li></ul>
+<h3>Quiet power</h3>
+<ul><li>Portable power stations (lithium) plus folding solar panels run lights, phones, radios, and CPAPs silently with no CO. Winter sun is weak; size panels generously.</li>
+<li>A vehicle can charge devices with an inverter. Run it only outdoors with the tailpipe clear of snow.</li></ul>
+<h3>Light</h3>
+<ul><li>Headlamps for every person (hands free), LED lanterns for the warm room, glow sticks for kids at night.</li>
+<li>Rechargeable AA/AAA with a USB or solar charger; one battery size across devices simplifies everything.</li></ul>
+</section>
+
+<!-- 15 COMMS -->
+<section id="comms" data-k="communication radio noaa weather radio same code am wlw ham gmrs frs phone contacts">
+<h2><span class="num">15</span>Communications and information</h2>
+<ul>
+<li><b>NOAA Weather Radio</b> with battery and hand crank. Program the SAME code for Warren County, Ohio: <code>039165</code>. Coverage comes from NWS Wilmington, OH.</li>
+<li><b>AM radio</b> reaches far when the grid is down: WLW 700 AM (Cincinnati, 50,000 watts) and other regional stations carry emergency information.</li>
+<li><b>Text instead of calling.</b> Texts get through congested networks when calls fail. Keep messages short.</li>
+<li><b>Out of area contact:</b> one relative in another region everyone checks in with.</li>
+<li><b>GMRS radios</b> (FCC license, no exam, covers your family) reach a few miles between house, barn, and neighbors. FRS needs no license but has less range. Amateur (ham) radio needs an exam but gives regional reach.</li>
+<li><b>Warren County EMA</b> posts alerts on its Facebook page (@WCOHEMA) and X (@WCEMAOhio). Sign up for county alerts now, while it is easy.</li>
+<li><b>Paper:</b> print a contact list (family, neighbors, doctors, vet, Duke Energy outage line, insurance) and a Warren County road map. Your phone may be dead when you need them.</li>
+<li>Household rally points: one at the house, one in town if separated.</li>
+</ul>
+</section>
+
+<!-- 16 SECURITY -->
+<section id="security" data-k="security community neighbors light discipline opsec barter">
+<h2><span class="num">16</span>Security and community</h2>
+<ul>
+<li><b>Neighbors are your best asset.</b> Know who has a generator, wood stove, medical training, tools, livestock, or a well with a hand pump. Agree in advance to check on each other.</li>
+<li><b>Low profile:</b> do not advertise supplies. A lit, warm, generator humming house stands out on a dark road. Blackout curtains after dark; run the generator in daylight when possible.</li>
+<li>Keep doors locked, vehicles locked, fuel and tools out of sight.</li>
+<li>Have a plan for who answers the door and how. Children stay out of sight of strangers.</li>
+<li>Firearms: secured from children at all times, especially with stress and darkness. Ammunition stored separately.</li>
+<li>Barter goods with value: fuel, batteries, coffee, salt, medicine, ammunition, skills.</li>
+</ul>
+</section>
+
+<!-- 17 DOCS -->
+<section id="docs" data-k="documents binder grab bag id insurance birth certificate passports cash records">
+<h2><span class="num">17</span>Documents: the grab binder</h2>
+<p class="lede">One waterproof binder or fire safe document bag, plus an encrypted USB copy. Update every January.</p>
+<div class="chk" data-list="docs">
+<label><input type="checkbox"><span>Driver's licenses, passports, birth certificates (all 5), Social Security cards (copies)</span></label>
+<label><input type="checkbox"><span>Home deed or lease, vehicle titles, registration</span></label>
+<label><input type="checkbox"><span>Homeowner's, auto, health, and life insurance policies with policy numbers and claim phone numbers</span></label>
+<label><input type="checkbox"><span>Medical: prescription list, allergies, immunization records, doctor and pharmacy contacts</span></label>
+<label><input type="checkbox"><span>Bank and account contact info (not passwords in plain text)</span></label>
+<label><input type="checkbox"><span>Photos or video of home contents and serial numbers for insurance claims</span></label>
+<label><input type="checkbox"><span>Utility account numbers (electric, gas, water, propane supplier)</span></label>
+<label><input type="checkbox"><span>Printed contact list and out of area contact</span></label>
+<label><input type="checkbox"><span>Paper maps of Warren County and region with routes to family</span></label>
+<label><input type="checkbox"><span>Hunting and fishing licenses, firearm records</span></label>
+<label><input type="checkbox"><span>Cash in small bills (card readers and ATMs fail without power)</span></label>
+<label><input type="checkbox"><span>Spare house and vehicle keys</span></label>
+<label><input type="checkbox"><span>Printed copy of this manual</span></label>
+</div>
+</section>
+
+<!-- 18 KIT -->
+<section id="kit" data-k="checklist supplies kit prep inventory gear">
+<h2><span class="num">18</span>Supply checklist</h2>
+<p class="lede">Tick as you acquire. Saved on this machine. <span class="prog" id="kitProg"></span></p>
+<div class="grid2 chk" data-list="kit">
+<div class="card"><h4>Water</h4>
+<label><input type="checkbox"><span>Stored water: 2 weeks (see §2 calculator)</span></label>
+<label><input type="checkbox"><span>Unscented bleach, under 1 yr old + dropper</span></label>
+<label><input type="checkbox"><span>Pool shock (calcium hypochlorite, plain)</span></label>
+<label><input type="checkbox"><span>Hollow fiber filter x2, plus gravity bag</span></label>
+<label><input type="checkbox"><span>Clean 5 gal buckets with lids</span></label>
+<label><input type="checkbox"><span>Water heater drain hose</span></label>
+<label><input type="checkbox"><span>Ready to feed infant formula</span></label>
+</div>
+<div class="card"><h4>Heat and shelter</h4>
+<label><input type="checkbox"><span>Battery CO alarms (each level + warm room)</span></label>
+<label><input type="checkbox"><span>Indoor rated heater + fuel, or wood stove + seasoned wood</span></label>
+<label><input type="checkbox"><span>Cold rated sleeping bags for all 5</span></label>
+<label><input type="checkbox"><span>Indoor tent</span></label>
+<label><input type="checkbox"><span>Plastic sheeting, duct tape, staple gun</span></label>
+<label><input type="checkbox"><span>Wool socks, base layers, hats, mittens for all</span></label>
+<label><input type="checkbox"><span>Infant sleep sacks, extra layers</span></label>
+<label><input type="checkbox"><span>RV antifreeze for drains</span></label>
+</div>
+<div class="card"><h4>Food and cooking</h4>
+<label><input type="checkbox"><span>2+ weeks shelf stable food</span></label>
+<label><input type="checkbox"><span>Baby food and toddler snacks</span></label>
+<label><input type="checkbox"><span>Outdoor stove + propane</span></label>
+<label><input type="checkbox"><span>Manual can openers x2</span></label>
+<label><input type="checkbox"><span>Food thermometer, appliance thermometers</span></label>
+<label><input type="checkbox"><span>Coolers, freezer jugs</span></label>
+<label><input type="checkbox"><span>Pressure canner + lids</span></label>
+</div>
+<div class="card"><h4>Game and procurement</h4>
+<label><input type="checkbox"><span>Current hunting and fishing licenses</span></label>
+<label><input type="checkbox"><span>Nitrile gloves (box)</span></label>
+<label><input type="checkbox"><span>Skinning knife, sharpener, bone saw</span></label>
+<label><input type="checkbox"><span>Gambrel, rope, game bags</span></label>
+<label><input type="checkbox"><span>Fishing gear, trotline supplies</span></label>
+<label><input type="checkbox"><span>Box traps</span></label>
+<label><input type="checkbox"><span>Curing salt, kosher salt</span></label>
+</div>
+<div class="card"><h4>Power and light</h4>
+<label><input type="checkbox"><span>Generator (CO shutoff) + transfer switch/interlock</span></label>
+<label><input type="checkbox"><span>Stabilized fuel, rotated</span></label>
+<label><input type="checkbox"><span>Power station + solar panel</span></label>
+<label><input type="checkbox"><span>Headlamps x5, lanterns</span></label>
+<label><input type="checkbox"><span>Rechargeable batteries + charger</span></label>
+<label><input type="checkbox"><span>Heavy duty outdoor extension cords</span></label>
+</div>
+<div class="card"><h4>Comms</h4>
+<label><input type="checkbox"><span>NOAA radio, SAME 039165 programmed</span></label>
+<label><input type="checkbox"><span>Hand crank AM/FM radio</span></label>
+<label><input type="checkbox"><span>GMRS radios + license</span></label>
+<label><input type="checkbox"><span>Power banks charged</span></label>
+<label><input type="checkbox"><span>County alerts signed up</span></label>
+</div>
+<div class="card"><h4>Sanitation and medical</h4>
+<label><input type="checkbox"><span>Bucket toilet kit + liners + litter/sawdust</span></label>
+<label><input type="checkbox"><span>Diapers, wipes (deep stock)</span></label>
+<label><input type="checkbox"><span>Soap, sanitizer, trash bags</span></label>
+<label><input type="checkbox"><span>Trauma and first aid kit</span></label>
+<label><input type="checkbox"><span>ORS packets / Pedialyte</span></label>
+<label><input type="checkbox"><span>30 day prescription buffer</span></label>
+<label><input type="checkbox"><span>Kids' fever reducers with dosing boxes</span></label>
+</div>
+<div class="card"><h4>Safety</h4>
+<label><input type="checkbox"><span>ABC fire extinguishers x3</span></label>
+<label><input type="checkbox"><span>Smoke alarm batteries</span></label>
+<label><input type="checkbox"><span>Chimney inspected this season</span></label>
+<label><input type="checkbox"><span>Heater barrier for kids</span></label>
+<label><input type="checkbox"><span>Firearm safe / locks</span></label>
+</div>
+</div>
+<p class="noprint"><button id="kitReset" type="button">Reset checklist</button></p>
+</section>
+
+<!-- 19 SOURCES -->
+<section id="sources" data-k="sources references links">
+<h2><span class="num">19</span>Sources</h2>
+<ul class="foot">
+<li>CDC, Making Water Safe in an Emergency (bleach, boiling): cdc.gov/water-emergency</li>
+<li>US EPA, Emergency Disinfection of Drinking Water (bleach strengths, calcium hypochlorite method)</li>
+<li>USDA FSIS, Keeping Food Safe During an Emergency (4 hour fridge, 24/48 hour freezer, dry ice)</li>
+<li>FoodSafety.gov / USDA, Safe Minimum Internal Temperatures (game 160°F, poultry 165°F)</li>
+<li>CDC, Preventing Hypothermia and Frostbite; Recognizing Hypothermia (infant signs)</li>
+<li>CDC, Carbon Monoxide prevention guidance (20 ft generator distance); NIST TN 1637 and TN 1666 generator modeling</li>
+<li>American Red Cross, frozen pipe prevention and winter outage guidance</li>
+<li>Ohio DNR Division of Wildlife, 2026 to 2027 Hunting and Trapping Seasons; CWD surveillance results 2025 to 2026</li>
+<li>CDC and state health departments, Tularemia prevention for hunters</li>
+<li>Ohio State University Extension, Parsley Family Identification Guide (ANR-102), poison hemlock</li>
+<li>Greater Cincinnati MSD / Midwest Biodiversity Institute, Little Miami River water quality (E. coli impairment)</li>
+<li>Warren County EMA, Citizen's Preparedness Guide and newsletters</li>
+<li>PJM / NERC winter reliability reporting; Winter Storm Fern coverage, Jan 2026</li>
+<li>WHO, oral rehydration solution home formula</li>
+</ul>
+<p class="foot">Compiled November 2026. Regulations and season dates change annually; re-verify each fall. Not a substitute for hands-on training in first aid, firearms, hunting, or food preservation.</p>
+</section>
+
+</main>
+</div>
+
+<script>
+(function(){
+  const store = {
+    get(k){ try{ return JSON.parse(localStorage.getItem('gdm:'+k)); }catch(e){ return null; } },
+    set(k,v){ try{ localStorage.setItem('gdm:'+k, JSON.stringify(v)); }catch(e){} }
+  };
+  // theme
+  const t = store.get('theme'); if(t) document.documentElement.dataset.theme = t;
+  document.getElementById('theme').onclick = () => {
+    const cur = document.documentElement.dataset.theme ||
+      (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    const nx = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = nx; store.set('theme', nx);
+  };
+  // search
+  const secs = [...document.querySelectorAll('main section')];
+  const q = document.getElementById('q');
+  function filt(){
+    const v = q.value.trim().toLowerCase();
+    secs.forEach(s => {
+      const hit = !v || (s.dataset.k||'').includes(v) || s.textContent.toLowerCase().includes(v);
+      s.classList.toggle('hide', !hit);
+    });
+  }
+  q.addEventListener('input', filt);
+  document.getElementById('clr').onclick = () => { q.value=''; filt(); };
+  // checklists
+  document.querySelectorAll('.chk[data-list]').forEach(list => {
+    const key = 'chk:'+list.dataset.list;
+    const boxes = [...list.querySelectorAll('input[type=checkbox]')];
+    const saved = store.get(key) || [];
+    boxes.forEach((b,i) => { b.checked = !!saved[i]; b.addEventListener('change', () => { store.set(key, boxes.map(x=>x.checked)); prog(); }); });
+  });
+  function prog(){
+    const b=[...document.querySelectorAll('[data-list=kit] input')];
+    const n=b.filter(x=>x.checked).length;
+    document.getElementById('kitProg').textContent = n+' of '+b.length+' ready';
+  }
+  prog();
+  document.getElementById('kitReset').onclick = () => {
+    if(!confirm('Clear all supply checklist ticks?')) return;
+    document.querySelectorAll('[data-list=kit] input').forEach(b=>b.checked=false);
+    store.set('chk:kit', []); prog();
+  };
+  // bleach calc
+  const bG=document.getElementById('bGal'), bC=document.getElementById('bCond'), bS=document.getElementById('bStr'), bO=document.getElementById('bOut');
+  function bleach(){
+    const g = Math.max(0, parseFloat(bG.value)||0), m = parseInt(bC.value,10), s = parseFloat(bS.value);
+    const perGal = (s>=8 ? 6 : 8) * m;            // drops per gallon (CDC/EPA)
+    const drops = perGal * g;
+    const ml = drops * 0.0625;                    // CDC: 8 drops ~= 0.5 mL
+    const tsp = ml / 4.93;
+    let txt = 'Add ' + Math.round(drops) + ' drops';
+    if (drops > 40) txt += '  (≈ ' + ml.toFixed(1) + ' mL ≈ ' + (tsp>=3 ? (tsp/3).toFixed(2)+' tbsp' : tsp.toFixed(2)+' tsp') + ')';
+    txt += '\nStir. Wait 30 min. Faint chlorine smell = done.\nNo smell? Repeat dose, wait 15 more min.';
+    bO.textContent = txt;
+    store.set('bleach',[bG.value,bC.value,bS.value]);
+  }
+  const bs = store.get('bleach'); if(bs){ bG.value=bs[0]; bC.value=bs[1]; bS.value=bs[2]; }
+  [bG,bC,bS].forEach(e=>e.addEventListener('input',bleach)); bleach();
+  // water calc
+  const wP=document.getElementById('wPpl'), wPe=document.getElementById('wPet'), wD=document.getElementById('wDays'), wR=document.getElementById('wRate'), wO=document.getElementById('wOut');
+  function water(){
+    const p=+wP.value||0, pe=+wPe.value||0, d=+wD.value||0, r=+wR.value||0;
+    const tot = (p*r + pe*1) * d;
+    wO.textContent = 'Target: ' + tot + ' gallons\n≈ ' + Math.ceil(tot/5) + ' five gallon containers, or ' + Math.ceil(tot/55) + ' × 55 gal drum(s)\nWater heater tank (40 to 80 gal) counts toward this.';
+    store.set('water',[wP.value,wPe.value,wD.value,wR.value]);
+  }
+  const ws = store.get('water'); if(ws){ [wP.value,wPe.value,wD.value,wR.value]=ws; }
+  [wP,wPe,wD,wR].forEach(e=>e.addEventListener('input',water)); water();
+  // outage clock
+  const oS=document.getElementById('oStart'), oF=document.getElementById('oFz'), oO=document.getElementById('oOut');
+  function pad(n){return String(n).padStart(2,'0');}
+  function localISO(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());}
+  function clock(){
+    if(!oS.value){ oO.textContent='Enter a start time.'; return; }
+    const st = new Date(oS.value), h = (Date.now()-st)/36e5, fz=+oF.value;
+    if (isNaN(h)) return;
+    const fmt = x => { const m=Math.floor(Math.abs(x)*60); return Math.floor(m/60)+'h '+pad(m%60)+'m'; };
+    let s = 'Elapsed: ' + fmt(h) + '\n';
+    s += 'Fridge: ' + (h<4 ? 'OK, ' + fmt(4-h) + ' left (door shut)' : 'PAST 4 h. Discard perishables above 40°F.') + '\n';
+    s += 'Freezer: ' + (h<fz ? 'OK, ' + fmt(fz-h) + ' left (door shut)' : 'PAST ' + fz + ' h. Check temps; ice crystals or ≤40°F can refreeze or cook now.');
+    oO.textContent = s;
+    store.set('outage',[oS.value,oF.value]);
+  }
+  const os = store.get('outage'); if(os){ oS.value=os[0]; oF.value=os[1]; }
+  document.getElementById('oNow').onclick=()=>{ oS.value=localISO(new Date()); clock(); };
+  [oS,oF].forEach(e=>e.addEventListener('input',clock)); clock(); setInterval(clock, 60000);
+})();
+</script>
+<script>if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(()=>{})}</script>
+</body>
+</html>
