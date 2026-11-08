@@ -828,8 +828,8 @@ D.push(
 {id:"bzn",n:"Benzonatate",b:"Tessalon Perles",t:"Rx",c:"Cough suppressant",u:"Persistent dry cough.",d:"100 to 200 mg three times daily, max 600 mg/day. Swallow whole.",k:"<b>Not under 10</b>: accidental ingestion of even 1 to 2 capsules by a young child can be fatal. Lock it up.",w:"Chewing or sucking numbs the throat (choking).",g:[],fda:"benzonatate"},
 {id:"cbp",n:"Cyclobenzaprine",b:"Flexeril, Amrix",t:"Rx",c:"Muscle relaxant",u:"Acute back/neck muscle spasm.",d:"5 to 10 mg three times daily, max 2 to 3 weeks.",k:"Not under 15.",w:"Drowsy, dry mouth, confusion in elderly. Serotonin syndrome with SSRIs; contraindicated with MAOIs.",g:["sedative","anticholinergic","serotonergic"],fda:"cyclobenzaprine"},
 {id:"mlx",n:"Meloxicam",b:"Mobic",t:"Rx",c:"NSAID (once daily)",u:"Arthritis, back pain, inflammation.",d:"7.5 to 15 mg once daily with food.",k:"See FDA label.",w:"All NSAID warnings: GI bleed, kidney, heart. Never with another NSAID.",g:["nsaid"],fda:"meloxicam"},
-{id:"lidv",n:"Lidocaine viscous 2%",b:"Xylocaine Viscous",t:"Rx",c:"Topical anesthetic",u:"Painful mouth sores, sore throat (adults).",d:"15 mL swish and spit (or gargle) every 3 h, max 8 doses/day.",k:"<b>Never for teething or young children</b>: seizures and deaths reported.",w:"Numb throat: don't eat for 1 h (choking).",g:[],fda:"lidocaine hydrochloride viscous"},
-{id:"oflo",n:"Ofloxacin 0.3% ear drops",b:"Floxin Otic",t:"Rx",c:"Antibiotic ear drops",u:"Swimmer's ear (outer ear infection), ear infection with tubes or ruptured drum (draining).",d:"Adults: 10 drops in affected ear once daily for 7 days; lie ear-up 5 min.",k:"See FDA label (fewer drops).",w:"Safe with a perforated eardrum (most other drops are not).",g:[],fda:"ofloxacin otic"},
+{id:"lidv",n:"Lidocaine viscous 2%",b:"Xylocaine Viscous",t:"Rx",c:"Topical anesthetic",u:"Painful mouth sores, sore throat (adults).",d:"15 mL swish and spit (or gargle) every 3 h, max 8 doses/day.",k:"<b>Never for teething or young children</b>: seizures and deaths reported.",w:"Numb throat: don't eat for 1 h (choking).",g:[],fda:"lidocaine hydrochloride"},
+{id:"oflo",n:"Ofloxacin 0.3% ear drops",b:"Floxin Otic",t:"Rx",c:"Antibiotic ear drops",u:"Swimmer's ear (outer ear infection), ear infection with tubes or ruptured drum (draining).",d:"Adults: 10 drops in affected ear once daily for 7 days; lie ear-up 5 min.",k:"See FDA label (fewer drops).",w:"Safe with a perforated eardrum (most other drops are not).",g:[],fda:"ofloxacin"},
 {id:"ptm",n:"Polymyxin B / trimethoprim eye drops",b:"Polytrim",t:"Rx",c:"Antibiotic eye drops",u:"Bacterial pink eye.",d:"1 drop every 3 h while awake (max 6 doses/day) for 7 to 10 days.",k:"2 months and older per label.",w:"Contact lenses out.",g:[],fda:"polymyxin b sulfate and trimethoprim"},
 {id:"ntg",n:"Nitroglycerin sublingual",b:"Nitrostat, NitroMist",t:"Rx",c:"Nitrate vasodilator",u:"Angina chest pain in a person who has it prescribed.",d:"0.4 mg under the tongue every 5 min, max 3 doses in 15 min. If pain not better after the first dose, this is a heart attack until proven otherwise.",k:"No.",w:"<b>Never within 24 to 48 h of sildenafil/tadalafil</b> (fatal blood pressure drop). Sit down before taking. Headache. Tablets lose potency once opened: keep in original glass bottle.",g:["nitrate"],fda:"nitroglycerin"},
 {id:"pde5",n:"Sildenafil / tadalafil",b:"Viagra, Revatio, Cialis, Adcirca",t:"HOME",c:"PDE5 inhibitor",u:"Erectile dysfunction, pulmonary hypertension, enlarged prostate.",d:"Individual.",k:"",w:"Deadly with nitrates.",g:["pde5"],fda:"sildenafil"},
@@ -843,6 +843,7 @@ const FDA_NAMES={apap:"acetaminophen",ibu:"ibuprofen",nap:"naproxen sodium",asa:
 amox:"amoxicillin",amc:"amoxicillin and clavulanate potassium",cex:"cephalexin",doxy:"doxycycline",smx:"sulfamethoxazole and trimethoprim",nit:"nitrofurantoin",cip:"ciprofloxacin",azi:"azithromycin",cli:"clindamycin",met:"metronidazole",tin:"tinidazole",flc:"fluconazole",osel:"oseltamivir",pred:"prednisone",alb:"albuterol sulfate",epi:"epinephrine",ond:"ondansetron",ssd:"silver sulfadiazine",mup:"mupirocin",erye:"erythromycin",perm5:"permethrin",alben:"albendazole",
 warf:"warfarin",doac:"apixaban",clop:"clopidogrel",ssri:"sertraline",lith:"lithium carbonate",ace:"lisinopril",diur:"hydrochlorothiazide",spir:"spironolactone",bb:"metoprolol",stat:"atorvastatin",mtxd:"methotrexate",levo:"levothyroxine",insu:"insulin glargine"};
 D.forEach(x=>{if(!x.fda&&FDA_NAMES[x.id])x.fda=FDA_NAMES[x.id]});
+const FDA_ROUTE={"erye": "OPHTHALMIC", "ptm": "OPHTHALMIC", "oflo": "OTIC", "flu_n": "NASAL", "oxy": "NASAL", "hc": "TOPICAL", "clo": "TOPICAL", "tac": "TOPICAL", "mup": "TOPICAL", "ssd": "TOPICAL", "perm5": "TOPICAL", "perm1": "TOPICAL", "tab": "TOPICAL", "mic": "VAGINAL", "nys": "ORAL", "epi": "INTRAMUSCULAR", "ntg": "SUBLINGUAL", "alb": "RESPIRATORY (INHALATION)", "nal": "NASAL", "dex": "ORAL", "pred": "ORAL"};
 
 /* Extra interaction rules */
 RULES.push(
@@ -1107,16 +1108,25 @@ function drugCard(x){
 /* --- openFDA fetch --- */
 function slimLabel(r){const o={};FDA_ORDER.forEach(([k])=>{if(r[k])o[k]=r[k].join('\n\n')});const f=r.openfda||{};o.brand=(f.brand_name||[]).join(', ');o.generic=(f.generic_name||[]).join(', ');o.mfr=(f.manufacturer_name||[])[0]||'';o.date=r.effective_time||'';return o}
 function lscore(r){return FDA_ORDER.reduce((n,[k])=>n+(r[k]?r[k].join('').length:0),0)+(r.dosage_and_administration?1e6:0)}
-async function getLabel(name,rx){
+async function getLabel(name,rx,route){
+  const nm=name.toLowerCase().trim();
+  const base=`openfda.generic_name:"${name}"`;
   const tries=[];
-  if(rx) tries.push(`openfda.generic_name:"${name}" AND openfda.product_type:"HUMAN PRESCRIPTION DRUG"`);
-  tries.push(`openfda.generic_name:"${name}"`,`openfda.substance_name:"${name}"`);
+  const add=(q)=>{if(!tries.includes(q))tries.push(q)};
+  if(route){ if(rx) add(base+` AND openfda.route:"${route}" AND openfda.product_type:"HUMAN PRESCRIPTION DRUG"`); add(base+` AND openfda.route:"${route}"`); }
+  if(rx) add(base+` AND openfda.product_type:"HUMAN PRESCRIPTION DRUG"`);
+  add(base); add(`openfda.substance_name:"${name}"`);
   for(const q of tries){
-    const r=await fetch('https://api.fda.gov/drug/label.json?search='+encodeURIComponent(q)+'&limit=10');
+    const r=await fetch('https://api.fda.gov/drug/label.json?search='+encodeURIComponent(q)+'&limit=25');
     if(r.status===404) continue;
     if(!r.ok) throw new Error('openFDA HTTP '+r.status);
     const j=await r.json();const res=j.results||[];if(!res.length)continue;
-    res.sort((a,b)=>lscore(b)-lscore(a));return slimLabel(res[0]);
+    const gn=x=>((x.openfda||{}).generic_name||[]).map(s=>s.toLowerCase().trim());
+    const exact=res.filter(x=>gn(x).some(g=>g===nm));
+    const single=res.filter(x=>gn(x).some(g=>g.includes(nm)&&!/ and |,|\//.test(g.replace(nm,''))));
+    const pool=exact.length?exact:single.length?single:(q.startsWith('openfda.substance')?[]:res);
+    if(!pool.length) continue;
+    pool.sort((a,b)=>lscore(b)-lscore(a));return slimLabel(pool[0]);
   }
   return null;
 }
@@ -1128,7 +1138,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 $('#fdaAll').onclick=async()=>{
   const list=D.filter(x=>x.fda);let ok=0,miss=[];
   for(let i=0;i<list.length;i++){const x=list[i];$('#fdaProg').textContent=`Fetching ${i+1}/${list.length}: ${x.n}…`;
-    try{const L=await getLabel(x.fda,x.t!=='OTC');if(L){LABELS[x.id]=L;ok++}else miss.push(x.n)}catch(e){$('#fdaProg').textContent='Stopped: '+e.message+'. Check the internet connection and try again (already fetched labels are kept).';fdaStatus();renderDrugs();return}
+    try{const L=await getLabel(x.fda,x.t!=='OTC',FDA_ROUTE[x.id]);if(L){LABELS[x.id]=L;ok++}else miss.push(x.n)}catch(e){$('#fdaProg').textContent='Stopped: '+e.message+'. Check the internet connection and try again (already fetched labels are kept).';fdaStatus();renderDrugs();return}
     await sleep(300);}
   $('#fdaProg').textContent=`Done: ${ok} labels fetched.`+(miss.length?` Not found: ${miss.join(', ')}.`:'')+' Stored in this app. On a computer, also click Save offline copy.';
   persistLabels();fdaStatus();renderDrugs();

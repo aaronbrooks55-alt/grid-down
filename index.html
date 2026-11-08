@@ -51,7 +51,7 @@ const standalone=window.navigator.standalone||matchMedia('(display-mode: standal
 if(standalone) document.getElementById('install').style.display='none';
 if('serviceWorker' in navigator){
   navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{
-    const ok=await caches.has('gridown-v1');
+    const ok=await caches.has('gridown-v2');
     st.className='status ok'; st.textContent='✓ Saved for offline use'+(navigator.onLine?'':' (you are offline)');
   }).catch(()=>{st.className='status warn';st.textContent='Offline cache unavailable in this browser. Install from Safari.'});
 }else{st.className='status warn';st.textContent='This browser cannot save the app offline.'}
