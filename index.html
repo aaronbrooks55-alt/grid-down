@@ -40,21 +40,42 @@ ol{padding-left:20px;margin:6px 0} li{margin:3px 0}
 <a class="tile" href="manual.html"><b>Field Manual</b><span>Water, heat, cold injuries, food, hunting and processing, foraging, sanitation, power, comms, checklists.</span></a>
 <a class="tile med" href="medical.html"><b>Medical</b><span>Symptom checker, children's dosing and dose log, conditions and treatment, drug lookup, interactions, pharmacy aisle decoder.</span></a>
 <div class="status" id="st">Checking offline status…</div>
-<div class="box" id="install"><h2>Install on iPhone or iPad</h2>
-<ol><li>Open this page in <b>Safari</b>.</li><li>Tap the <b>Share</b> button, then <b>Add to Home Screen</b>, then <b>Add</b>.</li><li>Open Grid Down from the home screen once while online, and open both tools, so everything is saved to the phone.</li><li>In Medical, go to <b>Drug lookup</b> and tap <b>Download all FDA labels</b> on Wi-Fi.</li></ol></div>
+<div class="box" id="install"><h2>Install</h2>
+<button id="instBtn" type="button" style="display:none;font:700 16px system-ui,sans-serif;padding:12px 18px;border-radius:10px;border:0;background:var(--a2);color:#fff;margin:4px 0 10px;cursor:pointer">Install Grid Down</button>
+<div id="instSteps"></div>
+<ol id="instAfter" style="margin-top:8px"><li>Open Grid Down from the home screen (or app list) once while online, and open both tools, so everything is saved to the device.</li><li>In Medical, go to <b>Drug lookup</b> and tap <b>Download all FDA labels</b> on Wi-Fi.</li></ol></div>
 <div class="box"><h2>Keep it current</h2>Open the app on Wi-Fi now and then; updates install automatically. Everything you enter (weights, dose logs, checklists) stays on this device only.</div>
 <p class="foot">Reference only. When any doctor, pharmacist, or emergency service is reachable, use them first.</p>
 </div>
 <script>
 const st=document.getElementById('st');
+const ua=navigator.userAgent;
+const isIOS=/iPhone|iPad|iPod/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+const isAndroid=/Android/.test(ua);
 const standalone=window.navigator.standalone||matchMedia('(display-mode: standalone)').matches;
+const steps=document.getElementById('instSteps');
+let how;
+if(isIOS){
+  if(/CriOS/.test(ua)) how='<b>Chrome on iPhone/iPad:</b><ol><li>Tap the <b>Share</b> icon (square with an arrow) at the right end of the address bar.</li><li>Tap <b>Add to Home Screen</b> (scroll the list if needed), then <b>Add</b>.</li></ol><p style="font-size:13px;color:var(--muted)">Needs iOS 16.4 or later. On older iOS, open this page in Safari instead.</p>';
+  else if(/FxiOS|EdgiOS/.test(ua)) how='<ol><li>Tap the <b>Share</b> icon (or the menu, then Share).</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol>';
+  else how='<b>Safari on iPhone/iPad:</b><ol><li>Tap the <b>Share</b> button (square with an arrow).</li><li>Tap <b>Add to Home Screen</b>, then <b>Add</b>.</li></ol>';
+}else if(isAndroid){
+  how='<b>Chrome on Android:</b> tap <b>Install Grid Down</b> above if it appears. Otherwise tap the <b>⋮</b> menu, then <b>Add to Home screen</b> (or <b>Install app</b>).';
+}else{
+  how='<b>Chrome or Edge on a computer:</b> click <b>Install Grid Down</b> above if it appears, or click the install icon at the right end of the address bar. Otherwise open the <b>⋮</b> menu, then <b>Cast, save, and share</b>, then <b>Install page as app</b>. It then opens from the Start menu in its own window and works offline.';
+}
+steps.innerHTML=how;
 if(standalone) document.getElementById('install').style.display='none';
+let deferred=null;
+const btn=document.getElementById('instBtn');
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;btn.style.display='inline-block'});
+btn.addEventListener('click',async()=>{if(!deferred)return;deferred.prompt();await deferred.userChoice.catch(()=>{});deferred=null;btn.style.display='none'});
+window.addEventListener('appinstalled',()=>{btn.style.display='none';steps.innerHTML='<b>Installed.</b> Open Grid Down from your home screen or app list.'});
 if('serviceWorker' in navigator){
-  navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(async()=>{
-    const ok=await caches.has('gridown-v2');
+  navigator.serviceWorker.register('sw.js').then(()=>navigator.serviceWorker.ready).then(()=>{
     st.className='status ok'; st.textContent='✓ Saved for offline use'+(navigator.onLine?'':' (you are offline)');
-  }).catch(()=>{st.className='status warn';st.textContent='Offline cache unavailable in this browser. Install from Safari.'});
-}else{st.className='status warn';st.textContent='This browser cannot save the app offline.'}
+  }).catch(()=>{st.className='status warn';st.textContent='Offline cache unavailable here. Use Safari or Chrome, not a private window.'});
+}else{st.className='status warn';st.textContent='This browser cannot save the app offline. Use Safari or Chrome.'}
 </script>
 </body>
 </html>

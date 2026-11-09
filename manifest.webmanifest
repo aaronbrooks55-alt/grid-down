@@ -1,7 +1,9 @@
 {
+  "id": "/grid-down/",
   "name": "Grid Down",
   "short_name": "Grid Down",
   "description": "Offline survival and medical reference",
+  "orientation": "any",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
