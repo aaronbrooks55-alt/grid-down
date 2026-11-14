@@ -39,6 +39,10 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--sans)}
 a{color:var(--accent)}
 header.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:2px solid var(--ink);padding:10px 16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 header.top h1{font:800 18px/1.1 var(--sans);letter-spacing:.06em;text-transform:uppercase;margin:0 12px 0 0}
+.r-ks{display:none}
+body[data-region="ks"] .r-ks{display:revert}
+body[data-region="ks"] .r-oh{display:none}
+#region{padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:600 14px var(--sans);max-width:100%}
 header.top h1 small{display:block;font:500 11px var(--mono);letter-spacing:.04em;color:var(--muted);text-transform:none}
 #q{flex:1;min-width:180px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink);font:15px var(--sans)}
 button{font:600 13px var(--sans);padding:8px 12px;border:1px solid var(--ink);background:var(--panel);color:var(--ink);border-radius:6px;cursor:pointer}
@@ -51,7 +55,7 @@ nav.toc .grp{font:700 11px var(--mono);color:var(--muted);text-transform:upperca
 main{padding:16px 24px 80px;min-width:0}
 section{scroll-margin-top:72px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px 22px;margin:0 0 18px}
 section.hide{display:none}
-h2{font:800 22px/1.2 var(--sans);margin:0 0 4px;display:flex;gap:10px;align-items:baseline}
+h2{font:800 22px/1.2 var(--sans);margin:0 0 4px;display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
 h2 .num{font:700 13px var(--mono);color:var(--accent)}
 .lede{color:var(--muted);margin:0 0 14px}
 h3{font:700 16px var(--sans);margin:20px 0 6px;border-bottom:1px solid var(--line);padding-bottom:4px}
@@ -84,6 +88,11 @@ kbd,code{font:13px var(--mono);background:var(--bg);border:1px solid var(--line)
 .foot{font-size:13px;color:var(--muted)}
 .prog{font:600 12px var(--mono);color:var(--muted)}
 @media (max-width:820px){
+  header.top{position:static;gap:8px;padding:10px 16px}
+  header.top h1{font-size:16px;margin-right:0;flex-basis:100%}
+  #region{flex:1 1 100%}
+  #q{flex:1 1 100%;min-width:0}
+  nav.toc{position:static}
   .wrap{grid-template-columns:1fr}
   nav.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);columns:2;padding:10px 16px}
   nav.toc .grp{display:none}
@@ -105,7 +114,8 @@ kbd,code{font:13px var(--mono);background:var(--bg);border:1px solid var(--line)
 </head>
 <body>
 <header class="top">
-  <h1>Grid Down Manual<small>Oregonia, OH · Warren County · offline reference · v1 Nov 2026</small></h1>
+  <h1>Grid Down Manual<small><span class="r-oh">Oregonia, OH · Warren County</span><span class="r-ks">Wichita, KS · Sedgwick County</span> · offline reference · v2 Nov 2026</small></h1>
+  <select id="region" aria-label="Region"><option value="oh">Warren County, OH</option><option value="ks">Sedgwick County, KS</option></select>
   <input id="q" type="search" placeholder="Search: bleach, deer, hypothermia, well, formula…" aria-label="Search the manual">
   <a href="index.html" class="noprint" style="font:700 13px system-ui,sans-serif;padding:8px 12px;border:1px solid currentColor;border-radius:6px;color:inherit;text-decoration:none">⌂ Home</a>
   <button id="clr" class="noprint">Show all</button>
@@ -145,7 +155,7 @@ kbd,code{font:13px var(--mono);background:var(--bg);border:1px solid var(--line)
 <!-- 0 START -->
 <section id="start" data-k="start priorities first hour">
 <h2><span class="num">00</span>Start here</h2>
-<p class="lede">Assume no restoration date and no outside help. Work the priorities in order. Everything below is for a 2 adult, 3 young child household in a rural Warren County winter.</p>
+<p class="lede">Assume no restoration date and no outside help. Work the priorities in order. Everything below is for a 2 adult, 3 young child household in a <span class="r-oh">rural Warren County</span><span class="r-ks">Sedgwick County</span> winter.</p>
 <div class="box danger"><b class="tag">The three killers in a winter outage</b>
 <ol>
 <li><b>Carbon monoxide.</b> Generators, grills, camp stoves, and gas ovens used to heat or cook indoors. Kills silently, often at night. See §6.</li>
@@ -163,11 +173,18 @@ Contaminated water (diarrheal illness, dehydration in small kids) is the fourth,
 <li><b>Sanitation:</b> set up the bucket toilet before you need it.</li>
 <li><b>Sustain:</b> fuel, power rationing, hunting/foraging only once the above are stable.</li>
 </ol>
-<div class="box local"><b class="tag">Local context · Oregonia / Warren County</b>
+<div class="box local r-oh"><b class="tag">Local context · Oregonia / Warren County</b>
 <ul>
 <li>You are on the PJM grid (13 states plus DC). Western PJM includes Duke Energy Ohio, which serves much of Warren County. In January 2026 Winter Storm Fern pushed PJM into a Level 1 emergency and federal emergency orders; PJM has publicly warned demand could outrun supply as early as 2027. A cold snap is the most likely trigger for a long outage here.</li>
 <li><b>If you are on a private well, your water stops when the power stops.</b> The pump needs electricity. Treat water capture (§3) as a first hour task.</li>
 <li>Nearby surface water: Little Miami River, Todd Fork, Caesar Creek Lake. The Little Miami is widely impaired by E. coli and receives agricultural runoff. Always filter <i>and</i> disinfect, and never use it for infant formula (§3).</li>
+</ul></div>
+<div class="box local r-ks"><b class="tag">Local context · Wichita / Sedgwick County, KS</b>
+<ul>
+<li>Kansas is on the <b>Southwest Power Pool (SPP)</b> grid. Evergy serves Wichita; rural areas are often on electric co-ops. During Winter Storm Uri (February 2021), SPP ordered rotating outages across its region, including Wichita, because of extreme cold. Ice storms and arctic cold are the main winter outage triggers here; tornadoes and straight-line winds cause outages the rest of the year.</li>
+<li><b>Wichita city water</b> comes from Cheney Reservoir and the Equus Beds aquifer and needs electric pumps and treatment. Expect pressure loss or a boil advisory in a long outage. <b>Private wells stop when the power stops.</b> Capture water in the first hour (§3).</li>
+<li>Nearby surface water: Arkansas River, Little Arkansas River, Cheney Reservoir, farm ponds. Summer and fall <b>blue-green algae</b> blooms (Cheney is a known site) make toxins that <b>boiling, bleach and most filters do not remove</b>: never use water that is green, scummy or paint-like. Farm runoff and urban runoff (PCBs on the Arkansas below Wichita) are also concerns. Filter <i>and</i> disinfect, and never use surface water for infant formula.</li>
+<li>Wind chill is the cold multiplier on the plains: block wind first when setting up shelter and outdoor work.</li>
 </ul></div>
 </section>
 
@@ -418,10 +435,10 @@ USDA warns against just putting food outside in snow: sun can warm it even on co
 
 <!-- 8 GAME -->
 <section id="game" data-k="hunting deer field dressing gutting skinning rabbit squirrel turkey goose duck raccoon groundhog opossum tularemia cwd venison processing season dates license">
-<h2><span class="num">08</span>Hunting and animal processing (Warren County species)</h2>
-<p class="lede">Assumes legal harvest under current ODNR rules. Season dates below are the 2026 to 2027 approved seasons; verify current regulations at wildohio.gov before relying on them.</p>
+<h2><span class="num">08</span>Hunting and animal processing (<span class="r-oh">Warren County</span><span class="r-ks">Sedgwick County</span> species)</h2>
+<p class="lede">Assumes legal harvest under current <span class="r-oh">ODNR rules. Season dates below are the 2026 to 2027 approved seasons; verify current regulations at wildohio.gov</span><span class="r-ks">KDWP (Kansas Department of Wildlife and Parks) rules. Verify dates at ksoutdoors.gov</span> before relying on them.</p>
 
-<div class="box"><b class="tag">2026 to 2027 Ohio seasons relevant to winter</b>
+<div class="box r-oh"><b class="tag">2026 to 2027 Ohio seasons relevant to winter</b>
 <div class="tbl"><table>
 <tr><th>Species</th><th>Season</th><th>Limit</th></tr>
 <tr><td>White-tailed deer, archery</td><td>Sept 26, 2026 to Feb 7, 2027</td><td>County bag limit map; 1 antlered statewide</td></tr>
@@ -434,6 +451,22 @@ USDA warns against just putting food outside in snow: sun can warm it even on co
 <tr><td>Groundhog (woodchuck), coyote</td><td>No closed season</td><td>None</td></tr>
 </table></div>
 Hunting hours: 30 minutes before sunrise to 30 minutes after sunset. Waterfowl and turkey have separate zones and dates.</div>
+<div class="box r-ks"><b class="tag">2026 to 2027 Kansas seasons relevant to winter</b>
+<div class="tbl"><table>
+<tr><th>Species</th><th>Season</th><th>Limit / notes</th></tr>
+<tr><td>White-tailed deer, archery</td><td>Sept 14 to Dec 31, 2026</td><td>Per permit (Kansas uses permits and game tags, not a statewide bag)</td></tr>
+<tr><td>Deer, pre-rut antlerless firearm</td><td>Oct 10 to 12, 2026</td><td>Antlerless permits</td></tr>
+<tr><td>Deer, regular firearm</td><td>Dec 2 to 13, 2026</td><td>Per permit</td></tr>
+<tr><td>Deer, January antlerless</td><td>Starts Jan 1, 2027; ends Jan 10, 17 or 24 depending on unit</td><td>Check which deer management unit your land is in</td></tr>
+<tr><td>Cottontail and jackrabbit</td><td>Open all year</td><td>10 daily, 30 possession</td></tr>
+<tr><td>Squirrel (fox, gray)</td><td>Normally June 1 to Feb 28 <span class="pill y">2026 to 2027 dates not yet posted</span></td><td>Verify</td></tr>
+<tr><td>Pheasant, bobwhite quail</td><td>Youth weekend Nov 7 to 8, 2026; regular season normally mid-November to Jan 31 <span class="pill y">not yet posted</span></td><td>4 rooster pheasants; 8 quail daily</td></tr>
+<tr><td>Raccoon, opossum, fox, mink, muskrat, badger, bobcat, weasel (hunting and trapping)</td><td>Normally mid-November to Feb 28 <span class="pill y">not yet posted</span>. Extended raccoon/opossum season ran Mar 1 to Nov 18, 2026</td><td>Furharvester license required</td></tr>
+<tr><td>Beaver, otter (trapping)</td><td>Normally mid-November to Mar 31 <span class="pill y">not yet posted</span></td><td>Furharvester license</td></tr>
+<tr><td>Coyote</td><td>Open all year</td><td>None</td></tr>
+<tr><td>Wild turkey</td><td>Fall season suspended; spring only</td><td></td></tr>
+</table></div>
+Kansas deer hunting hours: 30 minutes before sunrise to 30 minutes after sunset. <b>Feral hogs: hunting them is illegal in Kansas</b>; report sightings to KDWP.</div>
 
 <h3>Universal handling rules</h3>
 <ul>
@@ -449,16 +482,19 @@ Hunting hours: 30 minutes before sunrise to 30 minutes after sunset. Waterfowl a
 <h3>Species notes</h3>
 <div class="tbl"><table>
 <tr><th>Animal</th><th>Food value</th><th>Specific hazards and tips</th></tr>
-<tr><td><b>White-tailed deer</b></td><td>Best return: a field dressed adult yields roughly 40 to 60 lb boneless meat</td><td>Chronic wasting disease is confirmed in Ohio, so far concentrated in north central and northwest counties (Wyandot, Hardin, Allen, Marion, Morrow, Hancock, Crawford), not Warren County as of the 2025 to 2026 season. Still: do not eat brain, spinal cord, eyes, spleen, tonsils or lymph nodes; bone out the meat; avoid sawing through the spine. EHD (summer die offs) does not infect people.</td></tr>
+<tr><td><b>White-tailed deer</b></td><td>Best return: a field dressed adult yields roughly 40 to 60 lb boneless meat</td><td><span class="r-oh">Chronic wasting disease is confirmed in Ohio, so far concentrated in north central and northwest counties (Wyandot, Hardin, Allen, Marion, Morrow, Hancock, Crawford), not Warren County as of the 2025 to 2026 season. Still:</span><span class="r-ks"><b>Chronic wasting disease is widespread in Kansas</b>: over 1,200 positive wild deer and detections in every surveillance zone as of mid-2025. Treat every Kansas deer as possibly infected: test it if you can (KDWP/KSVDL), and debone in the field and leave the carcass at the kill site. Mule deer are also present in Kansas, mostly farther west; same rules.</span> Do not eat brain, spinal cord, eyes, spleen, tonsils or lymph nodes; bone out the meat; avoid sawing through the spine. EHD (summer die offs) does not infect people.</td></tr>
 <tr><td><b>Cottontail rabbit</b></td><td>Small, very lean</td><td>Tularemia: most human cases in the US come from rabbits. Gloves always. Check the liver for spots. Cook thoroughly. <b>Rabbit starvation:</b> a diet of only lean meat causes illness within days; pair with fat (oil, nuts, deer fat, raccoon, groundhog, pantry).</td></tr>
 <tr><td><b>Fox and gray squirrel</b></td><td>Good, abundant</td><td>Do not eat squirrel brains. Skin by cutting across the back and pulling the hide both ways. Tough older squirrels: braise or stew.</td></tr>
 <tr><td><b>Wild turkey</b></td><td>Excellent</td><td>Breast out or pluck. Cook to 165°F. Fall season only; out of season in winter.</td></tr>
 <tr><td><b>Canada goose, ducks</b></td><td>High fat, valuable in cold</td><td>Federal migratory bird rules apply. Breast out quickly; pluck for roasting. 165°F.</td></tr>
 <tr><td><b>Raccoon</b></td><td>Fatty, edible if prepared well</td><td>Rabies vector: avoid any that behave oddly. Raccoon roundworm eggs in feces can be fatal to people; gloves and keep kids clear of latrine areas. Remove the scent glands (pea sized nodules under the front legs and along the back) and trim fat. Cook thoroughly.</td></tr>
-<tr><td><b>Groundhog</b></td><td>Good, fatty in fall</td><td>Remove the scent glands under the front legs. Young ones are best. Hibernating in winter so harder to find.</td></tr>
+<tr class="r-oh"><td><b>Groundhog</b></td><td>Good, fatty in fall</td><td>Remove the scent glands under the front legs. Young ones are best. Hibernating in winter so harder to find.</td></tr>
 <tr><td><b>Opossum</b></td><td>Edible, greasy</td><td>Scavenger. Cook thoroughly; trim fat.</td></tr>
 <tr><td><b>Beaver, muskrat</b></td><td>Good, rich</td><td>Tularemia carriers like rabbits. Gloves. Beaver tail is fat.</td></tr>
 <tr><td><b>Coyote</b></td><td>Poor eating</td><td>Parasite load and rabies risk. Last resort.</td></tr>
+<tr class="r-ks"><td><b>Black-tailed jackrabbit</b></td><td>Large, lean, tougher than cottontail</td><td>Same tularemia rules as cottontail (Kansas reports tularemia every year). Gloves, check the liver, cook thoroughly. Braise or stew.</td></tr>
+<tr class="r-ks"><td><b>Pheasant, bobwhite quail</b></td><td>Excellent; the best regular winter bird here</td><td>Pluck or skin, gut promptly, 165°F. Small birds: plan several per meal.</td></tr>
+<tr class="r-ks"><td><b>Armadillo</b> (spreading into south-central Kansas)</td><td>Do not eat</td><td>Can carry the bacteria that cause leprosy (Hansen's disease). Don't handle bare-handed.</td></tr>
 </table></div>
 
 <h3>Deer: field dressing step by step</h3>
@@ -489,7 +525,7 @@ Bones: boil for stock (fat and calories). Hide: brain tan or salt for later use.
 <h3>Raccoon, groundhog and opossum: shared rules</h3>
 <div class="box danger"><b class="tag">Before you touch one</b>
 <ul>
-<li><b>Rabies:</b> raccoons are a major rabies carrier in Ohio, and groundhogs account for most rabid rodent cases in the eastern US. Pass on any animal that is out in daylight acting tame, aggressive, wobbly, or paralyzed. Do not cut into the head, and do not eat the brain.</li>
+<li><b>Rabies:</b> <span class="r-oh">raccoons are a major rabies carrier in Ohio,</span><span class="r-ks">skunks are the main rabies carrier in Kansas; raccoons and other mammals can also carry it,</span> and groundhogs account for most rabid rodent cases in the eastern US. Pass on any animal that is out in daylight acting tame, aggressive, wobbly, or paralyzed. Do not cut into the head, and do not eat the brain.</li>
 <li><b>Trichinella:</b> omnivores and carnivores can carry it. Wild strains can survive home freezing, so freezing is <b>not</b> a substitute for cooking. Cook every piece to 160°F all the way through.</li>
 <li><b>Gloves, eye protection, no kids nearby.</b> Wash hands and tools with soap, then sanitize with bleach solution.</li>
 <li><b>Fleas and ticks</b> leave a cooling carcass. Bag it for 30 minutes or hang it away from the house before you skin it.</li>
@@ -542,7 +578,7 @@ Bones: boil for stock (fat and calories). Hide: brain tan or salt for later use.
 
 <h3>Trapping basics</h3>
 <ul>
-<li>Ohio requires a fur taker permit and has specific trap rules (check daily, identification, legal types). Snares on land have restrictions; confirm before setting.</li>
+<li><span class="r-oh">Ohio requires a fur taker permit</span><span class="r-ks">Kansas requires a furharvester license</span> and has specific trap rules (check daily, identification, legal types). Snares on land have restrictions; confirm before setting.</li>
 <li>Body grip and cage traps on trails, den entrances, and creek crossings. Rabbit and squirrel: box traps baited with apple or corn.</li>
 <li>Trapping runs 24/7 and frees you for other work, which is its real value in a long outage.</li>
 </ul>
@@ -552,18 +588,20 @@ Bones: boil for stock (fat and calories). Hide: brain tan or salt for later use.
 <section id="fish" data-k="fishing fish catfish bass bluegill crappie carp crayfish little miami caesar creek ice fishing">
 <h2><span class="num">09</span>Fishing</h2>
 <ul>
-<li><b>Waters nearby:</b> Little Miami River (smallmouth bass, rock bass, channel catfish, sunfish), Caesar Creek Lake (crappie, bass, saugeye, catfish, bluegill), Todd Fork and farm ponds (bluegill, bass, catfish with permission).</li>
-<li><b>Winter methods:</b> slow, deep presentation. Catfish on cut bait or worms on the bottom; crappie and bluegill on small jigs or minnows near cover. Trotlines and set lines fish while you sleep (check Ohio limits on hooks and tagging).</li>
-<li><b>Ice:</b> only when solid ice is at least 4 inches, and never on rivers or near inlets, springs, or the dam. Southwest Ohio ice is often unreliable. Carry ice picks and a rope; never go alone.</li>
-<li><b>Contaminants:</b> Ohio EPA publishes fish consumption advisories (mercury, PCBs). Generally favor smaller panfish over large old catfish and carp; limit meals for kids. Check the advisory list in advance.</li>
+<li class="r-oh"><b>Waters nearby:</b> Little Miami River (smallmouth bass, rock bass, channel catfish, sunfish), Caesar Creek Lake (crappie, bass, saugeye, catfish, bluegill), Todd Fork and farm ponds (bluegill, bass, catfish with permission).</li>
+<li class="r-ks"><b>Waters nearby:</b> Cheney Reservoir (walleye, white bass, wipers, crappie, channel catfish), El Dorado Lake, the Arkansas and Little Arkansas Rivers (catfish, carp, white bass), and countless farm ponds (bluegill, bass, catfish with permission).</li>
+<li><b>Winter methods:</b> slow, deep presentation. Catfish on cut bait or worms on the bottom; crappie and bluegill on small jigs or minnows near cover. Trotlines and set lines fish while you sleep (check <span class="r-oh">Ohio</span><span class="r-ks">Kansas</span> limits on hooks and tagging).</li>
+<li><b>Ice:</b> only when solid ice is at least 4 inches, and never on rivers or near inlets, springs, or the dam. <span class="r-oh">Southwest Ohio</span><span class="r-ks">South-central Kansas</span> ice is often unreliable. Carry ice picks and a rope; never go alone.</li>
+<li class="r-oh"><b>Contaminants:</b> Ohio EPA publishes fish consumption advisories (mercury, PCBs). Generally favor smaller panfish over large old catfish and carp; limit meals for kids. Check the advisory list in advance.</li>
+<li class="r-ks"><b>Contaminants (KDHE 2026 advisories):</b> <b>Arkansas River from the Lincoln Street dam in Wichita down to Cowskin Creek near Belle Plaine: do not eat bottom-feeding fish</b> (carp, catfish, buffalo; PCBs). Little Arkansas River in Wichita: bottom feeders 2 servings a month max. K-96 Lake: 1 a month. Statewide mercury: channel catfish, crappie, walleye, sunfish 1 to 2 servings a week; largemouth bass, flathead catfish, buffalo 1 to 2 a month; cut these in half for fish over 20 inches. Children and pregnant women follow the limits strictly. Child serving sizes: 4 oz (ages 6 to 12), 2 oz (under 6).</li>
 <li><b>Prep:</b> scale or skin, gut, remove the dark mud line on catfish. Cook to 145°F or until flaky. Crayfish: boil thoroughly.</li>
-<li>Fishing license required (age 16 and older).</li>
+<li>Fishing license required (age 16 and older<span class="r-ks">; Kansas residents 75 and older exempt</span>).</li>
 </ul>
 </section>
 
 <!-- 10 FORAGE -->
 <section id="forage" data-k="foraging wild edible plants black walnut hickory acorn persimmon wild onion garlic chickweed garlic mustard cattail white pine needle tea rose hips sumac poison hemlock yew mushrooms">
-<h2><span class="num">10</span>Winter foraging (southwest Ohio)</h2>
+<h2><span class="num">10</span>Winter foraging (<span class="r-oh">southwest Ohio</span><span class="r-ks">south-central Kansas</span>)</h2>
 <div class="box danger"><b class="tag">Rule one</b>
 Eat nothing you cannot identify with 100% certainty. No wild mushrooms unless you are trained; the deadly ones look ordinary. Foraging is a supplement for calories and vitamins, not a primary food source in winter.</div>
 
@@ -582,8 +620,18 @@ Eat nothing you cannot identify with 100% certainty. No wild mushrooms unless yo
 <tr><td><b>Staghorn sumac</b></td><td>Red fuzzy berry clusters, tea</td><td>Lemony drink, cold steep. Poison sumac has white or gray berries and grows in wet areas.</td></tr>
 </table></div>
 
+<div class="box local r-ks"><b class="tag">Kansas differences</b>
+<ul>
+<li><b>Hackberry</b> (common along rivers and in towns): small orange-brown berries hang on all winter; the thin sweet flesh plus crunchy seed is edible and calorie-dense. One of the best winter finds here.</li>
+<li><b>Jerusalem artichoke</b> (wild sunflower relative in ditches and field edges): dig the knobby tubers all winter; eat raw or cooked. Introduce slowly (gas).</li>
+<li><b>Pecans</b> grow wild along river bottoms in south and southeast Kansas; black walnut in wooded creeks. Hickory and white pine are scarce here; skip those rows.</li>
+<li><b>Prickly pear</b> pads and fruit: burn or scrape off all spines and tiny glochids first.</li>
+<li><b>Osage orange</b> ("hedge apple") is not edible.</li>
+<li>Persimmon is mainly in southeast Kansas; wild onion, chickweed, curly dock and cattail are all present.</li>
+<li>Both <b>poison hemlock</b> and <b>water hemlock</b> grow in Kansas. Water hemlock (wet ditches, creek banks; chambered root that oozes yellow liquid) is the most toxic plant in North America. Same rule: no carrot-family plants.</li>
+</ul></div>
 <div class="box danger"><b class="tag">Poison hemlock is common here</b>
-Poison hemlock is spreading across southern Ohio and is among the most toxic plants in the region; it causes respiratory failure. It resembles wild carrot (Queen Anne's lace) and wild parsnip.
+Poison hemlock is spreading across <span class="r-oh">southern Ohio</span><span class="r-ks">Kansas roadsides and pastures</span> and is among the most toxic plants in the region; it causes respiratory failure. It resembles wild carrot (Queen Anne's lace) and wild parsnip.
 <ul><li><b>Poison hemlock:</b> smooth hairless stem with purple spots or blotches, hollow, musty or mousy smell, up to 10 ft.</li>
 <li><b>Wild carrot:</b> hairy stem and leaves, solid green stem, carrot smell.</li>
 <li>Do not burn it (the smoke is toxic) and do not forage anything in the carrot family unless you are expert.</li></ul></div>
@@ -674,13 +722,16 @@ This is reference only, not training. Take a hands-on first aid, CPR, and Stop t
 <section id="comms" data-k="communication radio noaa weather radio same code am wlw ham gmrs frs phone contacts">
 <h2><span class="num">15</span>Communications and information</h2>
 <ul>
-<li><b>NOAA Weather Radio</b> with battery and hand crank. Program the SAME code for Warren County, Ohio: <code>039165</code>. Coverage comes from NWS Wilmington, OH.</li>
-<li><b>AM radio</b> reaches far when the grid is down: WLW 700 AM (Cincinnati, 50,000 watts) and other regional stations carry emergency information.</li>
+<li class="r-oh"><b>NOAA Weather Radio</b> with battery and hand crank. Program the SAME code for Warren County, Ohio: <code>039165</code>. Coverage comes from NWS Wilmington, OH.</li>
+<li class="r-ks"><b>NOAA Weather Radio</b> with battery and hand crank. Program the SAME code for Sedgwick County, Kansas: <code>020173</code>. Transmitter KEC-59 Wichita, <b>162.550 MHz</b>, from NWS Wichita.</li>
+<li class="r-oh"><b>AM radio</b> reaches far when the grid is down: WLW 700 AM (Cincinnati, 50,000 watts) and other regional stations carry emergency information.</li>
+<li class="r-ks"><b>AM radio:</b> KNSS 1330 AM (Wichita news/talk) for local information. At night, 50,000-watt stations reach Kansas from hundreds of miles: WBAP 820 (Dallas-Fort Worth), KOA 850 (Denver), WHO 1040 (Des Moines). Those tell you how big the event is.</li>
 <li><b>Text instead of calling.</b> Texts get through congested networks when calls fail. Keep messages short.</li>
 <li><b>Out of area contact:</b> one relative in another region everyone checks in with.</li>
 <li><b>GMRS radios</b> (FCC license, no exam, covers your family) reach a few miles between house, barn, and neighbors. FRS needs no license but has less range. Amateur (ham) radio needs an exam but gives regional reach.</li>
-<li><b>Warren County EMA</b> posts alerts on its Facebook page (@WCOHEMA) and X (@WCEMAOhio). Sign up for county alerts now, while it is easy.</li>
-<li><b>Paper:</b> print a contact list (family, neighbors, doctors, vet, Duke Energy outage line, insurance) and a Warren County road map. Your phone may be dead when you need them.</li>
+<li class="r-oh"><b>Warren County EMA</b> posts alerts on its Facebook page (@WCOHEMA) and X (@WCEMAOhio). Sign up for county alerts now, while it is easy.</li>
+<li class="r-ks"><b>Sedgwick County Emergency Management</b>: sign up now for the county's free Civic Ready alerts (voice, text, email) on sedgwick.gov. County updates on Facebook (sedgwickcounty) and X (@sedgwickcounty). Office line 316-660-5959. Outdoor sirens mean go inside and get information; they are not an all-clear system.</li>
+<li><b>Paper:</b> print a contact list (family, neighbors, doctors, vet, <span class="r-oh">Duke Energy</span><span class="r-ks">Evergy or your co-op</span> outage line, insurance) and a <span class="r-oh">Warren County</span><span class="r-ks">Sedgwick County</span> road map. Your phone may be dead when you need them.</li>
 <li>Household rally points: one at the house, one in town if separated.</li>
 </ul>
 </section>
@@ -711,7 +762,7 @@ This is reference only, not training. Take a hands-on first aid, CPR, and Stop t
 <label><input type="checkbox"><span>Photos or video of home contents and serial numbers for insurance claims</span></label>
 <label><input type="checkbox"><span>Utility account numbers (electric, gas, water, propane supplier)</span></label>
 <label><input type="checkbox"><span>Printed contact list and out of area contact</span></label>
-<label><input type="checkbox"><span>Paper maps of Warren County and region with routes to family</span></label>
+<label><input type="checkbox"><span>Paper maps of <span class="r-oh">Warren County</span><span class="r-ks">Sedgwick County</span> and region with routes to family</span></label>
 <label><input type="checkbox"><span>Hunting and fishing licenses, firearm records</span></label>
 <label><input type="checkbox"><span>Cash in small bills (card readers and ATMs fail without power)</span></label>
 <label><input type="checkbox"><span>Spare house and vehicle keys</span></label>
@@ -770,7 +821,7 @@ This is reference only, not training. Take a hands-on first aid, CPR, and Stop t
 <label><input type="checkbox"><span>Heavy duty outdoor extension cords</span></label>
 </div>
 <div class="card"><h4>Comms</h4>
-<label><input type="checkbox"><span>NOAA radio, SAME 039165 programmed</span></label>
+<label><input type="checkbox"><span>NOAA radio, SAME <span class="r-oh">039165</span><span class="r-ks">020173</span> programmed</span></label>
 <label><input type="checkbox"><span>Hand crank AM/FM radio</span></label>
 <label><input type="checkbox"><span>GMRS radios + license</span></label>
 <label><input type="checkbox"><span>Power banks charged</span></label>
@@ -813,6 +864,10 @@ This is reference only, not training. Take a hands-on first aid, CPR, and Stop t
 <li>Greater Cincinnati MSD / Midwest Biodiversity Institute, Little Miami River water quality (E. coli impairment)</li>
 <li>Warren County EMA, Citizen's Preparedness Guide and newsletters</li>
 <li>PJM / NERC winter reliability reporting; Winter Storm Fern coverage, Jan 2026</li>
+<li class="r-ks">KDWP 2026 to 2027 deer seasons (kdwpt.ks.gov); KDWP hunting seasons and bag limits; KDWP chronic wasting disease page (data through June 30, 2025)</li>
+<li class="r-ks">KDHE / KDWP 2026 fish consumption advisories</li>
+<li class="r-ks">NWS Wichita NOAA Weather Radio transmitters (KEC-59 162.550 MHz); Sedgwick County Emergency Management (Civic Ready alerts)</li>
+<li class="r-ks">USGS Cheney Reservoir harmful algal bloom research; SPP Winter Storm Uri rotating outages, Feb 2021</li>
 <li>WHO, oral rehydration solution home formula</li>
 </ul>
 <p class="foot">Compiled November 2026. Regulations and season dates change annually; re-verify each fall. Not a substitute for hands-on training in first aid, firearms, hunting, or food preservation.</p>
@@ -835,6 +890,11 @@ This is reference only, not training. Take a hands-on first aid, CPR, and Stop t
     const nx = cur === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = nx; store.set('theme', nx);
   };
+  // region
+  const regSel=document.getElementById('region');
+  const reg=store.get('region')||'oh';
+  regSel.value=reg; document.body.dataset.region=reg;
+  regSel.addEventListener('change',()=>{document.body.dataset.region=regSel.value;store.set('region',regSel.value);});
   // search
   const secs = [...document.querySelectorAll('main section')];
   const q = document.getElementById('q');
